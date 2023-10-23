@@ -1,0 +1,13 @@
+body {
+    padding-top: 80px;
+    
+}
+
+
+.canvas-container {
+    width: 100% !important;
+    max-width: 600px;
+}
+.canvas-container canvas {
+    width: 100% !important;
+}
