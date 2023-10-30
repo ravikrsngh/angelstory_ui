@@ -3,6 +3,14 @@ import { CanvasContext } from "../../context/canvasContext";
 import EditBorder from "./components/border";
 import EditFill from "./components/fill";
 import EditShadow from "./components/shadow";
+import {
+  IconAlignCenter,
+  IconAlignLeft,
+  IconAlignRight,
+  IconBold,
+  IconItalic,
+  IconUnderline,
+} from "@tabler/icons-react";
 
 export default function EditText() {
   let { fabricRef } = useContext(CanvasContext);
@@ -16,6 +24,18 @@ export default function EditText() {
   let [fontSize, setFontSize] = useState(
     fabricRef.current._activeObject.fontSize
   );
+  let [fontWeight, setFontWeight] = useState(
+    fabricRef.current._activeObject.fontWeight
+  );
+  let [fontStyle, setFontStyle] = useState(
+    fabricRef.current._activeObject.fontStyle
+  );
+  let [textAlign, setTextAlign] = useState(
+    fabricRef.current._activeObject.textAlign
+  );
+  let [underline, setUnderline] = useState(
+    fabricRef.current._activeObject.underline
+  );
 
   const updateTextElement = () => {
     console.log(fabricRef.current._activeObject);
@@ -23,13 +43,17 @@ export default function EditText() {
     fabricRef.current._activeObject.set({
       fontFamily: fontFamily,
       fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      textAlign: textAlign,
+      underline: underline,
     });
     fabricRef.current.renderAll();
   };
 
   useEffect(() => {
     updateTextElement();
-  }, [fontFamily, fontSize]);
+  }, [fontFamily, fontSize, fontWeight, fontStyle, textAlign, underline]);
 
   return (
     <div className="p-5">
@@ -45,7 +69,7 @@ export default function EditText() {
             <option value={fontFamily} disabled selected>
               {fontFamily}
             </option>
-            <option value="Comic Sans">Comic Sans</option>
+            <option value="Arial">Arial</option>
             <option value="Times New Roman">Times New Roman</option>
           </select>
           <select
@@ -59,6 +83,60 @@ export default function EditText() {
               <option value={size}>{size}</option>
             ))}
           </select>
+        </div>
+        <div className="flex gap-2">
+          <button
+            className={`${textAlign == "left" ? "text-primary-400" : ""}`}
+            onClick={() => setTextAlign("left")}
+          >
+            <IconAlignLeft />
+          </button>
+          <button
+            className={`${textAlign == "center" ? "text-primary-400" : ""}`}
+            onClick={() => setTextAlign("center")}
+          >
+            <IconAlignCenter />
+          </button>
+          <button
+            className={`${textAlign == "right" ? "text-primary-400" : ""}`}
+            onClick={() => setTextAlign("right")}
+          >
+            <IconAlignRight />
+          </button>
+          <button
+            className={`${fontWeight == "bold" ? "text-primary-400" : ""}`}
+            onClick={() =>
+              setFontWeight((prev) => {
+                if (prev == "bold") {
+                  return "normal";
+                } else {
+                  return "bold";
+                }
+              })
+            }
+          >
+            <IconBold />
+          </button>
+          <button
+            className={`${fontStyle == "italic" ? "text-primary-400" : ""}`}
+            onClick={() =>
+              setFontStyle((prev) => {
+                if (prev == "italic") {
+                  return "normal";
+                } else {
+                  return "italic";
+                }
+              })
+            }
+          >
+            <IconItalic />
+          </button>
+          <button
+            className={`${underline ? "text-primary-400" : ""}`}
+            onClick={() => setUnderline((prev) => !prev)}
+          >
+            <IconUnderline />
+          </button>
         </div>
         <EditFill />
         <EditBorder />
