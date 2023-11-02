@@ -1,4 +1,3 @@
-import React from "react";
 import AccountDashboardHeading from "./account-dashboard-heading";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";

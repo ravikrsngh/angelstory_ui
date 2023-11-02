@@ -31,6 +31,18 @@ export default function Design() {
   const [prevIndex, setPrevIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
   let [activeObj, setActiveObj] = useState(0);
+  let [history, setHistory] = useState([]);
+
+  const recordChange = (e) => {
+    console.log(e);
+    console.log("modified");
+    setHistory((prev) => {
+      let h = [...prev];
+      h.push(JSON.stringify(fabricRef.current));
+      console.log(h);
+      return h;
+    });
+  };
 
   const updateTabIndexes = (index) => {
     fabricRef.current?.discardActiveObject().renderAll();
@@ -42,38 +54,24 @@ export default function Design() {
     fabric.Image.fromURL(url, function (oImg) {
       oImg.scale(1);
       fabricRef?.current?.add(oImg);
+      recordChange();
     });
   };
 
   const onKeyPress = (e) => {
     if (e.key == "Delete") {
       fabricRef.current?.remove(fabricRef.current?._activeObject);
+    } else if (e.ctrlKey && e.key === "z") {
+      console.log("ctrl + Z");
+      console.log(history);
+      setHistory((prev) => {
+        let h = [...prev];
+        let last_state = h.pop();
+        fabricRef.current?.loadFromJSON(last_state);
+        fabricRef.current?.renderAll();
+        return h;
+      });
     }
-  };
-
-  const addRect = (top, left) => {
-    const rect = new fabric.Rect({
-      top: top,
-      left: left,
-      width: 60,
-      height: 70,
-      fill: "red",
-    });
-    fabricRef.current?.add(rect);
-    fabricRef.current?.add(comicSansText);
-  };
-
-  const addCircle = (top, left) => {
-    fabricRef.current?.add(
-      new fabric.Circle({
-        radius: 20,
-        fill: "black",
-        top: top,
-        left: left,
-        selectable: true,
-        hoverCursor: "pointer",
-      })
-    );
   };
 
   const onMouseDownCanvas = (options) => {
@@ -105,6 +103,7 @@ export default function Design() {
     const canvas = new fabric.Canvas("canvas", { backgroundColor: "#fff" });
     fabricRef.current = canvas;
     canvas.on("mouse:down", onMouseDownCanvas);
+    canvas.on("object:modified", recordChange);
     setCanvasSizeAndZoom();
   }, []);
 
@@ -120,7 +119,7 @@ export default function Design() {
 
   return (
     <>
-      <CanvasContext.Provider value={{ fabricRef, setFabricRef }}>
+      <CanvasContext.Provider value={{ fabricRef, setFabricRef, recordChange }}>
         <div className="w-full h-[calc(100vh-80px)] overflow-hidden flex bg-slate-50">
           <Tab.Group
             className="sidebars shadow-md flex"

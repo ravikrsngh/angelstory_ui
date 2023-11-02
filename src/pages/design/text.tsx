@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { CanvasContext } from "../../context/canvasContext";
 
 export default function TextPanel() {
-  let { fabricRef } = useContext(CanvasContext);
+  let { fabricRef, recordChange } = useContext(CanvasContext);
 
   const addHeading = (size) => {
     let text = new fabric.IText("Enter your text here", {
@@ -15,6 +15,7 @@ export default function TextPanel() {
     });
     fabricRef.current.add(text);
     fabricRef.current.setActiveObject(text);
+    recordChange();
   };
 
   return (

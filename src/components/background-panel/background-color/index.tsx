@@ -18,13 +18,14 @@ const BackgroundColorButton = ({ setBackgroundColor, color }) => {
 };
 
 export default function BackgroundColorSection() {
-  let { fabricRef } = useContext(CanvasContext);
+  let { fabricRef, recordChange } = useContext(CanvasContext);
 
   const setBackgroundColor = (value) => {
     fabricRef?.current?.setBackgroundColor(
       value,
       fabricRef?.current?.renderAll.bind(fabricRef?.current)
     );
+    recordChange();
   };
 
   return (
