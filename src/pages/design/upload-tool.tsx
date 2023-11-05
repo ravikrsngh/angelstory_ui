@@ -2,8 +2,12 @@ import { Tab } from "@headlessui/react";
 import { cn } from "../../utils";
 import { useState } from "react";
 
-export default function UploadToolPanel({ addImage }) {
-  let [photoResults, setPhotoResults] = useState([]);
+export default function UploadToolPanel({
+  addImage,
+}: {
+  addImage: (url: string) => void;
+}) {
+  const [photoResults, setPhotoResults] = useState([]);
   const searchUnsplashImages = async (e) => {
     e.preventDefault();
     console.log(e.target.search.value);

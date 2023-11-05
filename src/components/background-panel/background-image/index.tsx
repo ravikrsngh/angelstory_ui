@@ -5,9 +5,10 @@ import BackgroundImagePosition from "./background-image-position";
 import { setBackgroundImageProperties } from "../../../utils";
 import { BackgroundImageOptions } from "./backgroud-image-options";
 import { IconTrash } from "@tabler/icons-react";
+import { fabric } from "fabric";
 
 export default function BackgroundImageSection() {
-  let { fabricRef } = useContext(CanvasContext);
+  let { fabricRef, recordChange } = useContext(CanvasContext);
   const [position, setPosition] = useState(0);
   const [size, setSize] = useState(0);
   let [photoResults, setPhotoResults] = useState([]);
@@ -39,13 +40,17 @@ export default function BackgroundImageSection() {
   };
 
   const setBackgroundImage = (url) => {
-    fabric.Image.fromURL(url, function (oImg) {
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // or 'use-credentials'
+    img.src = url;
+    img.onload = () => {
+      const fabricImage = new fabric.Image(img);
       fabricRef?.current?.setBackgroundImage(
-        oImg,
+        fabricImage,
         fabricRef?.current?.renderAll.bind(fabricRef?.current)
       );
       setBackgroundImageProperties(position, size);
-    });
+    };
   };
 
   const setBackgroundImageProperties = (position, size) => {
@@ -109,13 +114,13 @@ export default function BackgroundImageSection() {
         });
       }
 
-      fabricRef?.current?.renderAll();
+      recordChange();
     }
   };
 
   const removeBackgroundImage = () => {
     fabricRef?.current?.setBackgroundImage(null);
-    fabricRef?.current?.renderAll();
+    recordChange();
   };
 
   useEffect(() => {

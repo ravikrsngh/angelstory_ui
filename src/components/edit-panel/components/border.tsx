@@ -6,7 +6,7 @@ import { IconBaselineDensityMedium } from "@tabler/icons-react";
 import EditInputBox from "./edit-inputbox";
 
 export default function EditBorder() {
-  let { fabricRef, setFabricRef } = useContext(CanvasContext);
+  let { fabricRef, recordChange } = useContext(CanvasContext);
   let [borderColor, setBorderColor] = useState(
     fabricRef.current._activeObject.stroke
       ? fabricRef.current._activeObject.stroke
@@ -20,7 +20,7 @@ export default function EditBorder() {
   const applyBorderColor = (color) => {
     setBorderColor(color);
     fabricRef.current._activeObject.set({ stroke: color });
-    fabricRef.current.renderAll();
+    recordChange();
   };
 
   const onChangeStrokeWidth = (e) => {
@@ -29,7 +29,7 @@ export default function EditBorder() {
     fabricRef.current._activeObject.set({
       strokeWidth: parseInt(e.target.value ? e.target.value : 0),
     });
-    fabricRef.current.renderAll();
+    recordChange();
   };
   return (
     <div>

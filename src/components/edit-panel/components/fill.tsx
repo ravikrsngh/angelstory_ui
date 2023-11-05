@@ -4,7 +4,7 @@ import EditHeading from "./edit-heading";
 import { CanvasContext } from "../../../context/canvasContext";
 
 export default function EditFill() {
-  let { fabricRef } = useContext(CanvasContext);
+  let { fabricRef, recordChange } = useContext(CanvasContext);
   let [fillColor, setFillColor] = useState(
     fabricRef.current._activeObject.fill
       ? fabricRef.current._activeObject.fill
@@ -15,7 +15,7 @@ export default function EditFill() {
   const applyFillColor = (color) => {
     setFillColor(color);
     fabricRef.current._activeObject.set({ fill: color });
-    fabricRef.current.renderAll();
+    recordChange();
   };
 
   return (

@@ -6,7 +6,7 @@ import EditHeading from "./edit-heading";
 import EditInputBox from "./edit-inputbox";
 
 export default function EditShadow() {
-  let { fabricRef } = useContext(CanvasContext);
+  let { fabricRef, recordChange } = useContext(CanvasContext);
   let [shadowColor, setShadowColor] = useState(
     fabricRef.current._activeObject?.shadow?.color
       ? fabricRef.current._activeObject?.shadow?.color
@@ -38,7 +38,7 @@ export default function EditShadow() {
       offsetY: shadowY,
       blur: shadowBlur,
     };
-    fabricRef.current.renderAll();
+    recordChange();
   };
   return (
     <div>

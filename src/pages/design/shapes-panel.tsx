@@ -9,7 +9,7 @@ import React, { useContext } from "react";
 import { CanvasContext } from "../../context/canvasContext";
 
 export default function ShapesPanel() {
-  let { fabricRef } = useContext(CanvasContext);
+  const { fabricRef, recordChange } = useContext(CanvasContext);
 
   const addRectangle = () => {
     const rect = new fabric.Rect({
@@ -20,6 +20,7 @@ export default function ShapesPanel() {
       fill: "#CECECE",
     });
     fabricRef?.current?.add(rect);
+    recordChange();
   };
 
   const addTriangle = () => {
@@ -31,6 +32,7 @@ export default function ShapesPanel() {
       top: 80,
     });
     fabricRef?.current?.add(triangle);
+    recordChange();
   };
 
   const addCircle = () => {
@@ -41,6 +43,7 @@ export default function ShapesPanel() {
       top: 80,
     });
     fabricRef?.current?.add(circle);
+    recordChange();
   };
 
   const addLine = () => {
@@ -50,6 +53,7 @@ export default function ShapesPanel() {
     });
 
     fabricRef?.current?.add(line);
+    recordChange();
   };
 
   return (

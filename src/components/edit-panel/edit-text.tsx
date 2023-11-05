@@ -13,7 +13,7 @@ import {
 } from "@tabler/icons-react";
 
 export default function EditText() {
-  let { fabricRef } = useContext(CanvasContext);
+  let { fabricRef, recordChange } = useContext(CanvasContext);
   let fontSizes = [
     2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 36, 40,
     44, 48, 56, 60, 80, 100,
@@ -48,7 +48,7 @@ export default function EditText() {
       textAlign: textAlign,
       underline: underline,
     });
-    fabricRef.current.renderAll();
+    recordChange();
   };
 
   useEffect(() => {
