@@ -11,9 +11,12 @@ import {
   IconItalic,
   IconUnderline,
 } from "@tabler/icons-react";
+import { CanvasContextType } from "../../types";
 
 export default function EditText() {
-  let { fabricRef, recordChange } = useContext(CanvasContext);
+  const { fabricRef, recordChange } = useContext(
+    CanvasContext as React.Context<CanvasContextType>
+  );
   let fontSizes = [
     2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 36, 40,
     44, 48, 56, 60, 80, 100,

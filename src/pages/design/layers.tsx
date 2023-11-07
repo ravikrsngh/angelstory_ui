@@ -9,15 +9,18 @@ import {
   IconTriangle,
 } from "@tabler/icons-react";
 import { cn } from "../../utils";
+import { CanvasContextType } from "../../types";
 
 export default function LayersPanel() {
-  let { fabricRef } = useContext(CanvasContext);
-  let [currentOrder, setCurrentOrder] = useState(
-    [...fabricRef.current.getObjects()].reverse()
+  const { fabricRef } = useContext(
+    CanvasContext as React.Context<CanvasContextType>
   );
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [currentOrder, setCurrentOrder] = useState(
+    fabricRef.current ? [...fabricRef.current.getObjects()].reverse() : []
+  );
+  const [selectedItem, setSelectedItem] = useState<number | -1>(-1);
 
-  const getLayerLabel = (type) => {
+  const getLayerLabel = (type: string | undefined) => {
     if (type == "i-text") {
       return (
         <>
@@ -57,30 +60,34 @@ export default function LayersPanel() {
     }
   };
 
-  const onClickLayer = (item, index) => {
-    fabricRef.current.setActiveObject(item);
-    fabricRef.current.renderAll();
-    setSelectedItem(index);
+  const onClickLayer = (item: fabric.Object, index: number) => {
+    if (fabricRef.current) {
+      fabricRef.current.setActiveObject(item);
+      fabricRef.current.renderAll();
+      setSelectedItem(index);
+    }
   };
 
-  const handleDragStart = (e, index) => {
+  const handleDragStart = (index: number) => {
     console.log(index);
     setSelectedItem(index);
   };
 
-  const handleDrop = (e) => {
-    console.log("Dropped");
-    console.log(e);
-    fabricRef.current.moveTo(
-      currentOrder[selectedItem],
-      currentOrder.length - 1 - parseInt(e.target.id)
-    );
-    fabricRef.current.renderAll();
-    let all_objs = [...fabricRef.current.getObjects()].reverse();
-    setCurrentOrder(all_objs);
+  const handleDrop: React.DragEventHandler<HTMLLIElement> = (e) => {
+    if (fabricRef.current) {
+      console.log("Dropped");
+      console.log(e);
+      fabricRef.current.moveTo(
+        currentOrder[selectedItem],
+        currentOrder.length - 1 - parseInt(e.currentTarget.id)
+      );
+      fabricRef.current.renderAll();
+      const all_objs = [...fabricRef.current.getObjects()].reverse();
+      setCurrentOrder(all_objs);
+    }
   };
 
-  const handleDragOver = (e, index) => {
+  const handleDragOver = (e: React.DragEvent<HTMLLIElement>, index: number) => {
     e.preventDefault();
     console.log(selectedItem);
     console.log(index);
@@ -91,23 +98,26 @@ export default function LayersPanel() {
 
   return (
     <div className="p-5">
-      <h4 className="text-base text-primary-700 font-medium mb-4">Layers</h4>
+      <h4 className="text-base text-primary-700 font-medium mb-1">Layers</h4>
+      <span className="text-xs leading-5 block mb-4">
+        Drag and drop the layers to the order of your choice
+      </span>
       <ul>
         {currentOrder.map((item, index) => (
           <li
-            id={index}
+            id={String(index)}
             className={cn(
               "bg-primary-100 p-3 cursor-pointer mb-4 ",
               index == selectedItem && "border-2 border-primary-400"
             )}
             draggable="true"
-            onDragStart={(e) => handleDragStart(e, index)}
+            onDragStart={() => handleDragStart(index)}
             onDrop={handleDrop}
             onDragOver={(e) => handleDragOver(e, index)}
             onClick={() => onClickLayer(item, index)}
           >
-            <span id={index} className="flex gap-2 items-center">
-              {getLayerLabel(item.type)}
+            <span className="flex gap-2 items-center">
+              {currentOrder.length - index} - {getLayerLabel(item.type)}
             </span>
           </li>
         ))}

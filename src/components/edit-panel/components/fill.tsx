@@ -2,9 +2,12 @@ import React, { useContext, useState } from "react";
 import ColorPallete from "./color-pallete";
 import EditHeading from "./edit-heading";
 import { CanvasContext } from "../../../context/canvasContext";
+import { CanvasContextType } from "../../../types";
 
 export default function EditFill() {
-  let { fabricRef, recordChange } = useContext(CanvasContext);
+  const { fabricRef, recordChange } = useContext(
+    CanvasContext as React.Context<CanvasContextType>
+  );
   let [fillColor, setFillColor] = useState(
     fabricRef.current._activeObject.fill
       ? fabricRef.current._activeObject.fill

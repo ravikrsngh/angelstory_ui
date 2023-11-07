@@ -7,9 +7,12 @@ import {
 import { fabric } from "fabric";
 import React, { useContext } from "react";
 import { CanvasContext } from "../../context/canvasContext";
+import { CanvasContextType } from "../../types";
 
 export default function ShapesPanel() {
-  const { fabricRef, recordChange } = useContext(CanvasContext);
+  const { fabricRef, recordChange } = useContext(
+    CanvasContext as React.Context<CanvasContextType>
+  );
 
   const addRectangle = () => {
     const rect = new fabric.Rect({
@@ -24,7 +27,7 @@ export default function ShapesPanel() {
   };
 
   const addTriangle = () => {
-    let triangle = new fabric.Triangle({
+    const triangle = new fabric.Triangle({
       width: 400,
       height: 300,
       fill: "#CECECE",
@@ -36,7 +39,7 @@ export default function ShapesPanel() {
   };
 
   const addCircle = () => {
-    let circle = new fabric.Circle({
+    const circle = new fabric.Circle({
       radius: 50,
       fill: "#CECECE",
       left: 150,
@@ -47,7 +50,7 @@ export default function ShapesPanel() {
   };
 
   const addLine = () => {
-    let line = new fabric.Line([50, 50, 350, 350], {
+    const line = new fabric.Line([50, 50, 350, 350], {
       stroke: "#CECECE",
       strokeWidth: 2,
     });

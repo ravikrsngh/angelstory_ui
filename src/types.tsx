@@ -1,5 +1,10 @@
 import { Dispatch, SetStateAction } from "react";
 
+export type CanvasContextType = {
+  fabricRef: React.MutableRefObject<fabric.Canvas | null>;
+  recordChange: () => void;
+};
+
 export type SlideType = {
   content: string;
   duration: number;

@@ -1,6 +1,10 @@
 import { IconPlayerPlay } from "@tabler/icons-react";
 import React, { useContext } from "react";
-import { SlideShowPanelType, SlideCardType } from "../../types";
+import {
+  SlideShowPanelType,
+  SlideCardType,
+  CanvasContextType,
+} from "../../types";
 import { cn } from "../../utils";
 import { CanvasContext } from "../../context/canvasContext";
 
@@ -10,7 +14,9 @@ const Slide = ({
   setActiveSlide,
   slide,
 }: SlideCardType) => {
-  const { fabricRef } = useContext(CanvasContext);
+  const { fabricRef } = useContext(
+    CanvasContext as React.Context<CanvasContextType>
+  );
   const onClickSlide = () => {
     setActiveSlide(slideNumber);
     if (slide.content) {
@@ -33,11 +39,14 @@ const Slide = ({
       onClick={onClickSlide}
     >
       <img src={slide.previewImg} className="h-full w-auto" />
-      <input
-        type="number"
-        className="absolute bottom-1 left-1 w-10 text-xs bg-transparent"
-        defaultValue={slide.duration}
-      />
+      <div className="absolute bottom-1 left-1 flex">
+        <input
+          type="text"
+          className=" w-3 text-xs bg-transparent outline-none"
+          defaultValue={slide.duration}
+        />
+        <span className="-ml-1 text-xs">s</span>
+      </div>
     </div>
   );
 };

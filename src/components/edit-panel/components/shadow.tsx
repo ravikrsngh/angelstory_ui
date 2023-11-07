@@ -4,9 +4,12 @@ import { CanvasContext } from "../../../context/canvasContext";
 import ColorPallete from "./color-pallete";
 import EditHeading from "./edit-heading";
 import EditInputBox from "./edit-inputbox";
+import { CanvasContextType } from "../../../types";
 
 export default function EditShadow() {
-  let { fabricRef, recordChange } = useContext(CanvasContext);
+  const { fabricRef, recordChange } = useContext(
+    CanvasContext as React.Context<CanvasContextType>
+  );
   let [shadowColor, setShadowColor] = useState(
     fabricRef.current._activeObject?.shadow?.color
       ? fabricRef.current._activeObject?.shadow?.color

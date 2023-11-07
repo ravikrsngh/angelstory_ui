@@ -38,7 +38,7 @@ const ToolBarButton = ({
 };
 
 export default function Design() {
-  const fabricRef = useRef<fabric.Canvas | null>();
+  const fabricRef = useRef<fabric.Canvas | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [history, setHistory] = useState<string[]>([]);
   const [slideshowMode, setSlideShowMode] = useState<boolean>(false);
@@ -72,9 +72,10 @@ export default function Design() {
   const onKeyPress = (e: KeyboardEvent) => {
     if (e.key == "Delete") {
       fabricRef.current?.remove(fabricRef.current?._activeObject);
+      recordChange();
     } else if (e.ctrlKey && e.key === "z") {
       console.log("ctrl + Z");
-      let h = [...history];
+      const h = [...history];
       const last_snapshot = h.pop();
       setHistory(h);
       fabricRef.current?.loadFromJSON(last_snapshot, () => {});
@@ -123,7 +124,7 @@ export default function Design() {
   useEffect(() => {
     window.addEventListener("keydown", onKeyPress);
 
-    let temp_slides = [...slides];
+    const temp_slides = [...slides];
     temp_slides[activeSlide].content = JSON.stringify(fabricRef.current);
     temp_slides[activeSlide].previewImg = fabricRef?.current?.toDataURL({
       format: "png",
