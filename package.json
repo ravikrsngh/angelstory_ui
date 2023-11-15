@@ -23,6 +23,7 @@
     "react-audio-player": "^0.17.0",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.6",
     "react-hook-form": "^7.47.0",
     "react-multi-carousel": "^2.8.4",
     "react-router-dom": "^6.16.0",

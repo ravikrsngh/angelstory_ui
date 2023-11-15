@@ -48,9 +48,9 @@ export default function Design() {
   const [activeSlide, setActiveSlide] = useState<number>(0);
 
   const recordChange = () => {
-    console.log("modified");
-    setHistory((prev) => [...prev, JSON.stringify(fabricRef.current)]);
-    fabricRef.current?.renderAll();
+      console.log("modified");
+      setHistory((prev) => [...prev, JSON.stringify(fabricRef.current)]);
+      fabricRef.current?.renderAll();
   };
 
   const updateTabIndexes = (index: number) => {
@@ -76,9 +76,11 @@ export default function Design() {
     } else if (e.ctrlKey && e.key === "z") {
       console.log("ctrl + Z");
       const h = [...history];
+      console.log(h)
       const last_snapshot = h.pop();
-      setHistory(h);
+      console.log(h)
       fabricRef.current?.loadFromJSON(last_snapshot, () => {});
+      setHistory(h);
       fabricRef.current?.renderAll();
     }
   };
@@ -130,6 +132,7 @@ export default function Design() {
       format: "png",
     });
     setSlides(temp_slides);
+    console.log(history)
 
     return () => {
       window.addEventListener("keydown", onKeyPress);
@@ -138,7 +141,7 @@ export default function Design() {
 
   return (
     <>
-      <CanvasContext.Provider value={{ fabricRef, recordChange }}>
+      <CanvasContext.Provider value={{ fabricRef, recordChange, slides, setSlides, activeSlide, setActiveSlide }}>
         <EditorHeader />
         <div className="w-full h-[calc(100vh-80px)] overflow-hidden flex bg-slate-50">
           <Tab.Group
@@ -222,12 +225,7 @@ export default function Design() {
               ></canvas>
             </div>
             {slideshowMode && (
-              <SlideshowPanel
-                slides={slides}
-                setSlides={setSlides}
-                activeSlide={activeSlide}
-                setActiveSlide={setActiveSlide}
-              />
+              <SlideshowPanel/>
             )}
           </div>
           <div className="bg-slate-300 w-[140px]"></div>

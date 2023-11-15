@@ -36,6 +36,11 @@ export default function EditorHeader() {
           />
         </div>
         <div className="flex flex-1 items-center justify-end gap-x-6">
+        <button
+            className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900"
+          >
+            Generate template
+          </button>
           <button
             className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900"
             onClick={downloadImage}
