@@ -39,6 +39,7 @@ const ToolBarButton = ({
 
 export default function Design() {
   const fabricRef = useRef<fabric.Canvas | null>(null);
+  const historyRef = useRef<string[]>(['']);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [history, setHistory] = useState<string[]>([]);
   const [slideshowMode, setSlideShowMode] = useState<boolean>(false);
@@ -49,8 +50,15 @@ export default function Design() {
 
   const recordChange = () => {
       console.log("modified");
-      setHistory((prev) => [...prev, JSON.stringify(fabricRef.current)]);
+      historyRef.current.push(JSON.stringify(fabricRef.current))
       fabricRef.current?.renderAll();
+
+      const temp_slides = [...slides];
+      temp_slides[activeSlide].content = JSON.stringify(fabricRef.current);
+      temp_slides[activeSlide].previewImg = fabricRef?.current?.toDataURL({
+        format: "png",
+      });
+      setSlides(temp_slides);
   };
 
   const updateTabIndexes = (index: number) => {
@@ -73,14 +81,11 @@ export default function Design() {
     if (e.key == "Delete") {
       fabricRef.current?.remove(fabricRef.current?._activeObject);
       recordChange();
-    } else if (e.ctrlKey && e.key === "z") {
+    } else if (e.ctrlKey && (e.key === "z" || e.code == "KeyZ")) {
       console.log("ctrl + Z");
-      const h = [...history];
-      console.log(h)
-      const last_snapshot = h.pop();
-      console.log(h)
+      console.log(historyRef.current)
+      const last_snapshot = historyRef.current.pop();
       fabricRef.current?.loadFromJSON(last_snapshot, () => {});
-      setHistory(h);
       fabricRef.current?.renderAll();
     }
   };
@@ -94,6 +99,24 @@ export default function Design() {
     }
   };
 
+
+  const onObjectMoving = () => {
+    console.log("Object Moving")
+    // const canvasZoom = fabricRef.current.getZoom();
+    // const cw = fabricRef.current.getWidth();
+    // const ch = fabricRef.current.getHeight();
+    // const hx = new fabric.Line([cw/(2*canvasZoom), 0, cw/(2*canvasZoom), ch/canvasZoom], {
+    //   stroke: "#CECECE",
+    //   strokeWidth: 2,
+    // });
+    // const vx = new fabric.Line([0, ch/(canvasZoom*2), cw/(canvasZoom), ch/(canvasZoom*2)], {
+    //   stroke: "#CECECE",
+    //   strokeWidth: 2,
+    // });
+    // fabricRef?.current?.add(hx);
+    // fabricRef?.current?.add(vx);
+  }
+
   //   Functions to set the width and height of the canvas and add scaling.
 
   const setCanvasSizeAndZoom = () => {
@@ -101,6 +124,7 @@ export default function Design() {
     const originalWidth = 1080;
     document.querySelector(".canvas-container").style.height =
       document.querySelector(".canvas-container").offsetWidth * ratio + "px";
+    document.querySelector(".canvas-wrapper").style.width = document.querySelector(".canvas-container").offsetWidth + "px"
     fabricRef?.current?.setDimensions({
       width: document.querySelector(".canvas-container").offsetWidth,
       height: document.querySelector(".canvas-container").offsetWidth * ratio,
@@ -115,29 +139,15 @@ export default function Design() {
     fabricRef.current = canvas;
     canvas.on("mouse:down", onMouseDownCanvas);
     canvas.on("object:modified", recordChange);
+    canvas.on("object:moving", onObjectMoving);
     setCanvasSizeAndZoom();
 
     window.addEventListener("resize", setCanvasSizeAndZoom);
+    window.addEventListener('keypress', onKeyPress)
     return () => {
       window.removeEventListener("resize", setCanvasSizeAndZoom);
     };
   }, []);
-
-  useEffect(() => {
-    window.addEventListener("keydown", onKeyPress);
-
-    const temp_slides = [...slides];
-    temp_slides[activeSlide].content = JSON.stringify(fabricRef.current);
-    temp_slides[activeSlide].previewImg = fabricRef?.current?.toDataURL({
-      format: "png",
-    });
-    setSlides(temp_slides);
-    console.log(history)
-
-    return () => {
-      window.addEventListener("keydown", onKeyPress);
-    };
-  }, [history]);
 
   return (
     <>
@@ -219,10 +229,12 @@ export default function Design() {
 
           <div className="relative grow flex flex-col justify-between items-center">
             <div className="p-10 w-full flex justify-center">
-              <canvas
-                className="w-full border border-slate-400"
-                id="canvas"
-              ></canvas>
+              <div className="canvas-wrapper relative w-full">
+                <canvas
+                    className="w-full border border-slate-400"
+                    id="canvas"
+                  ></canvas>
+              </div>
             </div>
             {slideshowMode && (
               <SlideshowPanel/>

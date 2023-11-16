@@ -117,7 +117,7 @@ export default function LayersPanel() {
             onClick={() => onClickLayer(item, index)}
           >
             <span className="flex gap-2 items-center">
-              {currentOrder.length - index} - {getLayerLabel(item.type)}
+              {index + 1} - {getLayerLabel(item.type)}
             </span>
           </li>
         ))}
