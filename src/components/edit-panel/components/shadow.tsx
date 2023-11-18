@@ -1,41 +1,40 @@
-import { IconBaselineDensityMedium } from "@tabler/icons-react";
 import React, { useContext, useState } from "react";
 import { CanvasContext } from "../../../context/canvasContext";
 import ColorPallete from "./color-pallete";
 import EditHeading from "./edit-heading";
 import EditInputBox from "./edit-inputbox";
-import { CanvasContextType } from "../../../types";
+import { CanvasContextType, EditObjectType } from "../../../types";
 
-export default function EditShadow() {
-  const { fabricRef, recordChange } = useContext(
+export default function EditShadow({object} : EditObjectType) {
+  const { recordChange } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
-  let [shadowColor, setShadowColor] = useState(
-    fabricRef.current._activeObject?.shadow?.color
-      ? fabricRef.current._activeObject?.shadow?.color
+  const [shadowColor, setShadowColor] = useState(
+    object?.shadow?.color
+      ? object?.shadow?.color
       : "#fff"
   );
-  let [shadowX, setShadowX] = useState(
-    fabricRef.current._activeObject?.shadow?.offsetX
-      ? fabricRef.current._activeObject?.shadow?.offsetX
+  const [shadowX, setShadowX] = useState(
+    object?.shadow?.offsetX
+      ? object?.shadow?.offsetX
       : 0
   );
-  let [shadowY, setShadowY] = useState(
-    fabricRef.current._activeObject?.shadow?.offsetY
-      ? fabricRef.current._activeObject?.shadow?.offsetY
+  const [shadowY, setShadowY] = useState(
+    object?.shadow?.offsetY
+      ? object?.shadow?.offsetY
       : 0
   );
-  let [shadowBlur, setShadowBlur] = useState(
-    fabricRef.current._activeObject?.shadow?.blur
-      ? fabricRef.current._activeObject?.shadow?.blur
+  const [shadowBlur, setShadowBlur] = useState(
+    object?.shadow?.blur
+      ? object?.shadow?.blur
       : 0
   );
 
-  let [displayColorPallete, setDisplayColorPallete] = useState(false);
+  const [displayColorPallete, setDisplayColorPallete] = useState(false);
 
   const applyShadow = (color) => {
     setShadowColor(color);
-    fabricRef.current._activeObject.shadow = {
+    object.shadow = {
       color: shadowColor,
       offsetX: shadowX,
       offsetY: shadowY,

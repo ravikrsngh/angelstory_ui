@@ -39,9 +39,8 @@ const ToolBarButton = ({
 
 export default function Design() {
   const fabricRef = useRef<fabric.Canvas | null>(null);
-  const historyRef = useRef<string[]>(['']);
+  const historyRef = useRef<(string | null)[]>([null]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [history, setHistory] = useState<string[]>([]);
   const [slideshowMode, setSlideShowMode] = useState<boolean>(false);
   const [slides, setSlides] = useState<SlideType[]>([
     { content: "", duration: 2, previewImg: "" },
@@ -52,7 +51,7 @@ export default function Design() {
       console.log("modified");
       historyRef.current.push(JSON.stringify(fabricRef.current))
       fabricRef.current?.renderAll();
-
+      
       const temp_slides = [...slides];
       temp_slides[activeSlide].content = JSON.stringify(fabricRef.current);
       temp_slides[activeSlide].previewImg = fabricRef?.current?.toDataURL({
@@ -78,17 +77,42 @@ export default function Design() {
   };
 
   const onKeyPress = (e: KeyboardEvent) => {
-    if (e.key == "Delete") {
-      fabricRef.current?.remove(fabricRef.current?._activeObject);
-      recordChange();
-    } else if (e.ctrlKey && (e.key === "z" || e.code == "KeyZ")) {
-      console.log("ctrl + Z");
-      console.log(historyRef.current)
-      const last_snapshot = historyRef.current.pop();
-      fabricRef.current?.loadFromJSON(last_snapshot, () => {});
-      fabricRef.current?.renderAll();
+    if(fabricRef.current) {
+      if (e.key == "Delete") {
+        fabricRef.current.remove(fabricRef.current._activeObject);
+        recordChange();
+      } else if (e.ctrlKey && (e.key === "z" || e.code == "KeyZ")) {
+        console.log("ctrl + Z");
+        console.log(historyRef.current)
+        const last_snapshot = historyRef.current.pop();
+        fabricRef.current.loadFromJSON(last_snapshot, () => {});
+        fabricRef.current.renderAll();
+      }
     }
   };
+
+  const onKeyDown = (e:KeyboardEvent) => {
+    if(fabricRef.current?._activeObject) {
+      const activeObject = fabricRef.current._activeObject;
+      switch (e.key) {
+        case 'ArrowUp':
+          activeObject.set({ top: activeObject.top - 1 });
+          break;
+        case 'ArrowDown':
+          activeObject.set({ top: activeObject.top + 1 });
+          break;
+        case 'ArrowLeft':
+          activeObject.set({ left: activeObject.left - 1 });
+          break;
+        case 'ArrowRight':
+          activeObject.set({ left: activeObject.left + 1 });
+          break;
+        default:
+          break;
+      }
+      fabricRef.current.renderAll();
+    }
+  }
 
   const onMouseDownCanvas = () => {
     console.log("hey");
@@ -144,8 +168,11 @@ export default function Design() {
 
     window.addEventListener("resize", setCanvasSizeAndZoom);
     window.addEventListener('keypress', onKeyPress)
+    window.addEventListener('keydown', onKeyDown)
     return () => {
       window.removeEventListener("resize", setCanvasSizeAndZoom);
+      // window.removeEventListener("keypress", onKeyPress);
+      // window.removeEventListener("keydown", onKeyDown);
     };
   }, []);
 
@@ -212,17 +239,17 @@ export default function Design() {
               <Tab.Panel className="w-full h-full overflow-auto">
                 <BackgroundPanel />
               </Tab.Panel>
-              <Tab.Panel className="w-full">
+              <Tab.Panel className="w-full h-full overflow-auto">
                 <ShapesPanel />
               </Tab.Panel>
-              <Tab.Panel className="w-full">
+              <Tab.Panel className="w-full h-full overflow-auto">
                 <TextPanel />
               </Tab.Panel>
-              <Tab.Panel className="w-full">
+              <Tab.Panel className="w-full h-full overflow-auto">
                 <LayersPanel />
               </Tab.Panel>
-              <Tab.Panel className="w-full">
-                <EditPanel />
+              <Tab.Panel className="w-full h-full overflow-auto">
+                <EditPanel object={fabricRef.current?._activeObject} />
               </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>

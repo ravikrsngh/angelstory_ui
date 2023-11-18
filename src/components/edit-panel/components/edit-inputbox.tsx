@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "../../../utils";
+import { EditInputBoxType } from "../../../types";
 
 export default function EditInputBox({
   containerClassName,
@@ -9,7 +10,8 @@ export default function EditInputBox({
   id,
   defaultValue,
   onChange,
-}) {
+  step
+}: EditInputBoxType) {
   return (
     <div
       className={cn(
@@ -24,6 +26,7 @@ export default function EditInputBox({
         id={id}
         defaultValue={defaultValue}
         onChange={onChange}
+        step={step}
       />
     </div>
   );

@@ -36,3 +36,30 @@ export type CanvasContextType = {
   activeSlide: number;
   setActiveSlide: Dispatch<SetStateAction<number>>;
 };
+
+export type EditObjectType = {
+  object: fabric.Object | fabric.Group | undefined | fabric.Text
+}
+
+
+export type EditInputBoxType = {
+  containerClassName?: string;
+  icon?: React.ReactNode ;
+  inputClassName?: string;
+  type?: string;
+  id?: string;
+  defaultValue?: number | string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  step?: number ;
+}
+
+export type GoogleFontResponseType = {
+  family: string
+  variants: string[]
+  subsets: string[]
+  version: string
+  lastModified: string
+  category: string
+  kind: string
+  menu: string
+}

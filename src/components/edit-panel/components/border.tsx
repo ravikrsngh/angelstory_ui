@@ -4,32 +4,32 @@ import { CanvasContext } from "../../../context/canvasContext";
 import ColorPallete from "./color-pallete";
 import { IconBaselineDensityMedium } from "@tabler/icons-react";
 import EditInputBox from "./edit-inputbox";
-import { CanvasContextType } from "../../../types";
+import { CanvasContextType, EditObjectType } from "../../../types";
 
-export default function EditBorder() {
-  const { fabricRef, recordChange } = useContext(
+export default function EditBorder({object} : EditObjectType) {
+  const { recordChange } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
-  let [borderColor, setBorderColor] = useState(
-    fabricRef.current._activeObject.stroke
-      ? fabricRef.current._activeObject.stroke
+  const [borderColor, setBorderColor] = useState(
+    object.stroke
+      ? object.stroke
       : ""
   );
-  let [borderWidth, setBorderWidth] = useState(
-    fabricRef.current._activeObject.strokeWidth
+  const [borderWidth, setBorderWidth] = useState(
+    object.strokeWidth
   );
-  let [displayColorPallete, setDisplayColorPallete] = useState(false);
+  const [displayColorPallete, setDisplayColorPallete] = useState(false);
 
   const applyBorderColor = (color) => {
     setBorderColor(color);
-    fabricRef.current._activeObject.set({ stroke: color });
+    object.set({ stroke: color });
     recordChange();
   };
 
   const onChangeStrokeWidth = (e) => {
     console.log(e.target.value);
     setBorderWidth(borderWidth);
-    fabricRef.current._activeObject.set({
+    object.set({
       strokeWidth: parseInt(e.target.value ? e.target.value : 0),
     });
     recordChange();

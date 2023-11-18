@@ -12,6 +12,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-hover-card": "^1.0.7",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tabler/icons-react": "^2.39.0",
@@ -27,12 +28,14 @@
     "react-hook-form": "^7.47.0",
     "react-multi-carousel": "^2.8.4",
     "react-router-dom": "^6.16.0",
-    "tailwind-merge": "^1.14.0"
+    "tailwind-merge": "^1.14.0",
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
     "@types/fabric": "^5.3.5",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@types/webfontloader": "^1.6.37",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.0.3",

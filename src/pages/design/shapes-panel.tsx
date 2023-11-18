@@ -9,6 +9,8 @@ import React, { useContext } from "react";
 import { CanvasContext } from "../../context/canvasContext";
 import { CanvasContextType } from "../../types";
 
+import blockArrow1 from './../../assets/block arrows 1.svg';
+
 export default function ShapesPanel() {
   const { fabricRef, recordChange } = useContext(
     CanvasContext as React.Context<CanvasContextType>
@@ -59,8 +61,52 @@ export default function ShapesPanel() {
     recordChange();
   };
 
+  const addSVG = (url : string) => {
+    // Load SVG from URL and add it to the canvas
+    fabric.loadSVGFromURL(url, (objects, options) => {
+      console.log(objects)
+      console.log(options)
+      const svgObject = fabric.util.groupSVGElements(objects, options);
+      // Modify properties as needed
+      svgObject.set({
+        left: 50,
+        top: 50,
+        shadow: new fabric.Shadow({ color: 'rgba(0,0,0,0.3)', offsetX: 5, offsetY: 5, blur: 10 }), // Add shadow
+      });
+
+      fabricRef?.current?.add(svgObject);
+      recordChange();
+    })
+  }
+
+  const onSelectFileFromDevice = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        addSVG(e.target.result);
+      };
+    }
+  };
+
   return (
     <div className="p-5">
+      <form className="flex mb-4">
+        <input
+          type="file"
+          name="file"
+          id="upload-file"
+          className="w-0 h-0 overflow-hidden"
+          onChange={onSelectFileFromDevice}
+        />
+        <label
+          htmlFor="upload-file"
+          className="block text-center bg-primary-400 text-white w-full py-3"
+        >
+          Upload Shape (SVG Format)
+        </label>
+      </form>
       <h4 className="text-base text-primary-700 font-medium">Shapes</h4>
       <div className="flex gap-4 mt-4">
         <button
@@ -86,6 +132,12 @@ export default function ShapesPanel() {
           className="text-slate-600 hover:text-primary-600"
         >
           <IconBackslash size={40} />
+        </button>
+        <button
+          onClick={addSVG}
+          className="text-slate-600 hover:text-primary-600"
+        >
+          <img src={blockArrow1} className="w-auto h-10"/>
         </button>
       </div>
     </div>
