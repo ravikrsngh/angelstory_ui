@@ -11,6 +11,7 @@ export type SlideType = {
   content: string;
   duration: number;
   previewImg: string | undefined;
+  history: (string | null)[];
   music?: SlideMusic
 };
 
@@ -51,6 +52,8 @@ export type EditInputBoxType = {
   defaultValue?: number | string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   step?: number ;
+  min?: number;
+  max?:number
 }
 
 export type GoogleFontResponseType = {
@@ -62,4 +65,63 @@ export type GoogleFontResponseType = {
   category: string
   kind: string
   menu: string
+}
+
+
+
+
+
+
+
+// Template API Data
+export type TemplateType =  {
+  id: number
+  previewImage: string
+  formattedData: string
+  price: number
+  collectionId: number
+  name: string
+  createdAt: string
+  updatedAt: string
+  createdBy: number
+  premium: boolean
+}
+
+
+export type CollectionType = {
+  createdAt: string;
+  createdBy: number;
+  id: number;
+  name: string
+}
+
+export type CollectionCardType = {
+  name: string
+  id: number
+}
+
+
+export type CreateProjectInputType = {
+  collectionId: string | null | number;
+  height: string | null;
+  name: string;
+  projectType: string | null;
+  width: string | null;
+};
+
+export type CreateProjectPropType = {
+  displayCreateProject: boolean;
+  setDisplayCreateProject: Dispatch<SetStateAction<boolean>>;
+  step: number;
+  initalValue: {
+    width: string | null;
+    height: string | null;
+    projectType: string | null;
+  }
+};
+
+export type CreateProjectStepPropType = {
+  projData: CreateProjectInputType,
+  setProjData: Dispatch<SetStateAction<CreateProjectInputType>>;
+  setStep: Dispatch<SetStateAction<number>>
 }

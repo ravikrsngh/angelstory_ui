@@ -5,29 +5,21 @@ import EditHeading from "./edit-heading";
 import EditInputBox from "./edit-inputbox";
 import { CanvasContextType, EditObjectType } from "../../../types";
 
-export default function EditShadow({object} : EditObjectType) {
+export default function EditShadow({ object }: EditObjectType) {
   const { recordChange } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
   const [shadowColor, setShadowColor] = useState(
-    object?.shadow?.color
-      ? object?.shadow?.color
-      : "#fff"
+    object?.shadow?.color ? object?.shadow?.color : "#fff"
   );
   const [shadowX, setShadowX] = useState(
-    object?.shadow?.offsetX
-      ? object?.shadow?.offsetX
-      : 0
+    object?.shadow?.offsetX ? object?.shadow?.offsetX : 0
   );
   const [shadowY, setShadowY] = useState(
-    object?.shadow?.offsetY
-      ? object?.shadow?.offsetY
-      : 0
+    object?.shadow?.offsetY ? object?.shadow?.offsetY : 0
   );
   const [shadowBlur, setShadowBlur] = useState(
-    object?.shadow?.blur
-      ? object?.shadow?.blur
-      : 0
+    object?.shadow?.blur ? object?.shadow?.blur : 0
   );
 
   const [displayColorPallete, setDisplayColorPallete] = useState(false);
@@ -51,63 +43,68 @@ export default function EditShadow({object} : EditObjectType) {
           style={{ backgroundColor: shadowColor }}
           onClick={() => setDisplayColorPallete(true)}
         ></div>
+        {displayColorPallete && (
+          <ColorPallete
+            color={shadowColor}
+            onChange={applyShadow}
+            displayColorPallete={setDisplayColorPallete}
+          />
+        )}
         <EditInputBox
-          containerClassName=""
+          containerClassName="w-full border-none"
           icon={
             <span className="block basis-4 shrink-0 grow-0 text-xs opacity-80">
               X
             </span>
           }
-          inputClassName=""
-          type="number"
+          inputClassName="slider"
+          type="range"
           id="shadowX"
           defaultValue={shadowX}
           onChange={(e) => {
             setShadowX(e.target.value);
             applyShadow(shadowColor);
           }}
+          min={-50}
+          max={50}
         />
         <EditInputBox
-          containerClassName=""
+          containerClassName="w-full border-none"
           icon={
             <span className="block basis-4 shrink-0 grow-0 text-xs opacity-80">
               Y
             </span>
           }
-          inputClassName=""
-          type="number"
+          inputClassName="slider"
+          type="range"
           id="shadowY"
           defaultValue={shadowY}
           onChange={(e) => {
             setShadowY(e.target.value);
             applyShadow(shadowColor);
           }}
+          min={-50}
+          max={50}
         />
         <EditInputBox
-          containerClassName="w-24"
+          containerClassName="w-full border-none"
           icon={
             <span className="block basis-4 shrink-0 grow-0 text-xs opacity-80">
-              Blur
+              Blur {shadowBlur}
             </span>
           }
-          inputClassName=""
-          type="number"
+          inputClassName="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+          type="range"
           id="shadowBlur"
           defaultValue={shadowBlur}
           onChange={(e) => {
             setShadowBlur(e.target.value);
             applyShadow(shadowColor);
           }}
+          min={0}
+          max={100}
         />
       </div>
-
-      {displayColorPallete && (
-        <ColorPallete
-          color={shadowColor}
-          onChange={applyShadow}
-          displayColorPallete={setDisplayColorPallete}
-        />
-      )}
     </div>
   );
 }

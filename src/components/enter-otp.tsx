@@ -1,34 +1,17 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useVerifyUser } from "../hooks/user/use-verify-user";
 import { Input } from "./ui/input";
 import { IconBrandGoogle, IconBrandMeta } from "@tabler/icons-react";
-import { useSingUp } from "../hooks/user/use-signup";
-import { useState } from "react";
-import EnterOTP from "./enter-otp";
-import toast from "react-hot-toast";
 import { userId } from "../signals/user-signal";
 
-export default function SignUp() {
-  const [showEnterOTP, setSetEnterOTP] = useState(false)
+export default function EnterOTP({onVerifyOTP}) {
 
-  const signup = useSingUp();
+    
+  const verifyUser = useVerifyUser();
 
-  const handleSubmitSignUp = (e) => {
+  const handleSubmitOTP = (e) => {
     e.preventDefault();
-    const name = e.target.name.value;
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-    signup.mutate({name:name, email:email, password:password}, {
-      onSuccess: (response) => {
-        console.log(response)
-        userId.value = response.userId;
-        toast.success("OTP sent successfully to your email");
-        setSetEnterOTP(true);
-      }
-    })
-  }
-
-  if(showEnterOTP) {
-    return <EnterOTP onVerifyOTP={()=> {}}/>
+    const otp = e.target.otp.value;
+    verifyUser.mutate({userId:userId.value, otp: otp})
   }
 
   return (
@@ -36,23 +19,21 @@ export default function SignUp() {
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <h2 className="mt-6 text-center text-3xl font-bold leading-9 tracking-tight text-gray-900">
-            Create your account
+            Enter OTP
           </h2>
+
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <form className="space-y-6" onSubmit={handleSubmitSignUp}>
-              <Input label="Name" name="name"/>
-              <Input label="Email" type="email" name="email"/>
-              <Input label="Password" type="password" name="password"/>
-
+            <form className="space-y-6" onSubmit={handleSubmitOTP}>
+              <Input label="Enter OTP" name="otp" maxLength={6}/>
               <div>
                 <button
                   type="submit"
                   className="flex w-full justify-center bg-primary-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-400"
                 >
-                  Create an Account
+                  Verify
                 </button>
               </div>
             </form>
@@ -89,15 +70,6 @@ export default function SignUp() {
             </div>
           </div>
 
-          <p className="mt-10 text-center text-sm text-gray-500">
-            Already a member?{" "}
-            <Link
-              to="/login"
-              className="font-semibold leading-6 text-primary-600 hover:text-primary-400"
-            >
-              Login.
-            </Link>
-          </p>
         </div>
       </div>
     </>

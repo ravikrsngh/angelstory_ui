@@ -10,7 +10,9 @@ export default function EditInputBox({
   id,
   defaultValue,
   onChange,
-  step
+  step,
+  min,
+  max
 }: EditInputBoxType) {
   return (
     <div
@@ -27,6 +29,8 @@ export default function EditInputBox({
         defaultValue={defaultValue}
         onChange={onChange}
         step={step}
+        min={min}
+        max={max}
       />
     </div>
   );

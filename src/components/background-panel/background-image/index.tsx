@@ -11,6 +11,7 @@ import { BackgroundImageOptions } from "./backgroud-image-options";
 import { IconTrash } from "@tabler/icons-react";
 import { fabric } from "fabric";
 import { CanvasContextType } from "../../../types";
+import { useGetStockImages } from "../../../hooks/others/use-stock-photos";
 
 export default function BackgroundImageSection() {
   const { fabricRef, recordChange } = useContext(
@@ -18,22 +19,13 @@ export default function BackgroundImageSection() {
   );
   const [position, setPosition] = useState(0);
   const [size, setSize] = useState(0);
-  const [photoResults, setPhotoResults] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const {data, isLoading, isFetching, isError} = useGetStockImages(searchQuery);
 
-  const searchUnsplashImages = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
-    console.log(e.currentTarget.search.value);
-    const accessKey = "dqSeyQ2g_HMdOVHAPGVKtCnS2YcgKejOAAlrJ2JXkJM";
-    const url = `https://api.unsplash.com/search/photos?query=${e.currentTarget.search.value}&client_id=${accessKey}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      console.log(data.results);
-      setPhotoResults(data.results);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    setSearchQuery(e.target.search.value)
+  }
 
   const onSelectFileFromDevice: ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.currentTarget.files ? e.currentTarget.files[0] : null;
@@ -139,6 +131,24 @@ export default function BackgroundImageSection() {
     setBackgroundImageProperties(position, size);
   }, [position, size]);
 
+  if (isLoading || isFetching) {
+    return (
+      <>
+      <div className="p-5">
+        <span>Loading ...</span>
+        </div></>
+    )
+  }
+
+  if (isError) {
+    return (
+      <>
+      <div className="p-5">
+        <span>Something went wrong ...</span>
+        </div></>
+    )
+  }
+
   return (
     <>
       <div className="bg-image-edit-options mt-4">
@@ -173,7 +183,7 @@ export default function BackgroundImageSection() {
           Upload background
         </label>
       </form>
-      <form className="my-4" onSubmit={searchUnsplashImages}>
+      <form className="my-4" onSubmit={handleSearchSubmit}>
         <input
           className="w-full py-2 px-4 border border-slate-200 text-md"
           type="text"
@@ -183,7 +193,7 @@ export default function BackgroundImageSection() {
         />
       </form>
       <div className="w-full grid grid-cols-2 gap-4">
-        {photoResults.map((ins) => (
+        {data.results.map((ins) => (
           <div
             className="bg-slate-100 flex items-center justify-center"
             onClick={() => setBackgroundImage(ins.urls.regular)}

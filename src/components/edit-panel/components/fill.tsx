@@ -4,14 +4,13 @@ import EditHeading from "./edit-heading";
 import { CanvasContext } from "../../../context/canvasContext";
 import { CanvasContextType, EditObjectType } from "../../../types";
 
-export default function EditFill({object} : EditObjectType) {
+export default function EditFill({ object }: EditObjectType) {
+  console.log(object.fill);
   const { recordChange } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
   let [fillColor, setFillColor] = useState(
-    object.fill
-      ? object.fill
-      : "#CECECE"
+    object.fill ? object.fill : "#CECECE"
   );
   let [displayColorPallete, setDisplayColorPallete] = useState(false);
 

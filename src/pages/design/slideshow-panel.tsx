@@ -15,7 +15,7 @@ const Slide = ({
   slide,
   setSelectedMusic
 }: SlideCardType) => {
-  const { fabricRef, setActiveSlide, setSlides, slides, activeSlide } = useContext(
+  const { fabricRef, setActiveSlide, setSlides, slides } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
   const onClickSlide = () => {
@@ -111,7 +111,7 @@ export default function SlideshowPane() {
   const [selectedMusic, setSelectedMusic] = useState<SlideMusic | null>(null)
 
   const addSlide = () => {
-    setSlides([...slides, { content: "", duration: 2, previewImg: "" }]);
+    setSlides([...slides, { content: "", duration: 2, previewImg: "", history:[] }]);
   };
 
   const getTotalDuration = () => {

@@ -4,6 +4,7 @@ import EditFill from "./components/fill";
 import { EditObjectType } from "../../types";
 
 export default function EditGraphic({object} : EditObjectType) {
+  console.log(object)
   return (
     <div className="p-5">
       <h3 className="font-medium text-lg text-primary-700 mb-4">Edit</h3>

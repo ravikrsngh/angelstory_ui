@@ -20,7 +20,7 @@ export default function TextPanel() {
 
   return (
     <div className="p-5">
-      <h4 className="text-base text-primary-700 font-medium">Text</h4>
+      <h4 className="hidden lg:block text-base text-primary-700 font-medium">Text</h4>
       <div className="flex gap-4 mt-4 flex-col">
         <button
           onClick={() => addHeading(48)}

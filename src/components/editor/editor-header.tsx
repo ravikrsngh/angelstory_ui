@@ -1,20 +1,32 @@
 import { useContext, useState } from "react";
-import { Dialog } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import logoimg from "./../assets/logo.svg";
+import logoimg from "./../../assets/logo.svg";
 import { Link } from "react-router-dom";
-import { CanvasContext } from "../context/canvasContext";
+import { CanvasContext } from "../../context/canvasContext";
+import { useCreateTemplate } from "../../hooks/templates/use-create-template";
+import { fabric } from "fabric";
+import { DownloadButton } from "./download-btn";
 
 export default function EditorHeader() {
-  let { fabricRef } = useContext(CanvasContext);
+  const { fabricRef, slides } = useContext(CanvasContext);
 
-  const downloadImage = () => {
-    let img = new Image();
-    img.src = fabricRef.current.toDataURL({ format: "png" });
-    let link = document.createElement("a");
-    link.href = img.src;
-    link.download = "abc.png";
-    link.click();
+  const createTemplateHook = useCreateTemplate();
+
+  const generateTemplateData = () => {
+    const virtualCanvas = new fabric.Canvas('');
+      virtualCanvas.setDimensions({
+        width: fabricRef.current.getWidth()/fabricRef.current.getZoom(),
+        height: fabricRef.current.getHeight()/fabricRef.current.getZoom()
+      });
+    virtualCanvas.loadFromJSON(slides[0].content, () => {
+      createTemplateHook.mutate({
+        collectionId: 0,
+        formattedData: JSON.stringify(slides),
+        name: "Template2 ",
+        premium: false,
+        previewImage:  virtualCanvas.toDataURL({format:'png'}),
+        price: 0
+      });
+    });
   };
 
   return (
@@ -38,15 +50,11 @@ export default function EditorHeader() {
         <div className="flex flex-1 items-center justify-end gap-x-6">
         <button
             className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900"
+            onClick={generateTemplateData}
           >
             Generate template
           </button>
-          <button
-            className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900"
-            onClick={downloadImage}
-          >
-            Download
-          </button>
+          <DownloadButton/>
           <button className=" bg-primary-500 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             Share
           </button>

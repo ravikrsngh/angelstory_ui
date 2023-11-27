@@ -1,8 +1,17 @@
 import { Link } from "react-router-dom";
 import { Input } from "./ui/input";
 import { IconBrandGoogle, IconBrandMeta } from "@tabler/icons-react";
+import { useLogin } from "../hooks/user/use-login";
 
 export default function Login() {
+
+  const loginHook = useLogin();
+
+  const handleSubmitLogin = (e) => {
+    e.preventDefault();
+    loginHook.mutate({username: e.target.email.value, password: e.target.password.value});
+  }
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -14,9 +23,9 @@ export default function Login() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <form className="space-y-6" action="#" method="POST">
-              <Input label="Email" />
-              <Input label="Password" type="password" />
+            <form className="space-y-6" onSubmit={handleSubmitLogin}>
+              <Input label="Email" name="email" />
+              <Input label="Password" type="password" name="password" />
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center">

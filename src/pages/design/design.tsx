@@ -6,6 +6,7 @@ import {
   IconLayersSubtract,
   IconLetterT,
   IconSlideshow,
+  IconTemplate,
   IconTexture,
 } from "@tabler/icons-react";
 import { Tab } from "@headlessui/react";
@@ -16,64 +17,51 @@ import EditPanel from "../../components/edit-panel";
 import ShapesPanel from "./shapes-panel";
 import TextPanel from "./text";
 import LayersPanel from "./layers";
-import EditorHeader from "../../components/editor-header";
+import EditorHeader from "../../components/editor/editor-header";
 import SlideshowPanel from "./slideshow-panel";
 import { SlideType } from "../../types";
+import { TemplatePanel } from "./templates-panel";
+import { ToolBarButton } from "../../components/editor/toolbar-btn";
+import { MobileToolbar } from "../../components/editor/mobile/mobile-toolbar";
 
-const ToolBarButton = ({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) => {
-  return (
-    <button className="text-center w-full flex flex-col justify-center items-center opacity-70 hover:opacity-90">
-      {icon}
-      <span className="text-xs block mt-1 text-primary-700 font-medium">
-        {label}
-      </span>
-    </button>
-  );
-};
+
 
 export default function Design() {
+  const timeoutRef = useRef<unknown>(null);
   const fabricRef = useRef<fabric.Canvas | null>(null);
   const historyRef = useRef<(string | null)[]>([null]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [slideshowMode, setSlideShowMode] = useState<boolean>(false);
   const [slides, setSlides] = useState<SlideType[]>([
-    { content: "", duration: 2, previewImg: "" },
+    { content: "", duration: 2, previewImg: "", history:[] },
   ]);
   const [activeSlide, setActiveSlide] = useState<number>(0);
+  
 
   const recordChange = () => {
+    fabricRef.current?.renderAll();
+    clearTimeout(timeoutRef.current);
+
+    timeoutRef.current = setTimeout(() => {
       console.log("modified");
-      historyRef.current.push(JSON.stringify(fabricRef.current))
-      fabricRef.current?.renderAll();
-      
-      const temp_slides = [...slides];
-      temp_slides[activeSlide].content = JSON.stringify(fabricRef.current);
-      temp_slides[activeSlide].previewImg = fabricRef?.current?.toDataURL({
-        format: "png",
+      historyRef.current.push(JSON.stringify(fabricRef.current));
+      setSlides((prevSlides) => {
+        const tempSlides = [...prevSlides];
+        console.log(activeSlide, tempSlides);
+        tempSlides[activeSlide].content = JSON.stringify(fabricRef.current);
+        tempSlides[activeSlide].previewImg = fabricRef?.current?.toDataURL({
+          format: "png",
+        });
+        tempSlides[activeSlide].history = historyRef.current;
+        return tempSlides;
       });
-      setSlides(temp_slides);
+
+    }, 500);
   };
 
   const updateTabIndexes = (index: number) => {
     fabricRef.current?.discardActiveObject().renderAll();
     setCurrentIndex(index);
-  };
-
-  const addImage = (url: string) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous"; // or 'use-credentials'
-    img.src = url;
-    img.onload = () => {
-      const fabricImage = new fabric.Image(img);
-      fabricRef?.current?.add(fabricImage);
-      recordChange();
-    };
   };
 
   const onKeyPress = (e: KeyboardEvent) => {
@@ -110,49 +98,55 @@ export default function Design() {
         default:
           break;
       }
-      fabricRef.current.renderAll();
+      recordChange()
     }
   }
 
   const onMouseDownCanvas = () => {
     console.log("hey");
     if (fabricRef.current?._activeObject) {
-      setCurrentIndex(-1);
+      setCurrentIndex((prev) => prev-1);
     } else {
       setCurrentIndex(0);
     }
   };
 
+  console.log(currentIndex)
 
-  const onObjectMoving = () => {
-    console.log("Object Moving")
-    // const canvasZoom = fabricRef.current.getZoom();
-    // const cw = fabricRef.current.getWidth();
-    // const ch = fabricRef.current.getHeight();
-    // const hx = new fabric.Line([cw/(2*canvasZoom), 0, cw/(2*canvasZoom), ch/canvasZoom], {
-    //   stroke: "#CECECE",
-    //   strokeWidth: 2,
-    // });
-    // const vx = new fabric.Line([0, ch/(canvasZoom*2), cw/(canvasZoom), ch/(canvasZoom*2)], {
-    //   stroke: "#CECECE",
-    //   strokeWidth: 2,
-    // });
-    // fabricRef?.current?.add(hx);
-    // fabricRef?.current?.add(vx);
-  }
+  const resizeObserver = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      // Trigger your event or function when the size changes
+      setCanvasSizeAndZoom(entry.contentRect.width, entry.contentRect.height);
+    }
+  });
 
   //   Functions to set the width and height of the canvas and add scaling.
 
-  const setCanvasSizeAndZoom = () => {
+  const setCanvasSizeAndZoom = (container_width, container_height) => {
     const ratio = 1;
     const originalWidth = 1080;
-    document.querySelector(".canvas-container").style.height =
-      document.querySelector(".canvas-container").offsetWidth * ratio + "px";
-    document.querySelector(".canvas-wrapper").style.width = document.querySelector(".canvas-container").offsetWidth + "px"
-    fabricRef?.current?.setDimensions({
-      width: document.querySelector(".canvas-container").offsetWidth,
-      height: document.querySelector(".canvas-container").offsetWidth * ratio,
-    });
+    console.log(container_width, container_height);
+    const temp_height = container_width * ratio;
+    if (temp_height < container_height) {
+      console.log("here")
+      document.querySelector(".canvas-wrapper").style.width = "100%";
+      document.querySelector(".canvas-wrapper").style.height = temp_height*100/container_height + "%";
+
+      fabricRef?.current?.setDimensions({
+        width: container_width,
+        height: temp_height,
+      });
+    } else {
+      document.querySelector(".canvas-wrapper").style.height = "100%";
+      document.querySelector(".canvas-wrapper").style.width =
+      (container_height * 100)/(ratio*container_width) + "%";
+
+      fabricRef?.current?.setDimensions({
+        width: container_height / ratio,
+        height: container_height,
+      });
+    }
+
     const scale = fabricRef?.current?.getWidth() / originalWidth;
     fabricRef?.current?.setZoom(scale);
   };
@@ -160,29 +154,33 @@ export default function Design() {
   useEffect(() => {
     if (fabricRef.current) return;
     const canvas = new fabric.Canvas("canvas", { backgroundColor: "#fff" });
-    fabricRef.current = canvas;
     canvas.on("mouse:down", onMouseDownCanvas);
     canvas.on("object:modified", recordChange);
-    canvas.on("object:moving", onObjectMoving);
-    setCanvasSizeAndZoom();
+    fabricRef.current = canvas;
 
-    window.addEventListener("resize", setCanvasSizeAndZoom);
+    resizeObserver.observe(document.querySelector(".observe"))
+
     window.addEventListener('keypress', onKeyPress)
     window.addEventListener('keydown', onKeyDown)
     return () => {
-      window.removeEventListener("resize", setCanvasSizeAndZoom);
       // window.removeEventListener("keypress", onKeyPress);
       // window.removeEventListener("keydown", onKeyDown);
     };
   }, []);
 
+  useEffect(() => {
+    fabricRef.current.off("object:modified");
+    fabricRef.current.on("object:modified", recordChange);
+    historyRef.current = slides[activeSlide].history
+  },[activeSlide])
+
   return (
     <>
       <CanvasContext.Provider value={{ fabricRef, recordChange, slides, setSlides, activeSlide, setActiveSlide }}>
         <EditorHeader />
-        <div className="w-full h-[calc(100vh-80px)] overflow-hidden flex bg-slate-50">
+        <div className="w-full h-[calc(100vh-80px)] overflow-hidden lg:grid lg:grid-cols-[368px,auto,140px] bg-slate-50">
           <Tab.Group
-            className="sidebars shadow-md flex"
+            className="sidebars shadow-md hidden lg:flex"
             as={"div"}
             selectedIndex={currentIndex}
             onChange={updateTabIndexes}
@@ -223,6 +221,13 @@ export default function Design() {
                   label="Layers"
                 />
               </Tab>
+              <Tab className="outline-none">
+                <ToolBarButton
+                  key="templates"
+                  icon={<IconTemplate color="rgb(30 83 134)" size={26} />}
+                  label="Templates"
+                />
+              </Tab>
               <div onClick={() => setSlideShowMode(true)}>
                 <ToolBarButton
                   key="slideshow"
@@ -234,7 +239,7 @@ export default function Design() {
             </Tab.List>
             <Tab.Panels className="w-72 border-l border-slate-200 bg-white">
               <Tab.Panel className="w-full h-full overflow-auto">
-                <UploadToolPanel addImage={addImage} />
+                <UploadToolPanel/>
               </Tab.Panel>
               <Tab.Panel className="w-full h-full overflow-auto">
                 <BackgroundPanel />
@@ -249,13 +254,18 @@ export default function Design() {
                 <LayersPanel />
               </Tab.Panel>
               <Tab.Panel className="w-full h-full overflow-auto">
+                <TemplatePanel />
+              </Tab.Panel>
+              <Tab.Panel className="w-full h-full overflow-auto">
                 <EditPanel object={fabricRef.current?._activeObject} />
               </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
 
-          <div className="relative grow flex flex-col justify-between items-center">
-            <div className="p-10 w-full flex justify-center">
+          <MobileToolbar />
+
+          <div className="relative h-full grow flex flex-col justify-between items-center">
+            <div className="observe p-5 max-h-[500px] lg:max-h-max md:p-7 lg:p-10 w-full flex justify-center grow">
               <div className="canvas-wrapper relative w-full">
                 <canvas
                     className="w-full border border-slate-400"
@@ -267,7 +277,8 @@ export default function Design() {
               <SlideshowPanel/>
             )}
           </div>
-          <div className="bg-slate-300 w-[140px]"></div>
+          <div className="bg-slate-300 w-[140px] hidden lg:block"></div>
+          <div className="w-full overflow-auto flex h-20 bg-white lg:hidden"></div>
         </div>
       </CanvasContext.Provider>
     </>

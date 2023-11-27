@@ -63,7 +63,7 @@ export default function LayersPanel() {
   const onClickLayer = (item: fabric.Object, index: number) => {
     if (fabricRef.current) {
       fabricRef.current.setActiveObject(item);
-      fabricRef.current.renderAll();
+      fabricRef.current.renderAll()
       setSelectedItem(index);
     }
   };

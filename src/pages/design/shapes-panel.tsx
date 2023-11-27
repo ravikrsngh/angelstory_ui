@@ -107,7 +107,7 @@ export default function ShapesPanel() {
           Upload Shape (SVG Format)
         </label>
       </form>
-      <h4 className="text-base text-primary-700 font-medium">Shapes</h4>
+      <h4 className="hidden lg:block text-base text-primary-700 font-medium">Shapes</h4>
       <div className="flex gap-4 mt-4">
         <button
           onClick={addRectangle}

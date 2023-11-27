@@ -3,6 +3,7 @@ import EditGraphic from "./edit-graphic";
 import EditText from "./edit-text";
 import { EditGroup } from "./edit-group";
 import { EditObjectType } from "../../types";
+import { Text } from "fabric/fabric-impl";
 
 export default function EditPanel({object} : EditObjectType ) {
   if(object && object.type) {
@@ -23,7 +24,7 @@ export default function EditPanel({object} : EditObjectType ) {
     } else if (object.type == "i-text") {
       return (
         <div>
-          <EditText object={object} />
+          <EditText object={object as Text} />
         </div>
       );
     } else if (object.type == "group") {

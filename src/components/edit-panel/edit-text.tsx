@@ -70,8 +70,6 @@ export default function EditText({object} : {object: fabric.Text}) {
   };
 
   const updateFontFamily = () => {
-    console.log(object);
-
     WebFont.load({
       google: {
         families: [fontFamily || ''],
@@ -100,7 +98,6 @@ export default function EditText({object} : {object: fabric.Text}) {
     fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBkKgCbOnB4ttZA3K2AyZSzR3_N29YO71g')
       .then(response => response.json())
       .then(data => {
-        console.log(data.items)
         setFontList(data.items);
       })
       .catch(error => console.error('Error fetching fonts:', error));

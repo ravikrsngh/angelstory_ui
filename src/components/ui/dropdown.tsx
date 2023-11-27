@@ -2,39 +2,32 @@ import { IconChevronDown } from "@tabler/icons-react";
 import { Menu, Transition } from '@headlessui/react'
 import React, { Fragment } from "react";
 
-export const Dropdown = ({options}:) => {
+export const Dropdown = ({trigger, options}) => {
     return (
-      <Menu as="div">
+      <Menu as="div" className="relative inline-block text-left">
+      <div>
         <Menu.Button>
-          <div className="w-full">
-            <div className="w-full flex justify-between items-center border border-slate-300 p-2">
-              <span>Times New Roman</span>
-              <IconChevronDown size={20} />
-            </div>
-          </div>
+          {trigger}
         </Menu.Button>
-        <Transition
-          as={Fragment}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <Menu.Items>
+      </div>
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+          <div className="px-2 py-2 ">
+            {options.map((opt) => 
             <Menu.Item>
-              {({ active }) => (
-                <a
-                  className={`${active && "bg-primary-300"}`}
-                  href="/account-settings"
-                >
-                  Account settings
-                </a>
-              )}
-            </Menu.Item>
-          </Menu.Items>
-        </Transition>
-      </Menu>
+              {opt}
+            </Menu.Item>)}
+          </div>
+        </Menu.Items>
+      </Transition>
+    </Menu>
     );
 }
