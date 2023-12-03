@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import logoimg from "./../assets/logo.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { Dropdown } from "./ui/dropdown";
 
@@ -17,11 +17,16 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigate = useNavigate()
+  const location = useLocation()
 
   const logoutUser = () => {
     Cookies.remove('access');
     navigate('/login')
   }
+
+  useEffect(() => {
+    setMobileMenuOpen(false )
+  },[location])
 
   return (
     <header className="bg-primary-50 fixed top-0 left-0 w-full z-10 shadow-md">
@@ -31,7 +36,7 @@ export default function Header() {
       >
         <div className="flex lg:flex-1">
               <Link to="/" className="-m-1.5 p-1.5">
-                <img className="h-12 w-auto" src={logoimg} alt="" />
+                <img className="h-10 md:h-12 w-auto" src={logoimg} alt="" />
               </Link>
             </div>
         {Cookies.get("access") ? (
@@ -101,21 +106,16 @@ export default function Header() {
       >
         <div className="fixed inset-0 z-10" />
         <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center gap-x-6">
-            <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <img
-                className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                alt=""
-              />
-            </a>
-            <a
-              href="#"
-              className="ml-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Sign up
-            </a>
+          <div className="flex justify-between items-center gap-x-6">
+          <Link to="/" className="-m-1.5 p-1.5">
+                <img className="h-10 md:h-12 w-auto" src={logoimg} alt="" />
+              </Link>
+            <Link
+                to="/signup"
+                className=" bg-primary-500 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Sign up
+              </Link>
             <button
               type="button"
               className="-m-2.5 rounded-md p-2.5 text-gray-700"
@@ -139,12 +139,12 @@ export default function Header() {
                 ))}
               </div>
               <div className="py-6">
-                <a
-                  href="#"
+                <Link
+                  to="/login"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
-                </a>
+                </Link>
               </div>
             </div>
           </div>

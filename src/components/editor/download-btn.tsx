@@ -4,6 +4,7 @@ import { CanvasContext } from "../../context/canvasContext";
 import { fabric } from "fabric";
 import * as JSZip from 'jszip';
 import { dataURLtoBlob } from "../../utils";
+import { IconDownload } from "@tabler/icons-react";
 
 export const DownloadButton = () => {
     let { fabricRef, slides } = useContext(CanvasContext);
@@ -45,10 +46,13 @@ export const DownloadButton = () => {
 
   return (
     <Menu as="div" className="relative inline-block text-left">
-      <div>
+      <div className="flex justify-center items-center">
         <Menu.Button>
           <button className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900">
             Download
+          </button>
+          <button className="block lg:hidden text-primary-400">
+            <IconDownload />
           </button>
         </Menu.Button>
       </div>

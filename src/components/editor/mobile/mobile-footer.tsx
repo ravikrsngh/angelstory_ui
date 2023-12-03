@@ -4,12 +4,14 @@ import {
   IconCategory2,
   IconLetterT,
   IconTemplate,
+  IconSlideshow,
 } from "@tabler/icons-react";
 import { ToolBarButton } from "../toolbar-btn";
 import { FullScreenDialog } from "./fullscreen-dialog";
 import { useContext, useEffect, useState } from "react";
 import { CanvasContext } from "../../../context/canvasContext";
 import { CanvasContextType } from "../../../types";
+import { MobileSlideShowPanel } from "./mobile-slideshow";
 
 export const MobileFooter = () => {
   const { fabricRef } = useContext(
@@ -32,7 +34,7 @@ export const MobileFooter = () => {
 
   return (
     <>
-      <div className="fixed z-10 bottom-0 left-0 px-4 w-full h-16 bg-white shadow-[0_0_8px_rgba(0,0,0,0.1)] flex gap-4 justify-between items-center overflow-auto lg:hidden">
+      <div className="fixed z-10 bottom-0 left-0 px-4 w-full h-16 bg-white shadow-[0_0_8px_rgba(0,0,0,0.1)] flex gap-6 justify-between items-center overflow-auto lg:hidden">
         <div onClick={() => openMobileTab(1)}>
           <ToolBarButton
             key="upload"
@@ -71,12 +73,23 @@ export const MobileFooter = () => {
             label="Templates"
           />
         </div>
+        <div onClick={() => openMobileTab(6)}>
+                <ToolBarButton
+                  key="slideshow"
+                  icon={<IconSlideshow color="rgb(30 83 134)" size={26} />}
+                  label="Slideshow"
+                />
+              </div>
       </div>
       <FullScreenDialog
         mobileFullDisplay={mobileFullDisplay}
         setMobileFullDisplay={setMobileFullDisplay}
         tab={tabClicked}
       />
+      {
+        tabClicked == 6? <MobileSlideShowPanel /> : null
+      }
+
     </>
   );
 };

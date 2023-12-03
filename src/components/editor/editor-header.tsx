@@ -5,8 +5,9 @@ import { CanvasContext } from "../../context/canvasContext";
 import { useCreateTemplate } from "../../hooks/templates/use-create-template";
 import { fabric } from "fabric";
 import { DownloadButton } from "./download-btn";
+import { IconArrowBackUp, IconArrowLeft, IconShare, IconTrash } from "@tabler/icons-react";
 
-export default function EditorHeader() {
+export default function EditorHeader({deleteObject,goBackInHistory}) {
   const { fabricRef, slides } = useContext(CanvasContext);
 
   const createTemplateHook = useCreateTemplate();
@@ -32,10 +33,8 @@ export default function EditorHeader() {
   return (
     <header className="bg-primary-50 fixed top-0 left-0 w-full z-10 shadow-md">
       <nav
-        className="mx-auto flex items-center justify-between gap-x-6 px-4 md:px-10 lg:px-16 py-4"
-        aria-label="Global"
-      >
-        <div className="flex lg:flex-1">
+        className="hidden mx-auto lg:flex items-center justify-between gap-x-6 px-4 md:px-10 lg:px-16 py-4">
+        <div className="hidden lg:flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
             <img className="h-12 w-auto" src={logoimg} alt="" />
           </Link>
@@ -55,10 +54,28 @@ export default function EditorHeader() {
             Generate template
           </button>
           <DownloadButton/>
-          <button className=" bg-primary-500 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          <button className="hidden lg:block bg-primary-500 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             Share
           </button>
         </div>
+      </nav>
+      <nav className="flex lg:hidden items-center justify-end gap-x-6 px-4 md:px-10 lg:px-16 py-4">
+      <div className="mr-auto flex items-center gap-x-6">
+        <button className=" text-primary-400" onClick={goBackInHistory}>
+          <IconArrowBackUp />
+        </button>
+      </div>
+      
+        {
+          fabricRef.current?._activeObject? 
+          <button className="text-primary-400" onClick={deleteObject}>
+            <IconTrash />
+          </button> : null
+        }
+        <DownloadButton/>
+        <button className="text-primary-400">
+          <IconShare />
+        </button>
       </nav>
     </header>
   );

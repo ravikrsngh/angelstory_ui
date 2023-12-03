@@ -7,7 +7,7 @@ export default function Dashboard() {
   
   return (
     <>
-    <div className="px-16 py-8 flex flex-col gap-10">
+    <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-8 md:gap-10">
       <div>
         <form
           action=""
@@ -16,7 +16,7 @@ export default function Dashboard() {
           <input
             type="text"
             placeholder="Search templates"
-            className="grow px-4 py-3"
+            className="grow px-4 py-3 outline-none"
           />
           <button className="px-4 py-3">
             <IconSearch />
@@ -27,7 +27,7 @@ export default function Dashboard() {
       <div className="">
         <DashboardCollection />
       </div>
-      <div className="mt-10">
+      <div className="mt-3 md:mt-10">
         <DashboardTemplates />
       </div>
     </div>

@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import MultiCarousel from "../multi-carousel";
 import { useGetAllTemplate } from "../../hooks/templates/use-get-all-templates";
 import { TemplateType } from "../../types";
 
 export const DashboardTemplates = () => {
   const { data, isLoading, isFetching, isError } = useGetAllTemplate();
+
+  console.log(data)
 
   if(isLoading || isFetching) {
     return <span>Loading...</span>
@@ -16,16 +17,15 @@ export const DashboardTemplates = () => {
 
   return (
     <>
-      <h4 className="font-medium mb-10 text-xl flex justify-between items-center">
+      <h4 className="text-base font-medium mb-6 md:mb-10 md:text-xl flex justify-between items-center">
         Select Templates{" "}
-        <Link to="/templates" className="text-base hover:underline">
+        <Link to="/templates" className=" font-normal text-sm md:text-base hover:underline">
           View All
         </Link>
       </h4>
-      <div>
-        <MultiCarousel itemClass="mx-3 !w-56">
+      <div className="flex gap-4 overflow-x-auto">
         {data?.map((template: TemplateType) => (
-          <div className="relative w-56">
+          <div className="relative w-32 md:w-56">
           <img src={template.previewImage} alt="" className="w-full" />
           <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center opacity-0 hover:opacity-100">
             <button className="bg-primary-400 text-white px-5 py-2 rounded-sm ">
@@ -34,7 +34,6 @@ export const DashboardTemplates = () => {
           </div>
         </div>
         ))}
-        </MultiCarousel>
       </div>
     </>
   );

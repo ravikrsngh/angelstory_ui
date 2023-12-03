@@ -37,7 +37,7 @@ const Slide = ({
     const file = event.target.files[0];
     if (file) {
       const objectUrl = URL.createObjectURL(file);
-      setSelectedMusic({ name: file.name, url: objectUrl, startTime: 0, duration: 0 });
+      setSelectedMusic({ name: file.name, url: "https://www.free-stock-music.com/music/mixaund-hope.mp3", startTime: 0, duration: 0 });
     }
   };
 

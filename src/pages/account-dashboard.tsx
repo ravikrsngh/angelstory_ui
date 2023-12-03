@@ -11,6 +11,9 @@ import SideNavProfile from "../components/account-dashboard/sidenav-profile";
 import AccountSetting from "../components/account-dashboard/account-setting";
 import ChangePassword from "../components/account-dashboard/change-password";
 import YourTemplates from "../components/account-dashboard/your-templates";
+import { IconChevronDown } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
+import { Dropdown } from "../components/ui/dropdown";
 
 const navigation = [
   {
@@ -98,8 +101,33 @@ export default function Example() {
         </div>
 
         <div className="lg:pl-80">
-          <main className="py-10">
+          <main className="py-6 lg:py-10">
             <div className="px-4 sm:px-6 lg:px-8">
+              <div className="border border-slate-200 flex items-center gap-10 lg:hidden py-2 px-4 justify-between mb-10 bg-primary-400">
+                <h2 className="text-lg font-medium text-white">
+                  {(selectedIndex == 0 && "Account Setting") ||
+                    (selectedIndex == 1 && "Login and Security") ||
+                    (selectedIndex == 2 && "Your Templates") ||
+                    (selectedIndex == 3 && "Purchase History")}
+                </h2>
+                <Dropdown
+                    trigger={
+                      <button className="text-white">
+                        <IconChevronDown />
+                      </button>
+                    }
+                    options={navigation.map((ins) => {
+                      return (
+                        <span
+                          className="w-full text-base font-normal block p-2 hover:bg-primary-50"
+                          onClick={() => setSelectedIndex(ins.value)}
+                        >
+                          {ins.name}
+                        </span>
+                      );
+                    })}
+                  />
+              </div>
               <Tab.Panels>
                 <Tab.Panel>
                   <AccountSetting />

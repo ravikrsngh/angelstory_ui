@@ -92,12 +92,14 @@ export type CollectionType = {
   createdAt: string;
   createdBy: number;
   id: number;
-  name: string
+  name: string;
+  bgColor: string
 }
 
 export type CollectionCardType = {
   name: string
-  id: number
+  id: number;
+  bgColor: string
 }
 
 

@@ -64,17 +64,35 @@ export default function Design() {
     setCurrentIndex(index);
   };
 
+  const deleteObject = () => {
+    if (fabricRef.current) {
+      fabricRef.current.remove(fabricRef.current._activeObject);
+      recordChange();
+    }
+  };
+
+  const goBackInHistory = () => {
+    if (fabricRef.current) {
+      console.log("ctrl + Z");
+      console.log(historyRef.current);
+      const last_snapshot = historyRef.current.pop();
+      if(last_snapshot == '' || last_snapshot == null) {
+        fabricRef.current.clear();
+        fabricRef.current.set({
+          backgroundColor:"#fff"
+        })
+      }
+      fabricRef.current.loadFromJSON(last_snapshot, () => {});
+      fabricRef.current.renderAll();
+    }
+  };
+
   const onKeyPress = (e: KeyboardEvent) => {
     if(fabricRef.current) {
       if (e.key == "Delete") {
-        fabricRef.current.remove(fabricRef.current._activeObject);
-        recordChange();
+        deleteObject()
       } else if (e.ctrlKey && (e.key === "z" || e.code == "KeyZ")) {
-        console.log("ctrl + Z");
-        console.log(historyRef.current)
-        const last_snapshot = historyRef.current.pop();
-        fabricRef.current.loadFromJSON(last_snapshot, () => {});
-        fabricRef.current.renderAll();
+        goBackInHistory()
       }
     }
   };
@@ -177,7 +195,7 @@ export default function Design() {
   return (
     <>
       <CanvasContext.Provider value={{ fabricRef, recordChange, slides, setSlides, activeSlide, setActiveSlide }}>
-        <EditorHeader />
+        <EditorHeader deleteObject={deleteObject} goBackInHistory={goBackInHistory} />
         <div className="w-full h-[calc(100vh-80px)] overflow-hidden lg:grid lg:grid-cols-[368px,auto,140px] bg-slate-50">
           <Tab.Group
             className="sidebars shadow-md hidden lg:flex"

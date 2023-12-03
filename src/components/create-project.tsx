@@ -22,11 +22,11 @@ const SelectProjectTypeSection = ({ setProjData, setStep }: CreateProjectStepPro
     <>
       <Dialog.Title
         as="h3"
-        className="text-xl text-center font-medium leading-6 text-gray-900"
+        className="text-lg md:text-xl text-center font-medium leading-6 text-gray-900"
       >
         What do you want to create ?
       </Dialog.Title>
-      <div className="flex gap-4 justify-center items-center mt-16">
+      <div className="flex gap-4 justify-center items-center mt-10  md:mt-16">
         <div onClick={() => selectProjectType("card")} className="w-40 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
           {" "}
           <span>Card</span>{" "}
@@ -66,11 +66,11 @@ const SelectProjectSizeSection = ({ setProjData, setStep }:CreateProjectStepProp
     <>
       <Dialog.Title
         as="h3"
-        className="text-xl text-center font-medium leading-6 text-gray-900"
+        className="text-lg md:text-xl text-center font-medium leading-6 text-gray-900"
       >
         Choose a Size
       </Dialog.Title>
-      <div className="flex gap-4 justify-center items-center mt-16">
+      <div className="flex overflow-x-auto gap-4 items-center mt-10  md:mt-16">
         {data?.map((size) => (
             <div onClick={() => selectProjectSize(size.width, size.height)} style={{aspectRatio: `${size.width/size.height}`}} className="p-4 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
             {" "}
@@ -116,18 +116,18 @@ const SelectCollectionSection = ({ projData, setProjData }: CreateProjectStepPro
 
     
   return (
-    <div className="px-10">
+    <div className="md:px-10">
       <Dialog.Title
         as="h3"
-        className="text-xl text-center font-medium leading-6 text-gray-900"
+        className="text-lg md:text-xl text-center font-medium leading-6 text-gray-900"
       >
         Choose a collection for your project
       </Dialog.Title>
-      <form className="mt-10">
+      <form className="mt-6 md:mt-10 overflow-y-auto max-h-52">
         {data?.map((c) => (
             <div key={c.id} className="bg-primary-50 px-4 flex items-center gap-2 mb-4">
                 <input type="radio" name="collection" id={`collection${c.id}`} onChange={(e) => selectThisCollection(c.id)} />
-                <label htmlFor={`collection${c.id}`} className="grow h-full block py-4">{c.name}</label>
+                <label htmlFor={`collection${c.id}`} className="grow h-full block text-sm md:text-base py-3 md:py-4">{c.name}</label>
             </div>
         ) )}
       </form>
@@ -197,7 +197,7 @@ export const CreateProject = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="h- py-20 px-5 w-full max-w-3xl transform overflow-hidden rounded-md bg-white text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="py-12 md:py-20 px-5 w-full max-w-3xl transform overflow-hidden rounded-md bg-white text-left align-middle shadow-xl transition-all">
                 {step == 1 ? (
                   <SelectProjectTypeSection projData={projData} setProjData={setProjData} setStep={setStep} />
                 ) : null}

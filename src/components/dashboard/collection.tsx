@@ -53,18 +53,25 @@ export const DashboardCollection = () => {
   return (
     <>
       <div>
-        <h4 className="font-medium mb-10 text-xl flex justify-between items-center">
+        <h4 className="text-base font-medium mb-4 md:mb-10 md:text-xl flex justify-between items-center">
           My Collection
+          <div
+                    onClick={openModal}
+                    className="flex hover:text-primary-400 cursor-pointer border-primary-200 text-primary-300 rounded-md md:hidden justify-center items-center gap-2"
+                  >
+                    <IconPlus size={18} />
+                    <span>Create</span>
+                  </div>
         </h4>
         <div>
           <Tab.Group>
             <Tab.List>
-              <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
+              <div className="flex gap-4 border-b border-slate-300 items-center mb-6 md:mb-8">
                 <Tab>
                   {({ selected }) => (
                     <button
                       className={cn(
-                        "px-10 py-3 font-medium",
+                        "text-xs md:text-base px-5 md:px-10 py-3 font-medium",
                         selected
                           ? "text-primary-400 border-b-2 border-primary-400"
                           : ""
@@ -78,7 +85,7 @@ export const DashboardCollection = () => {
                   {({ selected }) => (
                     <button
                       className={cn(
-                        "px-10 py-3 font-medium",
+                        "text-xs md:text-base px-5 md:px-10 py-3 font-medium",
                         selected
                           ? "text-primary-400 border-b-2 border-primary-400"
                           : ""
@@ -92,7 +99,7 @@ export const DashboardCollection = () => {
                   {({ selected }) => (
                     <button
                       className={cn(
-                        "px-10 py-3 font-medium",
+                        "text-xs md:text-base px-5 md:px-10 py-3 font-medium",
                         selected
                           ? "text-primary-400 border-b-2 border-primary-400"
                           : ""
@@ -106,15 +113,15 @@ export const DashboardCollection = () => {
             </Tab.List>
             <Tab.Panels>
               <Tab.Panel>
-                <div className="flex gap-4">
+                <div className="flex gap-4 overflow-auto">
                   <div
                     onClick={openModal}
-                    className="w-52 h-52 border-2 hover:border-primary-400 hover:text-primary-400 cursor-pointer border-primary-200 text-primary-300 rounded-md flex flex-col justify-center items-center gap-2"
+                    className="hidden w-52 h-52 border-2 hover:border-primary-400 hover:text-primary-400 cursor-pointer border-primary-200 text-primary-300 rounded-md md:flex flex-col justify-center items-center gap-2"
                   >
                     <IconPlus />
                     <span>Create</span>
                   </div>
-                  {data.map((cc:CollectionType) => <CollectionCard key={cc.id} id={cc.id} name={cc.name} /> )}
+                  {data.map((cc:CollectionType) => <CollectionCard key={cc.id} id={cc.id} name={cc.name} bgColor={cc.bgColor} /> )}
                 </div>
               </Tab.Panel>
               <Tab.Panel>

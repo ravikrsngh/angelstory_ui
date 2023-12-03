@@ -14,7 +14,6 @@ export default function TextPanel() {
       fill: "black",
     });
     fabricRef.current.add(text);
-    fabricRef.current.setActiveObject(text);
     recordChange();
   };
 

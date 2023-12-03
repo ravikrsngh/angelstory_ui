@@ -1,10 +1,10 @@
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { CollectionCardType } from "../../types";
 
-export const CollectionCard = ({ id, name }: CollectionCardType) => {
+export const CollectionCard = ({ id, name, bgColor }: CollectionCardType) => {
   return (
     <div>
-      <div className="w-52 h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
+      <div className="w-32 h-32 md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
         <HoverCard.Root>
           <HoverCard.Trigger className="flex gap-1 absolute top-3 right-3">
             <div className="bg-primary-600 h-2 w-2 rounded-full"></div>

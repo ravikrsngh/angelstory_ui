@@ -28,7 +28,7 @@ export default function AccountSetting() {
               Change
             </label>
           </div>
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-8">
             <div className="grow">
               <Input label="Name" />
             </div>
@@ -38,10 +38,10 @@ export default function AccountSetting() {
             <div className="grow">
               <Input label="Phone Number" />
             </div>
-            <div></div>
-            <div></div>
+            <div className=""></div>
+            <div className="hidden md:block"></div>
             <div className="flex w-full justify-end">
-              <button className="bg-primary-400 text-white font-medium px-6 py-2 rounded-sm">
+              <button className=" w-full md:w-fit bg-primary-400 text-white font-medium px-6 py-2 rounded-sm">
                 SAVE CHANGES
               </button>
             </div>

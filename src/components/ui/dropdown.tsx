@@ -1,10 +1,9 @@
-import { IconChevronDown } from "@tabler/icons-react";
 import { Menu, Transition } from '@headlessui/react'
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 
 export const Dropdown = ({trigger, options}) => {
     return (
-      <Menu as="div" className="relative inline-block text-left">
+      <Menu as="div" className="relative inline-block text-left z-50">
       <div>
         <Menu.Button>
           {trigger}
