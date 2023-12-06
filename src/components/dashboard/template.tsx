@@ -25,7 +25,7 @@ export const DashboardTemplates = () => {
       </h4>
       <div className="flex gap-4 overflow-x-auto">
         {data?.map((template: TemplateType) => (
-          <div className="relative w-32 md:w-56">
+          <div key={template.id} className="relative w-32 md:w-56">
           <img src={template.previewImage} alt="" className="w-full" />
           <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center opacity-0 hover:opacity-100">
             <button className="bg-primary-400 text-white px-5 py-2 rounded-sm ">

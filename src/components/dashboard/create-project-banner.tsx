@@ -14,7 +14,7 @@ export const CreateProjectBanner = () => {
           onClick={() => setDisplayCreateProject(true)}
           className="flex items-center gap-2 bg-primary-400 text-white px-10 py-3 rounded-sm hover:bg-primary-500"
         >
-          <IconPlus /> <span className="text-sm lg:text-base font-medium">New Project</span>
+          <IconPlus /> <span className="text-sm lg:text-base font-medium">New Journey</span>
         </button>
       </div>
     </div>

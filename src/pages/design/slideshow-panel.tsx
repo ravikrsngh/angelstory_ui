@@ -37,7 +37,7 @@ const Slide = ({
     const file = event.target.files[0];
     if (file) {
       const objectUrl = URL.createObjectURL(file);
-      setSelectedMusic({ name: file.name, url: "https://www.free-stock-music.com/music/mixaund-hope.mp3", startTime: 0, duration: 0 });
+      setSelectedMusic({ name: file.name, url: "https://www.computerhope.com/jargon/m/example.mp3", startTime: 0, duration: 0 });
     }
   };
 
@@ -54,7 +54,8 @@ const Slide = ({
       name: slides[slideNumber].music?.name || '',
       url: slides[slideNumber].music?.url || '',
       duration: slides[slideNumber].music?.duration || 0,
-      startTime: slides[slideNumber].music?.startTime || 0
+      startTime: slides[slideNumber].music?.startTime || 0,
+      x: slides[slideNumber].music?.x || 0
     })
   }
 
@@ -152,7 +153,7 @@ export default function SlideshowPane() {
         </div>
       </div>
       <div className="my-4">
-        {selectedMusic && <AudioPlayer name={selectedMusic.name} url={selectedMusic.url} startTime={selectedMusic.startTime} duration={slides[activeSlide].duration || 0} setSelectedMusic={setSelectedMusic} />}
+        {selectedMusic && <AudioPlayer name={selectedMusic.name} url={selectedMusic.url} startTime={selectedMusic.startTime} duration={slides[activeSlide].duration || 0} setSelectedMusic={setSelectedMusic} x={selectedMusic.x || 0} />}
       </div>
     </div>
   );

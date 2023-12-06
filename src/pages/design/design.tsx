@@ -24,17 +24,13 @@ import { TemplatePanel } from "./templates-panel";
 import { ToolBarButton } from "../../components/editor/toolbar-btn";
 import { MobileToolbar } from "../../components/editor/mobile/mobile-toolbar";
 
-
-
-export default function Design() {
+export default function Design({ratio, originalWidth, initialSlides, name, projectType, saveProject}) {
   const timeoutRef = useRef<unknown>(null);
   const fabricRef = useRef<fabric.Canvas | null>(null);
   const historyRef = useRef<(string | null)[]>([null]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [slideshowMode, setSlideShowMode] = useState<boolean>(false);
-  const [slides, setSlides] = useState<SlideType[]>([
-    { content: "", duration: 2, previewImg: "", history:[] },
-  ]);
+  const [slides, setSlides] = useState<SlideType[]>(initialSlides);
   const [activeSlide, setActiveSlide] = useState<number>(0);
   
 
@@ -57,6 +53,16 @@ export default function Design() {
       });
 
     }, 500);
+  };
+
+  const extractFontFamilies = (objects) => {
+    const fontFamilies = new Set();
+    objects.forEach((obj) => {
+      if (obj.type === 'i-text' && obj.fontFamily) {
+        fontFamilies.add(obj.fontFamily);
+      }
+    });
+    return Array.from(fontFamilies);
   };
 
   const updateTabIndexes = (index: number) => {
@@ -141,8 +147,6 @@ export default function Design() {
   //   Functions to set the width and height of the canvas and add scaling.
 
   const setCanvasSizeAndZoom = (container_width, container_height) => {
-    const ratio = 1;
-    const originalWidth = 1080;
     console.log(container_width, container_height);
     const temp_height = container_width * ratio;
     if (temp_height < container_height) {
@@ -175,6 +179,12 @@ export default function Design() {
     canvas.on("mouse:down", onMouseDownCanvas);
     canvas.on("object:modified", recordChange);
     fabricRef.current = canvas;
+    if(slides[0].content) {
+      fabricRef.current.loadFromJSON(slides[0].content, () => {});
+      fabricRef.current.renderAll();
+    }
+
+    
 
     resizeObserver.observe(document.querySelector(".observe"))
 
@@ -187,6 +197,10 @@ export default function Design() {
   }, []);
 
   useEffect(() => {
+    saveProject({formattedData:JSON.stringify(slides)})
+  },[slides])
+
+  useEffect(() => {
     fabricRef.current.off("object:modified");
     fabricRef.current.on("object:modified", recordChange);
     historyRef.current = slides[activeSlide].history
@@ -195,7 +209,7 @@ export default function Design() {
   return (
     <>
       <CanvasContext.Provider value={{ fabricRef, recordChange, slides, setSlides, activeSlide, setActiveSlide }}>
-        <EditorHeader deleteObject={deleteObject} goBackInHistory={goBackInHistory} />
+        <EditorHeader deleteObject={deleteObject} goBackInHistory={goBackInHistory} name={name} saveProject={saveProject} />
         <div className="w-full h-[calc(100vh-80px)] overflow-hidden lg:grid lg:grid-cols-[368px,auto,140px] bg-slate-50">
           <Tab.Group
             className="sidebars shadow-md hidden lg:flex"
@@ -246,13 +260,14 @@ export default function Design() {
                   label="Templates"
                 />
               </Tab>
-              <div onClick={() => setSlideShowMode(true)}>
+              {projectType == "SLIDE_SHOW"? <div onClick={() => setSlideShowMode(true)}>
                 <ToolBarButton
                   key="slideshow"
                   icon={<IconSlideshow color="rgb(30 83 134)" size={26} />}
                   label="Slideshow"
                 />
-              </div>
+              </div> : null }
+              
               <Tab className="outline-none"></Tab>
             </Tab.List>
             <Tab.Panels className="w-72 border-l border-slate-200 bg-white">
@@ -291,7 +306,7 @@ export default function Design() {
                   ></canvas>
               </div>
             </div>
-            {slideshowMode && (
+            {(slideshowMode && projectType == "SLIDE_SHOW") &&  (
               <SlideshowPanel/>
             )}
           </div>

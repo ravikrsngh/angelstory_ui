@@ -5,6 +5,7 @@ export type SlideMusic = {
   url: string;
   startTime: number;
   duration: number;
+  x: number;
 }
 
 export type SlideType = {
@@ -105,10 +106,12 @@ export type CollectionCardType = {
 
 export type CreateProjectInputType = {
   collectionId: string | null | number;
+  formattedData: string | null;
   height: string | null;
   name: string;
   projectType: string | null;
   width: string | null;
+  previewImage: string | null;
 };
 
 export type CreateProjectPropType = {

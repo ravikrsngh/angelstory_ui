@@ -5,6 +5,8 @@ import { useGetStockImages } from "../../hooks/others/use-stock-photos";
 import { fabric } from "fabric";
 import { CanvasContext } from "../../context/canvasContext";
 import { CanvasContextType } from "../../types";
+import AWS from "aws-sdk";
+import { uploadFileToS3 } from "../../service/aws";
 
 export default function UploadToolPanel() {
   const { fabricRef, recordChange} = useContext(
@@ -32,13 +34,17 @@ export default function UploadToolPanel() {
   const onSelectFileFromDevice = (e) => {
     let file = e.target.files[0];
     if (file) {
+      // uploadFileToS3(file, import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME, file.name )
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (e) => {
+        console.log(e.target.result)
         addImage(e.target.result);
       };
     }
   };
+
+ 
 
   if (isLoading || isFetching) {
     return (

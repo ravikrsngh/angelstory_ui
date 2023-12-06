@@ -6,6 +6,8 @@ import Cookies from "js-cookie";
 import { useCreateCollection } from "../hooks/collection/use-create-collection";
 import toast from "react-hot-toast";
 import { CreateProjectInputType, CreateProjectPropType, CreateProjectStepPropType } from "../types";
+import { useCreateProject } from "../hooks/project/use-create-project";
+import { useNavigate } from "react-router-dom";
 
 const SelectProjectTypeSection = ({ setProjData, setStep }: CreateProjectStepPropType) => {
 
@@ -27,11 +29,11 @@ const SelectProjectTypeSection = ({ setProjData, setStep }: CreateProjectStepPro
         What do you want to create ?
       </Dialog.Title>
       <div className="flex gap-4 justify-center items-center mt-10  md:mt-16">
-        <div onClick={() => selectProjectType("card")} className="w-40 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
+        <div onClick={() => selectProjectType("CARD")} className="w-40 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
           {" "}
           <span>Card</span>{" "}
         </div>
-        <div onClick={() => selectProjectType("slideshow")} className="w-40 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
+        <div onClick={() => selectProjectType("SLIDE_SHOW")} className="w-40 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
           {" "}
           <span>Slideshow</span>{" "}
         </div>
@@ -72,7 +74,7 @@ const SelectProjectSizeSection = ({ setProjData, setStep }:CreateProjectStepProp
       </Dialog.Title>
       <div className="flex overflow-x-auto gap-4 items-center mt-10  md:mt-16">
         {data?.map((size) => (
-            <div onClick={() => selectProjectSize(size.width, size.height)} style={{aspectRatio: `${size.width/size.height}`}} className="p-4 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
+            <div key={size.id} onClick={() => selectProjectSize(size.width, size.height)} style={{aspectRatio: `${size.width/size.height}`}} className="p-4 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
             {" "}
             <span className="text-sm text-center">{size.label}</span>{" "}
           </div>
@@ -83,9 +85,9 @@ const SelectProjectSizeSection = ({ setProjData, setStep }:CreateProjectStepProp
 };
 
 const SelectCollectionSection = ({ projData, setProjData }: CreateProjectStepPropType) => {
-
     const {data, isLoading, isFetching } = useGetAllCollectionForUser(Cookies.get('user') || '')
     const createCollectionHook = useCreateCollection()
+    const createProjectHook = useCreateProject()
 
     const selectThisCollection = (collectionId: number) => {
         setProjData((prev) => {
@@ -101,11 +103,13 @@ const SelectCollectionSection = ({ projData, setProjData }: CreateProjectStepPro
         createCollectionHook.mutate({collectionName: e.target.collection.value})
       }
 
-      const createNewProject = () => {
+      const createNewProject = async () => {
         if(!projData.collectionId) {
           toast.error('Please select a collection.')
           return
         }
+        await createProjectHook.mutate(projData)
+
       }
 
     if (isLoading || isFetching) {
@@ -121,7 +125,7 @@ const SelectCollectionSection = ({ projData, setProjData }: CreateProjectStepPro
         as="h3"
         className="text-lg md:text-xl text-center font-medium leading-6 text-gray-900"
       >
-        Choose a collection for your project
+        Choose a collection for your journey
       </Dialog.Title>
       <form className="mt-6 md:mt-10 overflow-y-auto max-h-52">
         {data?.map((c) => (
@@ -153,6 +157,8 @@ export const CreateProject = ({
     name: "Untitled",
     projectType: null,
     width: null,
+    formattedData: '',
+    previewImage: ''
   });
 
   const closeProjectModal = () => {
@@ -163,6 +169,8 @@ export const CreateProject = ({
         name: "Untitled",
         projectType: null,
         width: null,
+        formattedData: '',
+        previewImage: ''
       })
     setDisplayCreateProject(false)
   }

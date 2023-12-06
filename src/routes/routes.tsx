@@ -5,10 +5,10 @@ import AccountDashboard from "../pages/account-dashboard";
 import Dashboard from "../pages/dashboard";
 import Collection from "../pages/collection";
 import CollectionAssets from "../pages/collection-assets";
-import Design from "../pages/design/design";
 import Templates from "../pages/templates";
 import { PrivateRoutes } from "./private-route";
 import { BasicPage } from "../components/ui/basic-page";
+import { DesignLoader } from "../pages/design";
 
 const RouteData = () => {
 
@@ -21,13 +21,13 @@ const RouteData = () => {
         <Route path="/" element={<PrivateRoutes />}>
           <Route path="/account-dashboard" element={<AccountDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/collection" element={<Collection />} />
+          <Route path="/collection/:collectionId" element={<Collection />} />
           <Route path="/collection/assets" element={<CollectionAssets />} />
         </Route>
       </Route>
       <Route path="/">
         <Route path="/" element={<PrivateRoutes />}>
-          <Route path="/design" element={<Design />} />
+          <Route path="/design/:collectionId/:projectId" element={<DesignLoader />} />
         </Route>
       </Route>
     </Routes>

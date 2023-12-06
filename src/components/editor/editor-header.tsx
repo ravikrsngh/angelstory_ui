@@ -7,7 +7,7 @@ import { fabric } from "fabric";
 import { DownloadButton } from "./download-btn";
 import { IconArrowBackUp, IconArrowLeft, IconShare, IconTrash } from "@tabler/icons-react";
 
-export default function EditorHeader({deleteObject,goBackInHistory}) {
+export default function EditorHeader({deleteObject,goBackInHistory, name, saveProject}) {
   const { fabricRef, slides } = useContext(CanvasContext);
 
   const createTemplateHook = useCreateTemplate();
@@ -30,6 +30,14 @@ export default function EditorHeader({deleteObject,goBackInHistory}) {
     });
   };
 
+  const saveProjectName = (e) => {
+    if(e.target.value) {
+      saveProject({name:e.target.value})
+    } else {
+      saveProject({name: "Untitled"})
+    }
+  }
+
   return (
     <header className="bg-primary-50 fixed top-0 left-0 w-full z-10 shadow-md">
       <nav
@@ -42,8 +50,9 @@ export default function EditorHeader({deleteObject,goBackInHistory}) {
         <div className="hidden lg:flex lg:gap-x-12">
           <input
             type="text"
-            defaultValue="Name of the file"
             className="text-center p-2 bg-transparent"
+            defaultValue={name}
+            onBlur={saveProjectName}
           />
         </div>
         <div className="flex flex-1 items-center justify-end gap-x-6">

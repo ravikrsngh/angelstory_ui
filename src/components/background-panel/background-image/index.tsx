@@ -195,6 +195,7 @@ export default function BackgroundImageSection() {
       <div className="w-full grid grid-cols-2 gap-4">
         {data.results.map((ins) => (
           <div
+            key={ins.id}
             className="bg-slate-100 flex items-center justify-center"
             onClick={() => setBackgroundImage(ins.urls.regular)}
           >

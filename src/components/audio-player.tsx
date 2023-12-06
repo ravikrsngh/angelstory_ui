@@ -9,7 +9,7 @@ import Draggable from "react-draggable";
 import { CanvasContext } from "../context/canvasContext";
 import { CanvasContextType } from "../types";
 
-const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic }) => {
+const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) => {
   const { setSlides, slides, activeSlide } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
@@ -17,6 +17,7 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [newStartTime, setNewStartTime] = useState(startTime);
+  const [defaultX, setDefaultX] = useState(x)
   const [isLoaded, setIsLoaded] = useState(false);
 
   console.log(newStartTime);
@@ -34,8 +35,6 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic }) => {
       audio.removeEventListener("timeupdate", updateTime);
     };
   }, []);
-
-  console.log(isPlaying);
 
   const playPauseHandler = () => {
     const audio = audioRef.current;
@@ -80,35 +79,24 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic }) => {
   };
 
   const onMusicDragStop = (e, data) => {
-    let w2 = data.node.parentNode.offsetWidth;
-    console.log(w2);
-    console.log(audioRef.current?.duration);
+    const w2 = data.node.parentNode.offsetWidth;
     console.log(data.x);
-    let duration_to_width = audioRef.current?.duration / w2;
-    setNewStartTime(parseInt(newStartTime + data.x * duration_to_width));
+    const duration_to_width = audioRef.current?.duration / w2;
+    setNewStartTime(parseInt(data.x * duration_to_width));
+    setDefaultX(data.x)
   };
 
   const saveMusic = () => {
-    let slides_copy = [...slides];
+    const slides_copy = [...slides];
     slides_copy[activeSlide].music = {
       name: name,
       url: url,
       startTime: newStartTime,
       duration: duration,
+      x: defaultX
     };
     setSlides(slides_copy);
     setSelectedMusic(null);
-  };
-
-  const getControlledPosition = () => {
-    let w = document.getElementById("progress-bar-container")?.offsetWidth;
-    let duration_to_width = audioRef.current?.duration / w;
-    return (
-      parseInt(
-        (newStartTime * audioRef.current?.duration) /
-          document.getElementById("progress-bar-container")?.offsetWidth
-      ) || 0
-    );
   };
 
   const handleLoadedData = () => {
@@ -150,7 +138,7 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic }) => {
               ></div>
             </div>
 
-            <Draggable bounds="parent" axis="x" onStop={onMusicDragStop}>
+            <Draggable defaultPosition={{x: defaultX, y:0}} bounds="parent" axis="x" onStop={onMusicDragStop}>
               <div
                 className="absolute h-full border-2 border-primary-600 rounded-md z-10 cursor-move"
                 style={{
