@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
 import React, { useContext, useState } from "react";
 import ColorPallete from "./color-pallete";
 import EditHeading from "./edit-heading";
@@ -9,10 +11,10 @@ export default function EditFill({ object }: EditObjectType) {
   const { recordChange } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
-  let [fillColor, setFillColor] = useState(
+  const [fillColor, setFillColor] = useState(
     object.fill ? object.fill : "#CECECE"
   );
-  let [displayColorPallete, setDisplayColorPallete] = useState(false);
+  const [displayColorPallete, setDisplayColorPallete] = useState(false);
 
   const applyFillColor = (color) => {
     setFillColor(color);

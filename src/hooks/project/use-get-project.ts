@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { templateAuthClient } from "..";
-import { DesignResType } from "../../types";
+import { DesignType } from "../../types";
 
 const getProjectDetails = (id:number) => {
-  return templateAuthClient.get("projects/" + id).json<DesignResType>();
+  return templateAuthClient.get("projects/" + id).json<DesignType>();
 };
 
 export function useGetProjectDetails(id:number) {

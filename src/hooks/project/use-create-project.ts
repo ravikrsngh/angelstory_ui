@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { HTTPError } from "ky";
 import toast from "react-hot-toast";
 import { templateAuthClient } from "..";
-import { CreateProjectInputType } from "../../types";
+import { CreateProjectInputType, DesignType } from "../../types";
 import { useNavigate } from "react-router-dom";
 
 
@@ -21,7 +21,7 @@ export function useCreateProject() {
     mutationFn: (input:CreateProjectInputType) => createProject(input),
     onSuccess:(res) => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
-      navigate(`/design/${res.collectionId}/${res.id}`)
+      navigate(`/design/${(res as DesignType).collectionId}/${(res as DesignType).id}`)
     },
     onError: (error) =>
       error instanceof HTTPError && toast.error(error.message),

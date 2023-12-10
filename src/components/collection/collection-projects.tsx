@@ -1,11 +1,12 @@
-import { HoverCard } from "@radix-ui/react-hover-card"
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useParams } from "react-router-dom"
 import { useGetProjectsFromCollection } from "../../hooks/project/use-get-projects-from-collection"
 import { CollectionProjectCard } from "./collection-project-card"
+import { DesignType } from "../../types"
 
 export const CollectionProjects = () => {
     const params = useParams()
-    const {data, isLoading, isFetching} = useGetProjectsFromCollection(params.collectionId)
+    const {data, isLoading, isFetching} = useGetProjectsFromCollection(parseInt(params.collectionId?params.collectionId : "-1"))
     if(isLoading || isFetching) {
       return <span>Loading ...</span>
     }
@@ -16,7 +17,7 @@ export const CollectionProjects = () => {
             Journies
           </h4>
           <div className="flex gap-4">
-            {data.map((proj) => <CollectionProjectCard key={proj.id} projData={proj} /> )}
+            {data?.map((proj:DesignType) => <CollectionProjectCard key={proj.id} projData={proj} /> )}
           </div>
         </div>
     )

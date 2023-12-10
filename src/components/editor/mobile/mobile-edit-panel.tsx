@@ -1,16 +1,15 @@
 import { Transition, Dialog } from "@headlessui/react";
-import { IconX } from "@tabler/icons-react";
-import { Fragment } from "react";
 import EditBorder from "../../edit-panel/components/border";
 import EditFill from "../../edit-panel/components/fill";
 import EditShadow from "../../edit-panel/components/shadow";
+import { MobileEditPanelPropType } from "../../../types";
 
 export const MobileEditPanel = ({
   object,
   tabClicked,
   displayMobileEditPanel,
   setDisplayMobileEditPanel,
-}) => {
+}:MobileEditPanelPropType) => {
   return (
     <>
       <Transition appear show={displayMobileEditPanel}>

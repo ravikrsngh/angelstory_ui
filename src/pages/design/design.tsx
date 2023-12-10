@@ -208,7 +208,9 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
     const temp_height = container_width * ratio;
     if (temp_height < container_height) {
       console.log("here")
+      // @ts-ignore
       document.querySelector(".canvas-wrapper").style.width = "100%";
+      // @ts-ignore
       document.querySelector(".canvas-wrapper").style.height = temp_height*100/container_height + "%";
 
       fabricRef?.current?.setDimensions({
@@ -216,7 +218,9 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
         height: temp_height,
       });
     } else {
+      // @ts-ignore
       document.querySelector(".canvas-wrapper").style.height = "100%";
+      // @ts-ignore
       document.querySelector(".canvas-wrapper").style.width =
       (container_height * 100)/(ratio*container_width) + "%";
 
@@ -225,7 +229,7 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
         height: container_height,
       });
     }
-
+    // @ts-ignore
     const scale = fabricRef?.current?.getWidth() / originalWidth;
     fabricRef?.current?.setZoom(scale);
   };
@@ -241,6 +245,7 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
       fabricRef.current.renderAll();
     }
 
+    // @ts-ignore
     resizeObserver.observe(document.querySelector(".observe"))
     
     window.addEventListener('keypress', onKeyPress)
@@ -255,8 +260,11 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
     saveProject({formattedData:JSON.stringify(slides)})
   },[slides])
 
+
   useEffect(() => {
+    // @ts-ignore
     fabricRef.current.off("object:modified");
+    // @ts-ignore
     fabricRef.current.on("object:modified", recordChange);
     historyRef.current = slides[activeSlide].history
   },[activeSlide])

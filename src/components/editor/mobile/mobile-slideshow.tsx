@@ -1,4 +1,4 @@
-import { Transition, Dialog } from "@headlessui/react";
+import { Transition} from "@headlessui/react";
 import SlideshowPanel from "../../../pages/design/slideshow-panel";
 
 export const MobileSlideShowPanel = () => {

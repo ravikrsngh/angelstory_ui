@@ -19,7 +19,7 @@ export const MobileEditFooter = () => {
   const [tabClicked, setTabClicked] = useState<number | null>(null)
   const [displayMobileEditPanel, setDisplayMobileEditPanel] = useState(false)
 
-  const editTabClicked = (tab) => {
+  const editTabClicked = (tab:number) => {
     setTabClicked(tab)
     setDisplayMobileEditPanel(true)
   }
@@ -27,7 +27,7 @@ export const MobileEditFooter = () => {
   return (
     <>
       <div className="fixed z-50 bottom-0 left-0 px-4 w-full h-16 bg-white shadow-[0_0_8px_rgba(0,0,0,0.1)] flex gap-4 items-center overflow-auto lg:hidden">
-      {["i-text"].includes(fabricRef.current?._activeObject.type) ? (
+      {["i-text"].includes(fabricRef.current?._activeObject.type || '') ? (
           <>
             <div onClick={() => editTabClicked(5)}>
               <ToolBarButton
@@ -66,7 +66,7 @@ export const MobileEditFooter = () => {
             label="Border"
           />
         </div>
-        {!["line"].includes(fabricRef.current?._activeObject.type) ? (
+        {!["line"].includes(fabricRef.current?._activeObject.type || '') ? (
           <div onClick={() => editTabClicked(2)}>
             <ToolBarButton
               key="fill"

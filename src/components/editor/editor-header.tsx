@@ -1,21 +1,27 @@
-import { useContext, useState } from "react";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useContext } from "react";
 import logoimg from "./../../assets/logo.svg";
 import { Link } from "react-router-dom";
 import { CanvasContext } from "../../context/canvasContext";
 import { useCreateTemplate } from "../../hooks/templates/use-create-template";
 import { fabric } from "fabric";
 import { DownloadButton } from "./download-btn";
-import { IconArrowBackUp, IconArrowLeft, IconShare, IconTrash } from "@tabler/icons-react";
+import { IconArrowBackUp, IconShare, IconTrash } from "@tabler/icons-react";
+import { CanvasContextType, EditorHeaderPropType } from "../../types";
 
-export default function EditorHeader({deleteObject,goBackInHistory, name, saveProject}) {
-  const { fabricRef, slides } = useContext(CanvasContext);
+export default function EditorHeader({deleteObject,goBackInHistory, name, saveProject}:EditorHeaderPropType) {
+  const { fabricRef, slides } = useContext(
+    CanvasContext as React.Context<CanvasContextType>
+  );
 
   const createTemplateHook = useCreateTemplate();
 
   const generateTemplateData = () => {
     const virtualCanvas = new fabric.Canvas('');
       virtualCanvas.setDimensions({
+        //@ts-ignore
         width: fabricRef.current.getWidth()/fabricRef.current.getZoom(),
+        //@ts-ignore
         height: fabricRef.current.getHeight()/fabricRef.current.getZoom()
       });
     virtualCanvas.loadFromJSON(slides[0].content, () => {
@@ -30,9 +36,9 @@ export default function EditorHeader({deleteObject,goBackInHistory, name, savePr
     });
   };
 
-  const saveProjectName = (e) => {
-    if(e.target.value) {
-      saveProject({name:e.target.value})
+  const saveProjectName = (e:React.FocusEvent) => {
+    if((e.target as HTMLInputElement).value) {
+      saveProject({name:(e.target as HTMLInputElement).value})
     } else {
       saveProject({name: "Untitled"})
     }

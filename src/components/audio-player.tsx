@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   IconPlayerPauseFilled,
@@ -9,11 +10,12 @@ import Draggable from "react-draggable";
 import { CanvasContext } from "../context/canvasContext";
 import { CanvasContextType } from "../types";
 
+// @ts-ignore
 const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) => {
   const { setSlides, slides, activeSlide } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
-  const audioRef = useRef(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [newStartTime, setNewStartTime] = useState(startTime);
@@ -25,63 +27,77 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
   useEffect(() => {
     const audio = audioRef.current;
 
-    const updateTime = () => {
-      setCurrentTime(audio.currentTime);
-    };
+    if(audio) {
+      const updateTime = () => {
+        setCurrentTime(audio.currentTime);
+      };
+  
+      audio.addEventListener("timeupdate", updateTime);
+  
+      return () => {
+        audio.removeEventListener("timeupdate", updateTime);
+      };
+    }
 
-    audio.addEventListener("timeupdate", updateTime);
-
-    return () => {
-      audio.removeEventListener("timeupdate", updateTime);
-    };
   }, []);
 
   const playPauseHandler = () => {
     const audio = audioRef.current;
-    console.log(audio);
-
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play();
+    if(audio) {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+      setIsPlaying(!isPlaying);
     }
-    setIsPlaying(!isPlaying);
   };
 
   const backHandler = () => {
     const audio = audioRef.current;
-    audio.currentTime -= 5;
+    if(audio) {
+      audio.currentTime -= 5;
+    }
   };
 
   const forwardHandler = () => {
     const audio = audioRef.current;
-    audio.currentTime += 5;
+    if(audio) {
+      audio.currentTime += 5;
+    }
   };
 
   const calculateProgress = () => {
     const audio = audioRef.current;
-    return (currentTime / audio?.duration) * 100 || 0;
+    if(audio)
+    return (currentTime / audio.duration) * 100 || 0;
   };
 
   const getSelectedWidth = () => {
     const audio = audioRef.current;
+    if(audio)
     return (duration / audio?.duration) * 100 || 0;
   };
 
-  const handleProgressBarClick = (e) => {
+  const handleProgressBarClick = (e: React.MouseEvent) => {
     const audio = audioRef.current;
-    const progressContainer = e.currentTarget;
-    const clickPosition =
-      e.clientX - progressContainer.getBoundingClientRect().left;
-    const newPosition =
-      (clickPosition / progressContainer.offsetWidth) * (audio.duration || 0);
-    audio.currentTime = newPosition;
+    if (audio) {
+      const progressContainer = e.currentTarget as HTMLElement;
+      const clickPosition =
+        e.clientX - progressContainer.getBoundingClientRect().left;
+      const newPosition =
+        (clickPosition / progressContainer.offsetWidth) * (audio.duration || 0);
+      audio.currentTime = newPosition;
+    }
   };
 
+  // @ts-ignore
   const onMusicDragStop = (e, data) => {
     const w2 = data.node.parentNode.offsetWidth;
     console.log(data.x);
+    // @ts-ignore
     const duration_to_width = audioRef.current?.duration / w2;
+    // @ts-ignore
     setNewStartTime(parseInt(data.x * duration_to_width));
     setDefaultX(data.x)
   };
@@ -92,8 +108,7 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
       name: name,
       url: url,
       startTime: newStartTime,
-      duration: duration,
-      x: defaultX
+      duration: duration
     };
     setSlides(slides_copy);
     setSelectedMusic(null);
@@ -114,6 +129,7 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
       }
     };
   }, []);
+
 
   return (
     <div className="audio-player">
@@ -155,9 +171,12 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
               60 * Math.trunc(Math.floor(currentTime) / 60)
             }s`}</span>
             <span>{`${Math.trunc(
+              // @ts-ignore
               Math.floor(audioRef.current?.duration) / 60
             )}m ${
+              // @ts-ignore
               Math.floor(audioRef.current?.duration) -
+              // @ts-ignore
               60 * Math.trunc(Math.floor(audioRef.current?.duration) / 60)
             }s`}</span>
           </div>

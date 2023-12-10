@@ -5,7 +5,6 @@ export type SlideMusic = {
   url: string;
   startTime: number;
   duration: number;
-  x: number;
 }
 
 export type SlideType = {
@@ -136,6 +135,17 @@ export type SizeResType = {
   label: string;
 }
 
+export type DesignType = {
+  id:number;
+  width: number;
+  height: number;
+  formattedData: string;
+  projectType: string;
+  name: string;
+  collectionId: number;
+  previewImage: string
+}
+
 
 export type DesignUpdateType = {
   width: number;
@@ -152,6 +162,55 @@ export type DesignLoaderPropType = {
   originalWidth: number;
   name: string;
   projectType: string;
-  saveProject: (obj: { formattedData: string }) => void;
+  saveProject: (obj: {
+    formattedData?: string;
+    name?: string;
+}) => void
   initialSlides: SlideType[]
+}
+
+export type BackgroundImageOptionsPropsType = {
+  icon: JSX.Element;
+  label: string;
+  isActive: boolean;
+  value: number;
+  action: (value: number) => void | Dispatch<SetStateAction<number>>
+}
+
+export type BackgroundPositionPropType = {
+  position: number;
+  setPosition: Dispatch<SetStateAction<number>>;
+}
+
+export type BackgroundSizePropType = {
+  size: number;
+  setSize: Dispatch<SetStateAction<number>>;
+}
+
+export type EditorHeaderPropType = {
+  deleteObject: () => void,
+  goBackInHistory: () => void,
+  name: string,
+  saveProject: (obj: {
+    formattedData?: string;
+    name?: string;
+}) => void
+}
+
+export type FullScreenDialogPropType = {
+  mobileFullDisplay: boolean;
+  setMobileFullDisplay:Dispatch<SetStateAction<boolean>>;
+  tab:number;
+}
+
+export type MobileEditPanelPropType = {
+  object: fabric.Object | fabric.Group | undefined | fabric.Text;
+  tabClicked: number | null;
+  displayMobileEditPanel: boolean;
+  setDisplayMobileEditPanel:Dispatch<SetStateAction<boolean>>;
+}
+
+export type DropdownPropType = {
+  trigger: JSX.Element;
+  options: JSX.Element[]
 }

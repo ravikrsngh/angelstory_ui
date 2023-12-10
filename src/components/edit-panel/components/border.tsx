@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
 import React, { useContext, useState } from "react";
 import EditHeading from "./edit-heading";
 import { CanvasContext } from "../../../context/canvasContext";
@@ -11,6 +13,7 @@ export default function EditBorder({object} : EditObjectType) {
     CanvasContext as React.Context<CanvasContextType>
   );
   const [borderColor, setBorderColor] = useState(
+
     object.stroke
       ? object.stroke
       : ""

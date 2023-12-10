@@ -1,7 +1,8 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from "react";
+import { DropdownPropType } from '../../types';
 
-export const Dropdown = ({trigger, options}) => {
+export const Dropdown = ({trigger, options}:DropdownPropType) => {
     return (
       <Menu as="div" className="relative inline-block text-left z-50">
       <div>

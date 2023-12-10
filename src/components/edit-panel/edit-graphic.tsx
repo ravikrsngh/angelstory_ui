@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
+
 import EditBorder from "./components/border";
 import EditShadow from "./components/shadow";
 import EditFill from "./components/fill";

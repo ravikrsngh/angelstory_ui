@@ -6,8 +6,9 @@ import BackgroundPanel from "../../../pages/design/background-panel";
 import ShapesPanel from "../../../pages/design/shapes-panel";
 import TextPanel from "../../../pages/design/text";
 import { TemplatePanel } from "../../../pages/design/templates-panel";
+import { FullScreenDialogPropType } from "../../../types";
 
-export const FullScreenDialog = ({mobileFullDisplay, setMobileFullDisplay, tab}) => {
+export const FullScreenDialog = ({mobileFullDisplay, setMobileFullDisplay, tab}: FullScreenDialogPropType) => {
   return (
     <Transition appear show={mobileFullDisplay} as={Fragment}>
       <Dialog

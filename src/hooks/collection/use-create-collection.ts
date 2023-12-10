@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { HTTPError } from "ky";
 import toast from "react-hot-toast";
 import { userAuthClient } from "..";
-import { useNavigate } from "react-router-dom";
 
 type CreateCollectionType = {
     collectionName: string
@@ -19,7 +18,7 @@ export function useCreateCollection() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input:CreateCollectionType) => createCollection(input),
-    onSuccess:(res) => {
+    onSuccess:() => {
       queryClient.invalidateQueries({ queryKey: ["collections"] });
     },
     onError: (error) =>

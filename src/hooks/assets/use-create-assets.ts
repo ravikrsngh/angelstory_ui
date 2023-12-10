@@ -21,7 +21,7 @@ export function useCreateAssets() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input:createAssetType) => createAsset(input),
-    onSuccess:(res) => {
+    onSuccess:() => {
       queryClient.invalidateQueries({ queryKey: ["assets"] });
     },
     onError: (error) =>

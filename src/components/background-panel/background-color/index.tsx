@@ -1,11 +1,14 @@
 import { Disclosure } from "@headlessui/react";
 import { IconPalette } from "@tabler/icons-react";
 import { Sketch } from "@uiw/react-color";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { cn } from "../../../utils";
 import { CanvasContext } from "../../../context/canvasContext";
+import { CanvasContextType } from "../../../types";
 
-const BackgroundColorButton = ({ setBackgroundColor, color }) => {
+
+
+const BackgroundColorButton = ({ setBackgroundColor, color }:{ setBackgroundColor: (value:string) => void, color:string }) => {
   return (
     <button
       className={cn(
@@ -18,9 +21,11 @@ const BackgroundColorButton = ({ setBackgroundColor, color }) => {
 };
 
 export default function BackgroundColorSection() {
-  let { fabricRef, recordChange } = useContext(CanvasContext);
+  const { fabricRef, recordChange } = useContext(
+    CanvasContext as React.Context<CanvasContextType>
+  );
 
-  const setBackgroundColor = (value) => {
+  const setBackgroundColor = (value: string) => {
     fabricRef?.current?.setBackgroundColor(
       value,
       fabricRef?.current?.renderAll.bind(fabricRef?.current)
@@ -63,7 +68,7 @@ export default function BackgroundColorSection() {
                     boxShadow: "none",
                     border: "1px solid rgba(0,0,0,0.15)",
                   }}
-                  color={fabricRef?.current?.backgroundColor}
+                  color={String(fabricRef?.current?.backgroundColor)}
                   onChange={(color) => setBackgroundColor(color.hex)}
                 />
               </Disclosure.Panel>

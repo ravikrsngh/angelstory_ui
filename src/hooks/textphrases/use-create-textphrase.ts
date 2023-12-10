@@ -19,7 +19,7 @@ export function useCreateTextPhrase() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input:createTextPhraseType) => createTextPhrase(input),
-    onSuccess:(res) => {
+    onSuccess:() => {
       queryClient.invalidateQueries({ queryKey: ["textphrase"] });
     },
     onError: (error) =>

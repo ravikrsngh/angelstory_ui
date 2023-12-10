@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   IconBackslash,
   IconCircle,
@@ -9,7 +10,6 @@ import React, { useContext } from "react";
 import { CanvasContext } from "../../context/canvasContext";
 import { CanvasContextType } from "../../types";
 
-import blockArrow1 from './../../assets/block arrows 1.svg';
 
 export default function ShapesPanel() {
   const { fabricRef, recordChange } = useContext(
@@ -79,15 +79,19 @@ export default function ShapesPanel() {
     })
   }
 
-  const onSelectFileFromDevice = (e) => {
-    const file = e.target.files[0];
+  const onSelectFileFromDevice = (e:React.ChangeEvent<HTMLInputElement>) => {
+    if(e.target.files) {
+      const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (e) => {
+        //@ts-ignore
         addSVG(e.target.result);
       };
     }
+    }
+    
   };
 
   return (
@@ -132,12 +136,6 @@ export default function ShapesPanel() {
           className="text-slate-600 hover:text-primary-600"
         >
           <IconBackslash size={40} />
-        </button>
-        <button
-          onClick={addSVG}
-          className="text-slate-600 hover:text-primary-600"
-        >
-          <img src={blockArrow1} className="w-auto h-10"/>
         </button>
       </div>
     </div>

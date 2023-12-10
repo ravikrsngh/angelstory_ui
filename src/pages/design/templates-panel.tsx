@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
 import { useContext, useEffect } from "react";
 import { CanvasContext } from "../../context/canvasContext";
 import { useGetAllTemplate } from "../../hooks/templates/use-get-all-templates";
-import { CanvasContextType, TemplateType } from "../../types";
+import { CanvasContextType} from "../../types";
 import { useGetTemplateDetails } from "../../hooks/templates/use-get-template-details";
 
 const TemplateCard = ({details}) => {

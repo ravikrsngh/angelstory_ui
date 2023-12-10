@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
 import { IconX } from "@tabler/icons-react";
 import { Sketch } from "@uiw/react-color";
-import React from "react";
 
 export default function ColorPallete({ color, onChange, displayColorPallete }) {
   return (

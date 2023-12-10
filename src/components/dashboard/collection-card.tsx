@@ -3,7 +3,7 @@ import { CollectionCardType } from "../../types";
 import { useDeleteCollection } from "../../hooks/collection/use-delete-collection";
 import { useNavigate } from "react-router-dom";
 
-export const CollectionCard = ({ id, name, bgColor }: CollectionCardType) => {
+export const CollectionCard = ({ id, name }: CollectionCardType) => {
   const navigate = useNavigate()
   const deleteCollectionHook = useDeleteCollection()
   const deleteCollection = () => {

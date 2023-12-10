@@ -1,5 +1,5 @@
-// s3Service.js
-
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 const client = new S3Client({

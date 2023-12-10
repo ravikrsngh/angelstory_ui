@@ -1,7 +1,8 @@
 import { IconArrowsMaximize, IconAspectRatio } from "@tabler/icons-react";
 import { BackgroundImageOptions } from "./backgroud-image-options";
+import { BackgroundSizePropType } from "../../../types";
 
-export default function BackgroundImageSize({ size, setSize }) {
+export default function BackgroundImageSize({ size, setSize}: BackgroundSizePropType) {
   return (
     <div className="bg-image-positions">
       <h5 className="text-xs text-primary-600 font-medium mb-3">Size</h5>

@@ -1,18 +1,21 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment, useContext } from "react";
 import { CanvasContext } from "../../context/canvasContext";
 import { fabric } from "fabric";
 import * as JSZip from 'jszip';
-import { dataURLtoBlob } from "../../utils";
 import { IconDownload } from "@tabler/icons-react";
+import { CanvasContextType } from "../../types";
 
 export const DownloadButton = () => {
-    let { fabricRef, slides } = useContext(CanvasContext);
+    const { fabricRef, slides } = useContext(
+      CanvasContext as React.Context<CanvasContextType>
+    );
 
   const downloadImage = () => {
-    let img = new Image();
-    img.src = fabricRef.current.toDataURL({ format: "png" });
-    let link = document.createElement("a");
+    const img = new Image();
+    img.src = fabricRef.current?.toDataURL({ format: "png" }) || '';
+    const link = document.createElement("a");
     link.href = img.src;
     link.download = "abc.png";
     link.click();
@@ -23,7 +26,9 @@ export const DownloadButton = () => {
     for (let index = 0; index < slides.length; index++) {
       const virtualCanvas = new fabric.Canvas('');
       virtualCanvas.setDimensions({
+        //@ts-ignore
         width: fabricRef.current.getWidth()/fabricRef.current.getZoom(),
+        //@ts-ignore
         height: fabricRef.current.getHeight()/fabricRef.current.getZoom()
       });
       virtualCanvas.loadFromJSON(slides[index].content, () => {

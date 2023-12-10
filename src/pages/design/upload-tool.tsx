@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
 import { Tab } from "@headlessui/react";
 import { cn } from "../../utils";
 import { useContext, useState } from "react";

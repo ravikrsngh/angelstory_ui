@@ -1,8 +1,9 @@
 import * as HoverCard from "@radix-ui/react-hover-card"
 import { useDeleteProject } from "../../hooks/project/use-delete-project"
 import { Link, useParams } from "react-router-dom"
+import { DesignType } from "../../types"
 
-export const CollectionProjectCard = ({projData}) => {
+export const CollectionProjectCard = ({projData}:{projData: DesignType}) => {
     const params = useParams()
     const deleteProjectHook = useDeleteProject()
 

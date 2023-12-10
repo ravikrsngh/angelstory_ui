@@ -1,5 +1,5 @@
 import * as Tooltip from "@radix-ui/react-tooltip";
-import React from "react";
+import { BackgroundImageOptionsPropsType } from "../../../types";
 
 export function BackgroundImageOptions({
   icon,
@@ -7,7 +7,7 @@ export function BackgroundImageOptions({
   value,
   isActive,
   action,
-}) {
+}: BackgroundImageOptionsPropsType) {
   return (
     <Tooltip.Provider>
       <Tooltip.Root>

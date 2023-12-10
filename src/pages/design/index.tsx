@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useParams } from "react-router-dom";
 import { useGetProjectDetails } from "../../hooks/project/use-get-project";
 import Design from "./design";
@@ -20,7 +21,7 @@ export const DesignLoader = () => {
     );
   }
 
-  const saveProject = (obj: { formattedData: string }) => {
+  const saveProject = (obj: { formattedData?: string; name?: string }) => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -37,6 +38,7 @@ export const DesignLoader = () => {
         projectType: data?.projectType,
         width: data?.width,
       };
+      // @ts-ignore
       saveProjectHook.mutate({ ...projData, ...obj });
     }, 5000);
   };

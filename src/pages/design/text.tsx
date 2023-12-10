@@ -1,13 +1,14 @@
-import { IconRectangle } from "@tabler/icons-react";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
 import { fabric } from "fabric";
 import { useContext } from "react";
 import { CanvasContext } from "../../context/canvasContext";
 
 export default function TextPanel() {
-  let { fabricRef, recordChange } = useContext(CanvasContext);
+  const { fabricRef, recordChange } = useContext(CanvasContext);
 
   const addHeading = (size) => {
-    let text = new fabric.IText("Enter your text here", {
+    const text = new fabric.IText("Enter your text here", {
       left: 100,
       top: 100,
       fontSize: parseInt(size / fabricRef.current.getZoom()),

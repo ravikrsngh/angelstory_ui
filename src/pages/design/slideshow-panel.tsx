@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
 import { IconPlayerPlay } from "@tabler/icons-react";
 import React, { useContext, useState } from "react";
 import {
@@ -33,17 +35,17 @@ const Slide = ({
     }
   };
 
-  const onSelectMusic = (event) => {
+  const onSelectMusic = (event:React.ChangeEvent) => {
     const file = event.target.files[0];
     if (file) {
-      const objectUrl = URL.createObjectURL(file);
+      // const objectUrl = URL.createObjectURL(file);
       setSelectedMusic({ name: file.name, url: "https://www.computerhope.com/jargon/m/example.mp3", startTime: 0, duration: 0 });
     }
   };
 
   const changeDuration = (e, index) => {
     console.log(e.target.value, index)
-    let slides_copy = [...slides]
+    const slides_copy = [...slides]
     slides_copy[index].duration = parseInt(e.target.value)
     setSlides(slides_copy)
   }

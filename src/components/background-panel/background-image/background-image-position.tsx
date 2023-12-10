@@ -6,8 +6,9 @@ import {
   IconBoxAlignBottomRight,
 } from "@tabler/icons-react";
 import { BackgroundImageOptions } from "./backgroud-image-options";
+import { BackgroundPositionPropType } from "../../../types";
 
-export default function BackgroundImagePosition({ position, setPosition }) {
+export default function BackgroundImagePosition({ position, setPosition }: BackgroundPositionPropType) {
   return (
     <div className="bg-image-positions mb-4">
       <h5 className="text-xs text-primary-600 font-medium mb-3">Position</h5>
