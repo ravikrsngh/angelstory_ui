@@ -5,8 +5,9 @@ import { useGetStockImages } from "../../hooks/others/use-stock-photos";
 import { fabric } from "fabric";
 import { CanvasContext } from "../../context/canvasContext";
 import { CanvasContextType } from "../../types";
-import AWS from "aws-sdk";
 import { uploadFileToS3 } from "../../service/aws";
+import { useCreateAssets } from "../../hooks/assets/use-create-assets";
+import { useParams } from "react-router-dom";
 
 export default function UploadToolPanel() {
   const { fabricRef, recordChange} = useContext(
@@ -14,6 +15,8 @@ export default function UploadToolPanel() {
   );
   const [searchQuery, setSearchQuery] = useState('');
   const {data, isLoading, isFetching, isError} = useGetStockImages(searchQuery);
+  const createAssetHook = useCreateAssets()
+  const params = useParams()
 
   const addImage = (url: string) => {
     const img = new Image();
@@ -34,11 +37,17 @@ export default function UploadToolPanel() {
   const onSelectFileFromDevice = (e) => {
     let file = e.target.files[0];
     if (file) {
-      // uploadFileToS3(file, import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME, file.name )
+      uploadFileToS3(file, import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME, file.name )
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (e) => {
-        console.log(e.target.result)
+        // createAssetHook.mutate({
+          
+        //   assetType:"IMAGE",
+        //   assetUrl: e.target?.result,
+        //   projectId: parseInt(params.projectId),
+        //   collectionId: parseInt(params.collectionId)
+        // })
         addImage(e.target.result);
       };
     }

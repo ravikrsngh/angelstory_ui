@@ -12,7 +12,7 @@ import AccountSetting from "../components/account-dashboard/account-setting";
 import ChangePassword from "../components/account-dashboard/change-password";
 import YourTemplates from "../components/account-dashboard/your-templates";
 import { IconChevronDown } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+
 import { Dropdown } from "../components/ui/dropdown";
 
 const navigation = [

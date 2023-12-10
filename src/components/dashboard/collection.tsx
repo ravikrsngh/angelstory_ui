@@ -24,10 +24,11 @@ export const DashboardCollection = () => {
     setIsOpen(true);
   }
 
-  const handleSubmitCreateCollection = (e) => {
+  const handleSubmitCreateCollection = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(e.target.collection.value)
-    createCollectionHook.mutate({collectionName: e.target.collection.value})
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form)
+    createCollectionHook.mutate({collectionName: formData.get('collection') as string})
   }
 
   if(isLoading || isFetching) {

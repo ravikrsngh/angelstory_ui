@@ -1,12 +1,12 @@
 import { Tab } from "@headlessui/react";
 import { cn } from "../utils";
-import { useState } from "react";
+import React, { useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { IconX } from "@tabler/icons-react";
 
 export default function CollectionAssets() {
-  let [itemsSelected, setItemsSelected] = useState(0);
-  const itemChecked = (e: any) => {
+  const [itemsSelected, setItemsSelected] = useState<number>(0);
+  const itemChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       setItemsSelected((prev) => prev + 1);
     } else {

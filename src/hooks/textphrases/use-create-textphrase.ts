@@ -3,24 +3,24 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { HTTPError } from "ky";
 import toast from "react-hot-toast";
 import { userAuthClient } from "..";
-import { useNavigate } from "react-router-dom";
 
-type CreateCollectionType = {
-    collectionName: string
-};
+type createTextPhraseType = {
+    formattedData: string;
+    previewImg: string
+}
 
-const createCollection = (input:CreateCollectionType) => {
+const createTextPhrase = (input:createTextPhraseType) => {
       return userAuthClient
-        .post("collections", { json: input })
+        .post("textphrases", { json: input })
         .json()
 }
 
-export function useCreateCollection() {
+export function useCreateTextPhrase() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input:CreateCollectionType) => createCollection(input),
+    mutationFn: (input:createTextPhraseType) => createTextPhrase(input),
     onSuccess:(res) => {
-      queryClient.invalidateQueries({ queryKey: ["collections"] });
+      queryClient.invalidateQueries({ queryKey: ["textphrase"] });
     },
     onError: (error) =>
       error instanceof HTTPError && toast.error(error.message),

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Input } from "./ui/input";
 import { IconBrandGoogle, IconBrandMeta } from "@tabler/icons-react";
 import { useSingUp } from "../hooks/user/use-signup";
@@ -12,16 +12,16 @@ export default function SignUp() {
 
   const signup = useSingUp();
 
-  const handleSubmitSignUp = (e) => {
+  const handleSubmitSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const name = e.target.name.value;
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-    console.log("hey")
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
     signup.mutate({name:name, email:email, password:password}, {
       onSuccess: (response) => {
-        console.log(response)
-        userId.value = response.userId;
+        userId.value = (response as {userId:number}).userId;
         toast.success("OTP sent successfully to your email");
         setSetEnterOTP(true);
       }
@@ -29,7 +29,7 @@ export default function SignUp() {
   }
 
   if(showEnterOTP) {
-    return <EnterOTP onVerifyOTP={()=> {}}/>
+    return <EnterOTP/>
   }
 
   return (

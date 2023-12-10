@@ -107,26 +107,51 @@ export type CollectionCardType = {
 export type CreateProjectInputType = {
   collectionId: string | null | number;
   formattedData: string | null;
-  height: string | null;
+  height: number | null;
   name: string;
   projectType: string | null;
-  width: string | null;
+  width: number | null;
   previewImage: string | null;
 };
 
 export type CreateProjectPropType = {
   displayCreateProject: boolean;
   setDisplayCreateProject: Dispatch<SetStateAction<boolean>>;
-  step: number;
-  initalValue: {
-    width: string | null;
-    height: string | null;
-    projectType: string | null;
-  }
+  initialStep: number;
+  initalValue: CreateProjectInputType;
 };
 
 export type CreateProjectStepPropType = {
   projData: CreateProjectInputType,
   setProjData: Dispatch<SetStateAction<CreateProjectInputType>>;
   setStep: Dispatch<SetStateAction<number>>
+}
+
+
+
+export type SizeResType = {
+  id:number;
+  width: number;
+  height: number;
+  label: string;
+}
+
+
+export type DesignUpdateType = {
+  width: number;
+  height: number;
+  formattedData: string;
+  projectType: string;
+  name: string;
+  collectionId: number;
+  previewImage: string
+}
+
+export type DesignLoaderPropType = {
+  ratio: number;
+  originalWidth: number;
+  name: string;
+  projectType: string;
+  saveProject: (obj: { formattedData: string }) => void;
+  initialSlides: SlideType[]
 }

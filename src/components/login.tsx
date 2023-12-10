@@ -7,9 +7,11 @@ export default function Login() {
 
   const loginHook = useLogin();
 
-  const handleSubmitLogin = (e) => {
+  const handleSubmitLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    loginHook.mutate({username: e.target.email.value, password: e.target.password.value});
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    loginHook.mutate({username: formData.get('email') as string, password:formData.get('password') as string});
   }
 
   return (

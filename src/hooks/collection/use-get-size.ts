@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { userAuthClient } from "..";
-import { CollectionType } from "../../types";
+import { SizeResType } from "../../types";
 
 const getAllSizes = () => {
-  return userAuthClient.get("sizes/getAll").json<CollectionType[]>();
+  return userAuthClient.get("sizes/getAll").json<SizeResType[]>();
 };
 
 export function useGetAllSizes() {

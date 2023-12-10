@@ -5,10 +5,10 @@ import { useSaveProject } from "../../hooks/project/use-save-project";
 import { useRef } from "react";
 
 export const DesignLoader = () => {
-  const timeoutRef = useRef<unknown>(null);
+  const timeoutRef = useRef<number>(null);
   const params = useParams();
   const { data, isLoading, isFetching } = useGetProjectDetails(
-    params.projectId
+    parseInt(params.projectId? params.projectId : "-1")
   );
   const saveProjectHook = useSaveProject()
 
@@ -20,37 +20,45 @@ export const DesignLoader = () => {
     );
   }
 
-  const saveProject = (obj) => {
-    clearTimeout(timeoutRef.current);
+  const saveProject = (obj: { formattedData: string }) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     timeoutRef.current = setTimeout(() => {
-      let projData = {
-        collectionId: data.collectionId,
-        formattedData: data.formattedData,
-        height: data.height,
-        name: data.name,
-        previewImage: data.previewImage,
-        projectId: data.id,
-        projectType: data.projectType,
-        width: data.width
-      }
-      saveProjectHook.mutate({...projData, ...obj})
-    }, 5000)
-  }
+      const projData = {
+        collectionId: data?.collectionId,
+        formattedData: data?.formattedData,
+        height: data?.height,
+        name: data?.name,
+        previewImage: data?.previewImage,
+        projectId: data?.id,
+        projectType: data?.projectType,
+        width: data?.width,
+      };
+      saveProjectHook.mutate({ ...projData, ...obj });
+    }, 5000);
+  };
 
   console.log(data);
 
   return (
-    <Design
-      originalWidth={data.width}
-      ratio={data.height / data.width}
-      initialSlides={
-        data.formattedData
-          ? JSON.parse(data.formattedData)
-          : [{ content: "", duration: 2, previewImg: "", history: [] }]
-      }
-      name={data.name}
-      projectType = {data.projectType}
-      saveProject = {saveProject}
-    />
+    <>
+      {data ? (
+        <Design
+          originalWidth={data?.width}
+          ratio={data.height / data.width}
+          initialSlides={
+            data.formattedData
+              ? JSON.parse(data.formattedData)
+              : [{ content: "", duration: 2, previewImg: "", history: [] }]
+          }
+          name={data.name}
+          projectType={data.projectType}
+          saveProject={saveProject}
+        />
+      ) : null}
+    </>
   );
 };

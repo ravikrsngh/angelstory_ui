@@ -1,4 +1,3 @@
-import React from "react";
 import AccountDashboardHeading from "./account-dashboard-heading";
 import { Tab } from "@headlessui/react";
 import { cn } from "../../utils";

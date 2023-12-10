@@ -5,9 +5,8 @@ import { useGetAllCollectionForUser } from "../hooks/collection/use-get-collecti
 import Cookies from "js-cookie";
 import { useCreateCollection } from "../hooks/collection/use-create-collection";
 import toast from "react-hot-toast";
-import { CreateProjectInputType, CreateProjectPropType, CreateProjectStepPropType } from "../types";
+import { CreateProjectInputType, CreateProjectPropType, CreateProjectStepPropType, SizeResType } from "../types";
 import { useCreateProject } from "../hooks/project/use-create-project";
-import { useNavigate } from "react-router-dom";
 
 const SelectProjectTypeSection = ({ setProjData, setStep }: CreateProjectStepPropType) => {
 
@@ -47,7 +46,7 @@ const SelectProjectSizeSection = ({ setProjData, setStep }:CreateProjectStepProp
 
     const {data, isLoading, isFetching} = useGetAllSizes()
 
-    const selectProjectSize = (width, height) => {
+    const selectProjectSize = (width: number, height: number) => {
         setProjData((prev) => {
             const temp = {...prev}
             temp.width = width
@@ -73,7 +72,7 @@ const SelectProjectSizeSection = ({ setProjData, setStep }:CreateProjectStepProp
         Choose a Size
       </Dialog.Title>
       <div className="flex overflow-x-auto gap-4 items-center mt-10  md:mt-16">
-        {data?.map((size) => (
+        {data?.map((size: SizeResType) => (
             <div key={size.id} onClick={() => selectProjectSize(size.width, size.height)} style={{aspectRatio: `${size.width/size.height}`}} className="p-4 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
             {" "}
             <span className="text-sm text-center">{size.label}</span>{" "}
@@ -97,10 +96,11 @@ const SelectCollectionSection = ({ projData, setProjData }: CreateProjectStepPro
       })
     }
 
-    const handleSubmitCreateCollection = (e) => {
+    const handleSubmitCreateCollection = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(e.target.collection.value)
-        createCollectionHook.mutate({collectionName: e.target.collection.value})
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        createCollectionHook.mutate({collectionName: e.target.collection.value}) 
       }
 
       const createNewProject = async () => {
@@ -130,7 +130,7 @@ const SelectCollectionSection = ({ projData, setProjData }: CreateProjectStepPro
       <form className="mt-6 md:mt-10 overflow-y-auto max-h-52">
         {data?.map((c) => (
             <div key={c.id} className="bg-primary-50 px-4 flex items-center gap-2 mb-4">
-                <input type="radio" name="collection" id={`collection${c.id}`} onChange={(e) => selectThisCollection(c.id)} />
+                <input type="radio" name="collection" id={`collection${c.id}`} onChange={() => selectThisCollection(c.id)} />
                 <label htmlFor={`collection${c.id}`} className="grow h-full block text-sm md:text-base py-3 md:py-4">{c.name}</label>
             </div>
         ) )}
@@ -147,19 +147,13 @@ const SelectCollectionSection = ({ projData, setProjData }: CreateProjectStepPro
 };
 
 export const CreateProject = ({
+  initialStep,
+  initalValue,
   displayCreateProject,
   setDisplayCreateProject,
 }:CreateProjectPropType) => {
-  const [step, setStep] = useState<number>(1);
-  const [projData, setProjData] = useState<CreateProjectInputType>({
-    collectionId: null,
-    height: null,
-    name: "Untitled",
-    projectType: null,
-    width: null,
-    formattedData: '',
-    previewImage: ''
-  });
+  const [step, setStep] = useState<number>(initialStep);
+  const [projData, setProjData] = useState<CreateProjectInputType>(initalValue);
 
   const closeProjectModal = () => {
     setStep(1)

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import {
@@ -19,25 +20,32 @@ import TextPanel from "./text";
 import LayersPanel from "./layers";
 import EditorHeader from "../../components/editor/editor-header";
 import SlideshowPanel from "./slideshow-panel";
-import { SlideType } from "../../types";
+import { DesignLoaderPropType, SlideType } from "../../types";
 import { TemplatePanel } from "./templates-panel";
 import { ToolBarButton } from "../../components/editor/toolbar-btn";
 import { MobileToolbar } from "../../components/editor/mobile/mobile-toolbar";
+import { useCreateTextPhrase } from "../../hooks/textphrases/use-create-textphrase";
+import WebFont from "webfontloader";
 
-export default function Design({ratio, originalWidth, initialSlides, name, projectType, saveProject}) {
-  const timeoutRef = useRef<unknown>(null);
+export default function Design({ratio, originalWidth, initialSlides, name, projectType, saveProject}: DesignLoaderPropType) {
+  const timeoutRef = useRef<number>(null);
   const fabricRef = useRef<fabric.Canvas | null>(null);
   const historyRef = useRef<(string | null)[]>([null]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [slideshowMode, setSlideShowMode] = useState<boolean>(false);
   const [slides, setSlides] = useState<SlideType[]>(initialSlides);
   const [activeSlide, setActiveSlide] = useState<number>(0);
+
+  const createTextPhraseHook = useCreateTextPhrase()
   
 
   const recordChange = () => {
     fabricRef.current?.renderAll();
-    clearTimeout(timeoutRef.current);
-
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     timeoutRef.current = setTimeout(() => {
       console.log("modified");
       historyRef.current.push(JSON.stringify(fabricRef.current));
@@ -55,15 +63,15 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
     }, 500);
   };
 
-  const extractFontFamilies = (objects) => {
-    const fontFamilies = new Set();
-    objects.forEach((obj) => {
-      if (obj.type === 'i-text' && obj.fontFamily) {
-        fontFamilies.add(obj.fontFamily);
-      }
-    });
-    return Array.from(fontFamilies);
-  };
+  // const extractFontFamilies = (objects) => {
+  //   const fontFamilies = new Set();
+  //   objects.forEach((obj) => {
+  //     if (obj.type === 'i-text' && obj.fontFamily) {
+  //       fontFamilies.add(obj.fontFamily);
+  //     }
+  //   });
+  //   return Array.from(fontFamilies);
+  // };
 
   const updateTabIndexes = (index: number) => {
     fabricRef.current?.discardActiveObject().renderAll();
@@ -84,6 +92,8 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
       const last_snapshot = historyRef.current.pop();
       if(last_snapshot == '' || last_snapshot == null) {
         fabricRef.current.clear();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         fabricRef.current.set({
           backgroundColor:"#fff"
         })
@@ -93,12 +103,58 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
     }
   };
 
+  const convertToTextPhrase = () => {
+    if (fabricRef.current) {
+      const allObjects = fabricRef.current.getObjects();
+      console.log(allObjects);
+      if (allObjects.length > 1) {
+        const group = new fabric.Group(allObjects, {
+          originX: "center",
+          originY: "center",
+        });
+        console.log();
+        fabricRef.current.discardActiveObject().renderAll();
+        fabricRef.current.add(group);
+        createTextPhraseHook.mutate({
+          formattedData: JSON.stringify(JSON.stringify(group.toObject())),
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          previewImg: group.toDataURL('png'),
+        });
+      }
+    }
+  };
+
+  const importTextFromJSON = () => {
+    const jsonData = '{"type":"group","version":"5.3.0","originX":"center","originY":"center","left":400.69,"top":285.36,"width":560.21,"height":361.56,"fill":"rgb(0,0,0)","stroke":null,"strokeWidth":0,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":false,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"objects":[{"type":"i-text","version":"5.3.0","originX":"left","originY":"top","left":-254.93,"top":-180.78,"width":534.04,"height":266.05,"fill":"#1167bd","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":false,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"fontFamily":"Akatab","fontWeight":"bold","fontSize":109,"text":"Enter your \ntext here","underline":false,"overline":false,"linethrough":false,"textAlign":"center","fontStyle":"normal","lineHeight":1.16,"textBackgroundColor":"","charSpacing":0,"styles":[],"direction":"ltr","path":null,"pathStartOffset":0,"pathSide":"left","pathAlign":"baseline"},{"type":"i-text","version":"5.3.0","originX":"left","originY":"top","left":-280.1,"top":102.94,"width":541.88,"height":76.84,"fill":"black","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":false,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"fontFamily":"Times New Roman","fontWeight":"normal","fontSize":68,"text":"Enter your text here","underline":false,"overline":false,"linethrough":false,"textAlign":"left","fontStyle":"normal","lineHeight":1.16,"textBackgroundColor":"","charSpacing":0,"styles":[],"direction":"ltr","path":null,"pathStartOffset":0,"pathSide":"left","pathAlign":"baseline"}]}'
+    const json = JSON.parse(jsonData.replace('\n', 'n-n-n'));
+    const fontFamilies = []
+    for (let i = 0; i < json.objects.length; i++) {
+      fontFamilies.push(json.objects[i]['fontFamily'])
+      const txt = json.objects[i].text.replace('n-n-n','\n')
+      delete json.objects[i]['text']
+      fabricRef.current?.add(new fabric.IText(txt, {...json.objects[i], "left": (json['left'] +  json.objects[i]['left']), "top": (json['top'] + json.objects[i]['top']) }));
+    }
+    console.log(fontFamilies)
+    WebFont.load({
+      google: {
+        families: fontFamilies,
+      },
+      active: () => {
+        recordChange();
+      }
+    })
+  };
+
   const onKeyPress = (e: KeyboardEvent) => {
+    console.log(e)
     if(fabricRef.current) {
       if (e.key == "Delete") {
         deleteObject()
       } else if (e.ctrlKey && (e.key === "z" || e.code == "KeyZ")) {
         goBackInHistory()
+      } else if (e.ctrlKey && (e.key === "q" || e.code == "KeyQ")) {
+        convertToTextPhrase()
       }
     }
   };
@@ -108,16 +164,16 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
       const activeObject = fabricRef.current._activeObject;
       switch (e.key) {
         case 'ArrowUp':
-          activeObject.set({ top: activeObject.top - 1 });
+          activeObject.set({ top: (activeObject.top || 0) - 1 });
           break;
         case 'ArrowDown':
-          activeObject.set({ top: activeObject.top + 1 });
+          activeObject.set({ top: (activeObject.top || 0) + 1 });
           break;
         case 'ArrowLeft':
-          activeObject.set({ left: activeObject.left - 1 });
+          activeObject.set({ left: (activeObject.left || 0) - 1 });
           break;
         case 'ArrowRight':
-          activeObject.set({ left: activeObject.left + 1 });
+          activeObject.set({ left: (activeObject.left || 0) + 1 });
           break;
         default:
           break;
@@ -146,6 +202,7 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
 
   //   Functions to set the width and height of the canvas and add scaling.
 
+  // @ts-ignore
   const setCanvasSizeAndZoom = (container_width, container_height) => {
     console.log(container_width, container_height);
     const temp_height = container_width * ratio;
@@ -184,10 +241,8 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
       fabricRef.current.renderAll();
     }
 
-    
-
     resizeObserver.observe(document.querySelector(".observe"))
-
+    
     window.addEventListener('keypress', onKeyPress)
     window.addEventListener('keydown', onKeyDown)
     return () => {
@@ -266,7 +321,11 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
                   icon={<IconSlideshow color="rgb(30 83 134)" size={26} />}
                   label="Slideshow"
                 />
+                
               </div> : null }
+              <button onClick={importTextFromJSON}>
+                  Import
+                </button>
               
               <Tab className="outline-none"></Tab>
             </Tab.List>

@@ -1,4 +1,3 @@
-import React from "react";
 import TemplatesGrid from "../components/templates-grid";
 import AccountDashboardHeading from "../components/account-dashboard/account-dashboard-heading";
 

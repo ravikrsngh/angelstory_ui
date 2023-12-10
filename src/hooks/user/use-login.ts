@@ -5,12 +5,16 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 import { userClient } from "..";
-import { userId } from "../../signals/user-signal";
 
 type LoginInputType = {
   username: string;
   password: string;
 };
+
+type LoginResType = {
+  jwtToken:string;
+  userId: string
+}
 
 const login = (input:LoginInputType) => {
       return userClient
@@ -24,8 +28,8 @@ export function useLogin() {
     mutationFn: (input:LoginInputType) => login(input),
     onSuccess: (res) => {
         console.log(res);
-        Cookies.set('access', res.jwtToken);
-        Cookies.set('user', res.userId);
+        Cookies.set('access', (res as LoginResType).jwtToken);
+        Cookies.set('user', (res as LoginResType).userId);
         toast.success("Login successful.");
         navigate('/dashboard')
     },

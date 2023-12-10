@@ -2,15 +2,18 @@ import { useVerifyUser } from "../hooks/user/use-verify-user";
 import { Input } from "./ui/input";
 import { IconBrandGoogle, IconBrandMeta } from "@tabler/icons-react";
 import { userId } from "../signals/user-signal";
+import React from "react";
 
-export default function EnterOTP({onVerifyOTP}) {
+export default function EnterOTP() {
 
     
   const verifyUser = useVerifyUser();
 
-  const handleSubmitOTP = (e) => {
+  const handleSubmitOTP = (e: React.FormEvent) => {
     e.preventDefault();
-    const otp = e.target.otp.value;
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form)
+    const otp = formData.get('otp') as string
     verifyUser.mutate({userId:userId.value, otp: otp})
   }
 
