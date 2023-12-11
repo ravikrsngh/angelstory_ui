@@ -6,8 +6,8 @@ import { CollectionProjects } from "../components/collection/collection-projects
 
 const CollectionAssets = () => {
   return (
-    <div className="mt-10">
-        <h4 className="font-medium mb-10 text-xl flex justify-between items-center">
+    <div className="lg:mt-10">
+        <h4 className="font-medium mb-5 md:mb-10 text-xl flex justify-between items-center">
           Assets
         </h4>
         <div>
@@ -18,7 +18,7 @@ const CollectionAssets = () => {
                   {({ selected }) => (
                     <button
                       className={cn(
-                        "px-10 py-3 font-medium",
+                        "px-3 md:px-10 py-3 font-medium",
                         selected
                           ? "text-primary-400 border-b-2 border-primary-400"
                           : ""
@@ -32,7 +32,7 @@ const CollectionAssets = () => {
                   {({ selected }) => (
                     <button
                       className={cn(
-                        "px-10 py-3 font-medium",
+                        "px-3 md:px-10 py-3 font-medium",
                         selected
                           ? "text-primary-400 border-b-2 border-primary-400"
                           : ""
@@ -42,16 +42,16 @@ const CollectionAssets = () => {
                     </button>
                   )}
                 </Tab>
-                <Link className="ml-auto" to="/collection/assets">
+                <Link className="ml-auto text-xs md:text-sm lg:text-base" to="/collection/assets">
                   View all assets
                 </Link>
               </div>
             </Tab.List>
             <Tab.Panels>
               <Tab.Panel>
-                <div className="flex gap-4">
+                <div className="flex gap-4 overflow-auto">
                   <div>
-                    <div className="w-52 h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
+                    <div className="w-[180px] h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
                       <HoverCard.Root>
                         <HoverCard.Trigger className="flex gap-1 absolute top-3 right-3">
                           <div className="bg-primary-600 h-2 w-2 rounded-full"></div>
@@ -74,7 +74,7 @@ const CollectionAssets = () => {
                     </div>
                   </div>
                   <div>
-                    <div className="w-52 h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
+                    <div className="w-[180px] h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
                       <HoverCard.Root>
                         <HoverCard.Trigger className="flex gap-1 absolute top-3 right-3">
                           <div className="bg-primary-600 h-2 w-2 rounded-full"></div>
@@ -115,10 +115,10 @@ const CollectionAssets = () => {
 
 export default function Collection() {
   return (
-    <div className="px-16 py-8 flex flex-col gap-10">
-      <div className="relative rounded-md overflow-hidden p-10 pt-[200px] bg-primary-200 text-primary-950">
-        <span className="text-sm">Collection</span>
-        <h4 className="text-5xl font-medium">Ravi</h4>
+    <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-10">
+      <div className="relative rounded-md overflow-hidden p-4 pt-10 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] bg-primary-200 text-primary-950">
+        <span className="text-xs md:text-sm">Collection</span>
+        <h4 className="text-3xl md:text-4xl lg:text-5xl font-medium">Ravi</h4>
       </div>
       <CollectionAssets />
       <CollectionProjects />

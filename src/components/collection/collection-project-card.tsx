@@ -12,7 +12,7 @@ export const CollectionProjectCard = ({projData}:{projData: DesignType}) => {
     }
     return (
         <Link to={`/design/${params.collectionId}/${projData.id}`}>
-              <div className="w-52 h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
+              <div className="w-[180px] h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
                 <HoverCard.Root>
                   <HoverCard.Trigger className="flex gap-1 absolute top-3 right-3">
                     <div className="bg-primary-600 h-2 w-2 rounded-full"></div>

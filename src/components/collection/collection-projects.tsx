@@ -16,7 +16,7 @@ export const CollectionProjects = () => {
           <h4 className="font-medium mb-10 text-xl flex justify-between items-center">
             Journies
           </h4>
-          <div className="flex gap-4">
+          <div className="flex gap-4 overflow-auto">
             {data?.map((proj:DesignType) => <CollectionProjectCard key={proj.id} projData={proj} /> )}
           </div>
         </div>
