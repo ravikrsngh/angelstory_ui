@@ -9,14 +9,14 @@ const beforeErrorHook = async (error: HTTPError) => {
   };
   
   export const userClient = ky.extend({
-    prefixUrl: 'http://52.56.110.44:8080/',
+    prefixUrl: 'http://13.40.189.218:8080/',
     hooks: {
       beforeError: [beforeErrorHook],
     },
   });
 
   export const userAuthClient = ky.extend({
-    prefixUrl: 'http://52.56.110.44:8080/',
+    prefixUrl: 'http://13.40.189.218:8080/',
     hooks: {
       beforeRequest: [
         (request) => {
@@ -29,14 +29,14 @@ const beforeErrorHook = async (error: HTTPError) => {
   });
   
   export const templateClient = ky.extend({
-    prefixUrl: 'http://52.56.110.44:8081/',
+    prefixUrl: 'http://13.40.189.218:8081/',
     hooks: {
       beforeError: [beforeErrorHook],
     },
   });
 
   export const templateAuthClient = ky.extend({
-    prefixUrl: 'http://52.56.110.44:8081/',
+    prefixUrl: 'http://13.40.189.218:8081/',
     hooks: {
       beforeRequest: [
         (request) => {
