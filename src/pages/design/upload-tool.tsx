@@ -10,15 +10,19 @@ import { CanvasContextType } from "../../types";
 import { uploadFileToS3 } from "../../service/aws";
 import { useCreateAssets } from "../../hooks/assets/use-create-assets";
 import { useParams } from "react-router-dom";
+import Cookies from "js-cookie";
 
 export default function UploadToolPanel() {
-  const { fabricRef, recordChange} = useContext(
+  const { fabricRef, recordChange } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
-  const [searchQuery, setSearchQuery] = useState('');
-  const {data, isLoading, isFetching, isError} = useGetStockImages(searchQuery);
-  const createAssetHook = useCreateAssets()
-  const params = useParams()
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data, isLoading, isFetching, isError } =
+    useGetStockImages(searchQuery);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const createAssetHook = useCreateAssets();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const params = useParams();
 
   const addImage = (url: string) => {
     const img = new Image();
@@ -33,46 +37,49 @@ export default function UploadToolPanel() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setSearchQuery(e.target.search.value)
-  }
+    setSearchQuery(e.target.search.value);
+  };
 
   const onSelectFileFromDevice = (e) => {
-    let file = e.target.files[0];
+    const file = e.target.files[0];
     if (file) {
-      uploadFileToS3(file, import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME, file.name )
+      uploadFileToS3(
+        file,
+        `${import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME}`,
+        `users/${Cookies.get("user")}/project/${file.name}`
+      );
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (e) => {
         // createAssetHook.mutate({
-          
-        //   assetType:"IMAGE",
+        //   assetType: "IMAGE",
         //   assetUrl: e.target?.result,
         //   projectId: parseInt(params.projectId),
-        //   collectionId: parseInt(params.collectionId)
-        // })
+        //   collectionId: parseInt(params.collectionId),
+        // });
         addImage(e.target.result);
       };
     }
   };
 
- 
-
   if (isLoading || isFetching) {
     return (
       <>
-      <div className="p-5">
-        <span>Loading ...</span>
-        </div></>
-    )
+        <div className="p-5">
+          <span>Loading ...</span>
+        </div>
+      </>
+    );
   }
 
   if (isError) {
     return (
       <>
-      <div className="p-5">
-        <span>Something went wrong ...</span>
-        </div></>
-    )
+        <div className="p-5">
+          <span>Something went wrong ...</span>
+        </div>
+      </>
+    );
   }
 
   return (

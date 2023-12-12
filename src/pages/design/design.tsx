@@ -25,9 +25,15 @@ import { TemplatePanel } from "./templates-panel";
 import { ToolBarButton } from "../../components/editor/toolbar-btn";
 import { MobileToolbar } from "../../components/editor/mobile/mobile-toolbar";
 import { useCreateTextPhrase } from "../../hooks/textphrases/use-create-textphrase";
-import WebFont from "webfontloader";
 
-export default function Design({ratio, originalWidth, initialSlides, name, projectType, saveProject}: DesignLoaderPropType) {
+export default function Design({
+  ratio,
+  originalWidth,
+  initialSlides,
+  name,
+  projectType,
+  saveProject,
+}: DesignLoaderPropType) {
   const timeoutRef = useRef<number>(null);
   const fabricRef = useRef<fabric.Canvas | null>(null);
   const historyRef = useRef<(string | null)[]>([null]);
@@ -36,8 +42,7 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
   const [slides, setSlides] = useState<SlideType[]>(initialSlides);
   const [activeSlide, setActiveSlide] = useState<number>(0);
 
-  const createTextPhraseHook = useCreateTextPhrase()
-  
+  const createTextPhraseHook = useCreateTextPhrase();
 
   const recordChange = () => {
     fabricRef.current?.renderAll();
@@ -59,7 +64,6 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
         tempSlides[activeSlide].history = historyRef.current;
         return tempSlides;
       });
-
     }, 500);
   };
 
@@ -90,13 +94,13 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
       console.log("ctrl + Z");
       console.log(historyRef.current);
       const last_snapshot = historyRef.current.pop();
-      if(last_snapshot == '' || last_snapshot == null) {
+      if (last_snapshot == "" || last_snapshot == null) {
         fabricRef.current.clear();
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         fabricRef.current.set({
-          backgroundColor:"#fff"
-        })
+          backgroundColor: "#fff",
+        });
       }
       fabricRef.current.loadFromJSON(last_snapshot, () => {});
       fabricRef.current.renderAll();
@@ -107,93 +111,70 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
     if (fabricRef.current) {
       const allObjects = fabricRef.current.getObjects();
       console.log(allObjects);
-      if (allObjects.length > 1) {
+      if (allObjects.length >= 1) {
         const group = new fabric.Group(allObjects, {
           originX: "center",
           originY: "center",
         });
-        console.log();
-        fabricRef.current.discardActiveObject().renderAll();
-        fabricRef.current.add(group);
+        console.log("Text Phrase");
         createTextPhraseHook.mutate({
           formattedData: JSON.stringify(JSON.stringify(group.toObject())),
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          previewImg: group.toDataURL('png'),
+          previewImg: group.toDataURL("png"),
         });
       }
     }
   };
 
-  const importTextFromJSON = () => {
-    const jsonData = '{"type":"group","version":"5.3.0","originX":"center","originY":"center","left":400.69,"top":285.36,"width":560.21,"height":361.56,"fill":"rgb(0,0,0)","stroke":null,"strokeWidth":0,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":false,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"objects":[{"type":"i-text","version":"5.3.0","originX":"left","originY":"top","left":-254.93,"top":-180.78,"width":534.04,"height":266.05,"fill":"#1167bd","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":false,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"fontFamily":"Akatab","fontWeight":"bold","fontSize":109,"text":"Enter your \ntext here","underline":false,"overline":false,"linethrough":false,"textAlign":"center","fontStyle":"normal","lineHeight":1.16,"textBackgroundColor":"","charSpacing":0,"styles":[],"direction":"ltr","path":null,"pathStartOffset":0,"pathSide":"left","pathAlign":"baseline"},{"type":"i-text","version":"5.3.0","originX":"left","originY":"top","left":-280.1,"top":102.94,"width":541.88,"height":76.84,"fill":"black","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":false,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"fontFamily":"Times New Roman","fontWeight":"normal","fontSize":68,"text":"Enter your text here","underline":false,"overline":false,"linethrough":false,"textAlign":"left","fontStyle":"normal","lineHeight":1.16,"textBackgroundColor":"","charSpacing":0,"styles":[],"direction":"ltr","path":null,"pathStartOffset":0,"pathSide":"left","pathAlign":"baseline"}]}'
-    const json = JSON.parse(jsonData.replace('\n', 'n-n-n'));
-    const fontFamilies = []
-    for (let i = 0; i < json.objects.length; i++) {
-      fontFamilies.push(json.objects[i]['fontFamily'])
-      const txt = json.objects[i].text.replace('n-n-n','\n')
-      delete json.objects[i]['text']
-      fabricRef.current?.add(new fabric.IText(txt, {...json.objects[i], "left": (json['left'] +  json.objects[i]['left']), "top": (json['top'] + json.objects[i]['top']) }));
-    }
-    console.log(fontFamilies)
-    WebFont.load({
-      google: {
-        families: fontFamilies,
-      },
-      active: () => {
-        recordChange();
-      }
-    })
-  };
-
   const onKeyPress = (e: KeyboardEvent) => {
-    console.log(e)
-    if(fabricRef.current) {
+    console.log(e);
+    if (fabricRef.current) {
       if (e.key == "Delete") {
-        deleteObject()
+        deleteObject();
       } else if (e.ctrlKey && (e.key === "z" || e.code == "KeyZ")) {
-        goBackInHistory()
+        goBackInHistory();
       } else if (e.ctrlKey && (e.key === "q" || e.code == "KeyQ")) {
-        convertToTextPhrase()
+        convertToTextPhrase();
       }
     }
   };
 
-  const onKeyDown = (e:KeyboardEvent) => {
-    if(fabricRef.current?._activeObject) {
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (fabricRef.current?._activeObject) {
       const activeObject = fabricRef.current._activeObject;
       switch (e.key) {
-        case 'ArrowUp':
+        case "ArrowUp":
           activeObject.set({ top: (activeObject.top || 0) - 1 });
           break;
-        case 'ArrowDown':
+        case "ArrowDown":
           activeObject.set({ top: (activeObject.top || 0) + 1 });
           break;
-        case 'ArrowLeft':
+        case "ArrowLeft":
           activeObject.set({ left: (activeObject.left || 0) - 1 });
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           activeObject.set({ left: (activeObject.left || 0) + 1 });
           break;
         default:
           break;
       }
-      recordChange()
+      recordChange();
     }
-  }
+  };
 
   const onMouseDownCanvas = () => {
     console.log("hey");
     if (fabricRef.current?._activeObject) {
-      setCurrentIndex((prev) => prev-1);
+      setCurrentIndex((prev) => prev - 1);
     } else {
       setCurrentIndex(0);
     }
   };
 
-  console.log(currentIndex)
+  console.log(currentIndex);
 
-  const resizeObserver = new ResizeObserver(entries => {
+  const resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
       // Trigger your event or function when the size changes
       setCanvasSizeAndZoom(entry.contentRect.width, entry.contentRect.height);
@@ -207,11 +188,12 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
     console.log(container_width, container_height);
     const temp_height = container_width * ratio;
     if (temp_height < container_height) {
-      console.log("here")
+      console.log("here");
       // @ts-ignore
       document.querySelector(".canvas-wrapper").style.width = "100%";
       // @ts-ignore
-      document.querySelector(".canvas-wrapper").style.height = temp_height*100/container_height + "%";
+      document.querySelector(".canvas-wrapper").style.height =
+        (temp_height * 100) / container_height + "%";
 
       fabricRef?.current?.setDimensions({
         width: container_width,
@@ -222,7 +204,7 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
       document.querySelector(".canvas-wrapper").style.height = "100%";
       // @ts-ignore
       document.querySelector(".canvas-wrapper").style.width =
-      (container_height * 100)/(ratio*container_width) + "%";
+        (container_height * 100) / (ratio * container_width) + "%";
 
       fabricRef?.current?.setDimensions({
         width: container_height / ratio,
@@ -240,16 +222,16 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
     canvas.on("mouse:down", onMouseDownCanvas);
     canvas.on("object:modified", recordChange);
     fabricRef.current = canvas;
-    if(slides[0].content) {
+    if (slides[0].content) {
       fabricRef.current.loadFromJSON(slides[0].content, () => {});
       fabricRef.current.renderAll();
     }
 
     // @ts-ignore
-    resizeObserver.observe(document.querySelector(".observe"))
-    
-    window.addEventListener('keypress', onKeyPress)
-    window.addEventListener('keydown', onKeyDown)
+    resizeObserver.observe(document.querySelector(".observe"));
+
+    window.addEventListener("keypress", onKeyPress);
+    window.addEventListener("keydown", onKeyDown);
     return () => {
       // window.removeEventListener("keypress", onKeyPress);
       // window.removeEventListener("keydown", onKeyDown);
@@ -257,22 +239,35 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
   }, []);
 
   useEffect(() => {
-    saveProject({formattedData:JSON.stringify(slides)})
-  },[slides])
-
+    saveProject({ formattedData: JSON.stringify(slides) });
+  }, [slides]);
 
   useEffect(() => {
     // @ts-ignore
     fabricRef.current.off("object:modified");
     // @ts-ignore
     fabricRef.current.on("object:modified", recordChange);
-    historyRef.current = slides[activeSlide].history
-  },[activeSlide])
+    historyRef.current = slides[activeSlide].history;
+  }, [activeSlide]);
 
   return (
     <>
-      <CanvasContext.Provider value={{ fabricRef, recordChange, slides, setSlides, activeSlide, setActiveSlide }}>
-        <EditorHeader deleteObject={deleteObject} goBackInHistory={goBackInHistory} name={name} saveProject={saveProject} />
+      <CanvasContext.Provider
+        value={{
+          fabricRef,
+          recordChange,
+          slides,
+          setSlides,
+          activeSlide,
+          setActiveSlide,
+        }}
+      >
+        <EditorHeader
+          deleteObject={deleteObject}
+          goBackInHistory={goBackInHistory}
+          name={name}
+          saveProject={saveProject}
+        />
         <div className="w-full h-[calc(100vh-80px)] overflow-hidden lg:grid lg:grid-cols-[368px,auto,140px] bg-slate-50">
           <Tab.Group
             className="sidebars shadow-md hidden lg:flex"
@@ -323,23 +318,21 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
                   label="Templates"
                 />
               </Tab>
-              {projectType == "SLIDE_SHOW"? <div onClick={() => setSlideShowMode(true)}>
-                <ToolBarButton
-                  key="slideshow"
-                  icon={<IconSlideshow color="rgb(30 83 134)" size={26} />}
-                  label="Slideshow"
-                />
-                
-              </div> : null }
-              <button onClick={importTextFromJSON}>
-                  Import
-                </button>
-              
+              {projectType == "SLIDE_SHOW" ? (
+                <div onClick={() => setSlideShowMode(true)}>
+                  <ToolBarButton
+                    key="slideshow"
+                    icon={<IconSlideshow color="rgb(30 83 134)" size={26} />}
+                    label="Slideshow"
+                  />
+                </div>
+              ) : null}
+
               <Tab className="outline-none"></Tab>
             </Tab.List>
             <Tab.Panels className="w-72 border-l border-slate-200 bg-white">
               <Tab.Panel className="w-full h-full overflow-auto">
-                <UploadToolPanel/>
+                <UploadToolPanel />
               </Tab.Panel>
               <Tab.Panel className="w-full h-full overflow-auto">
                 <BackgroundPanel />
@@ -368,14 +361,12 @@ export default function Design({ratio, originalWidth, initialSlides, name, proje
             <div className="observe p-5 max-h-[500px] lg:max-h-max md:p-7 lg:p-10 w-full flex justify-center grow">
               <div className="canvas-wrapper relative w-full">
                 <canvas
-                    className="w-full border border-slate-400"
-                    id="canvas"
-                  ></canvas>
+                  className="w-full border border-slate-400"
+                  id="canvas"
+                ></canvas>
               </div>
             </div>
-            {(slideshowMode && projectType == "SLIDE_SHOW") &&  (
-              <SlideshowPanel/>
-            )}
+            {slideshowMode && projectType == "SLIDE_SHOW" && <SlideshowPanel />}
           </div>
           <div className="bg-slate-300 w-[140px] hidden lg:block"></div>
           <div className="w-full overflow-auto flex h-20 bg-white lg:hidden"></div>
