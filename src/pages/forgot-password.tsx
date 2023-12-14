@@ -56,13 +56,13 @@ const TriggerOTP = ({setStep, setEmail}:{setStep: Dispatch<SetStateAction<number
 }
 
 const VerifyOTPComp = ({setStep}:{setStep: Dispatch<SetStateAction<number>>}) => {
-    const verifyOTPHook = useVerifyOTP()
+    //const verifyOTPHook = useVerifyOTP()
 
 
     const handleVerifyOTPSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const form = e.currentTarget as HTMLFormElement;
-        const formData = new FormData(form)
+        //const formData = new FormData(form)
         // verifyOTPHook.mutate({otp: formData.get('otp') as string, userId:userId.value}, {
         //     onSuccess: () => {
         //       toast.success("OTP verified.");
