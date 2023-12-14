@@ -3,7 +3,6 @@ import { Input } from "../components/ui/input"
 import { useTriggerOTP } from "../hooks/forgot-password/use-trigger-otp"
 import toast from "react-hot-toast"
 import { userId } from "../signals/user-signal"
-import { useVerifyOTP } from "../hooks/forgot-password/use-verify-otp"
 import { useResetPassword } from "../hooks/forgot-password/use-reset-password"
 import { useNavigate } from "react-router-dom"
 
@@ -61,7 +60,7 @@ const VerifyOTPComp = ({setStep}:{setStep: Dispatch<SetStateAction<number>>}) =>
 
     const handleVerifyOTPSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const form = e.currentTarget as HTMLFormElement;
+        //const form = e.currentTarget as HTMLFormElement;
         //const formData = new FormData(form)
         // verifyOTPHook.mutate({otp: formData.get('otp') as string, userId:userId.value}, {
         //     onSuccess: () => {
