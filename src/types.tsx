@@ -201,3 +201,26 @@ export type TextPhrase = {
   formattedData: string;
   previewImg: string;
 };
+
+export type AssetResType = {
+  assetType: string
+  assetUrl: string
+  collectionId: number
+  id: number
+  projectId: number
+  uploadedAt: string
+  uploadedBy: number
+}
+
+
+export type UserDetailsResType = { 
+  name: string; 
+  mobileNumber: string; 
+  active?: boolean | undefined; 
+  birthDate?: string | undefined; 
+  country?: string | undefined; 
+  email?: string | undefined; 
+  gender?: string | undefined; 
+  id?: number | undefined; 
+  profileImage?: string | undefined; 
+}

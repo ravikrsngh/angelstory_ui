@@ -1,12 +1,55 @@
+import toast from "react-hot-toast";
+import { useGetUserDetails } from "../../hooks/user/use-get-user-details";
+import { useSaveUserDetails } from "../../hooks/user/use-save-user-details";
 import { Input } from "../ui/input";
 import AccountDashboardHeading from "./account-dashboard-heading";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 
 export default function AccountSetting() {
+  const {data, isLoading, isFetching, isError} = useGetUserDetails()
+  const saveUserDetailsHook = useSaveUserDetails()
+
+  const handleSaveSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    const payload = {
+      ...data,
+      name: formData.get('name') as string,
+      mobileNumber: formData.get('mobileNumber') as string
+    }
+    saveUserDetailsHook.mutate(payload, {
+      onSuccess: () => {
+        toast.success("Details updated successfully.")
+      }
+    })
+
+  }
+
+  if (isLoading || isFetching) {
+    return (
+      <>
+        <div className="p-5">
+          <span>Loading ...</span>
+        </div>
+      </>
+    );
+  }
+
+  if (isError) {
+    return (
+      <>
+        <div className="p-5">
+          <span>Something went wrong ...</span>
+        </div>
+      </>
+    );
+  }
+
   return (
     <div>
       <AccountDashboardHeading name="Your Profile" />
-      <form className="max-w-5xl">
+      <form className="max-w-5xl" onSubmit={handleSaveSubmit}>
         <div className="">
           <div className="flex items-center gap-x-3 mb-10">
             <div>
@@ -30,13 +73,13 @@ export default function AccountSetting() {
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             <div className="grow">
-              <Input label="Name" />
+              <Input label="Name" name="name" defaultValue={data.name} />
+            </div>
+            <div className="grow opacity-60">
+              <Input label="Email" name="email" defaultValue={data.email} disabled />
             </div>
             <div className="grow">
-              <Input label="Email" />
-            </div>
-            <div className="grow">
-              <Input label="Phone Number" />
+              <Input label="Phone Number" name="mobileNumber" defaultValue={data.mobileNumber} />
             </div>
             <div className=""></div>
             <div className="hidden md:block"></div>

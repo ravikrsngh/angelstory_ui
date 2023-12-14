@@ -46,12 +46,12 @@ export default function Login() {
                 </div>
 
                 <div className="text-sm leading-6">
-                  <a
-                    href="#"
+                  <Link
+                    to='/forgot-password'
                     className="font-semibold text-primary-400 hover:text-primary-600"
                   >
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
               </div>
 

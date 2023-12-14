@@ -9,6 +9,7 @@ import Templates from "../pages/templates";
 import { PrivateRoutes } from "./private-route";
 import { BasicPage } from "../components/ui/basic-page";
 import { DesignLoader } from "../pages/design";
+import { ForgotPassword } from "../pages/forgot-password";
 
 const RouteData = () => {
   return (
@@ -16,6 +17,7 @@ const RouteData = () => {
       <Route path="/" element={<BasicPage />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/templates" element={<Templates />} />
         <Route path="/" element={<PrivateRoutes />}>
           <Route path="/account-dashboard" element={<AccountDashboard />} />
