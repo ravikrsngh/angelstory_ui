@@ -1,12 +1,32 @@
 import AccountDashboardHeading from "./account-dashboard-heading";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import toast from "react-hot-toast";
+import { useChangePassword } from "../../hooks/user/use-change-password";
 
 export default function ChangePassword() {
+  const changePasswordHoook = useChangePassword()
+  const changePasswordSubmitHandler = (e:React.FormEvent) => {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form)
+    const np = formData.get('new_password') as string;
+    const cfm_np = formData.get('cfm_new_password') as string;
+    const op = formData.get('old_password') as string;
+    if(np != cfm_np) {
+      toast.error("Password does not match.")
+      return
+    }
+    changePasswordHoook.mutate({
+      newPassword:np,
+      oldPassword:op
+    })
+
+  }
   return (
     <div>
       <AccountDashboardHeading name="Change Password" />
-      <form action="" className="max-w-3xl flex flex-col gap-7">
+      <form  className="max-w-3xl flex flex-col gap-7" onSubmit={changePasswordSubmitHandler}>
         <div>
           <label
             htmlFor=""
@@ -33,6 +53,7 @@ export default function ChangePassword() {
           <input
             type="password"
             className="w-full border-[0.4px] border-slate-400 bg-white px-4 py-3 text-xs focus:outline-none"
+            name="old_password"
           />
         </div>
         <div>
@@ -45,6 +66,7 @@ export default function ChangePassword() {
           <input
             type="password"
             className="w-full border-[0.4px] border-slate-400 bg-white px-4 py-3 text-xs focus:outline-none"
+            name="new_password"
           />
         </div>
         <div>
@@ -57,6 +79,7 @@ export default function ChangePassword() {
           <input
             type="password"
             className="w-full border-[0.4px] border-slate-400 bg-white px-4 py-3 text-xs focus:outline-none"
+            name="cfm_new_password"
           />
         </div>
         <div className="flex w-full justify-end">

@@ -23,7 +23,7 @@ const RouteData = () => {
           <Route path="/account-dashboard" element={<AccountDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/collection/:collectionId" element={<Collection />} />
-          <Route path="/collection/assets" element={<CollectionAssets />} />
+          <Route path="/collection/:collectionId/assets" element={<CollectionAssets />} />
         </Route>
       </Route>
       <Route path="/">

@@ -224,3 +224,25 @@ export type UserDetailsResType = {
   id?: number | undefined; 
   profileImage?: string | undefined; 
 }
+
+export type ProjectInCollectionType = {
+  collectionId: number
+  createdAt: string
+  createdBy: number
+  height: number
+  id: number
+  name: string
+  projectType: string
+  updatedAt: string
+  width: number
+}
+
+export type CollectionDetailsResType ={
+  assetList: AssetResType[]
+  bgColor: string
+  createdAt: string
+  createdBy: number
+  id: number
+  name: string
+  projectDtoList: ProjectInCollectionType[]
+}

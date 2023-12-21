@@ -3,8 +3,20 @@ import { cn } from "../utils";
 import React, { useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { IconX } from "@tabler/icons-react";
+import { useParams } from "react-router-dom";
+import { useGetCollectionDetails } from "../hooks/collection/use-fetch-all-collection-details";
+import { AssetResType } from "../types";
+import { useDeleteAssets } from "../hooks/assets/use-delete-assets";
+import { useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 export default function CollectionAssets() {
+  const queryClient = useQueryClient();
+  const params = useParams()
+    const {data, isLoading, isFetching} = useGetCollectionDetails(params.collectionId?params.collectionId : "-1")
+
+    const deleteAssetHook = useDeleteAssets()
+    
   const [itemsSelected, setItemsSelected] = useState<number[]>([]);
   const itemChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
@@ -20,10 +32,25 @@ export default function CollectionAssets() {
       })
     }
   };
-  console.log(itemsSelected)
+  if(isLoading || isFetching) {
+    return <span>Loading ...</span>
+  }
+
+  const deleteAssets = () => {
+    deleteAssetHook.mutate(itemsSelected, {
+      onSuccess: () => {
+        toast.success("Asset(s) deleted.");
+        queryClient.invalidateQueries({
+          queryKey:  ["collection-details"],
+        });
+        setItemsSelected([])
+      }
+    })
+  }
+  
   return (
     <div className="px-4 md:px-10 lg:px-16 py-16">
-      <h2 className="font-medium text-xl md:text-2xl lg:text-3xl">Collection Name/ Assets</h2>
+      <h2 className="font-medium text-xl md:text-2xl lg:text-3xl">{data?.name || 'Collection'}/ Assets</h2>
       <div className="mt-10">
         <Tab.Group>
           <Tab.List>
@@ -60,7 +87,7 @@ export default function CollectionAssets() {
             {itemsSelected.length > 0 && (
               <div className="bg-primary-200 px-6 py-2 flex gap-3 mb-6 rounded-md">
                 <span>{itemsSelected.length} selected</span>
-                <button>
+                <button onClick={deleteAssets}>
                   <TrashIcon className="h-5 w-5" />
                 </button>
                 <button
@@ -75,127 +102,20 @@ export default function CollectionAssets() {
           <Tab.Panels>
             <Tab.Panel>
               <form className="grid grid-cols-2 md:flex flex-wrap gap-4">
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
+                {data?.assetList.map((asset:AssetResType) => (
+                  <div key={asset.id}>
+                  <div className="overflow-hidden w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
+                    <img src={asset.assetUrl} className="w-full" />
                     <input
                       type="checkbox"
                       className="absolute top-3 right-3"
                       onChange={itemChecked}
-                      value={10}
-                      checked={itemsSelected.includes(10)}
+                      value={asset.id}
+                      checked={itemsSelected.includes(asset.id)}
                     />
                   </div>
                 </div>
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="absolute top-3 right-3"
-                      onChange={itemChecked}
-                      value={11}
-                      checked={itemsSelected.includes(11)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="absolute top-3 right-3"
-                      onChange={itemChecked}
-                      value={12}
-                      checked={itemsSelected.includes(12)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52  relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="absolute top-3 right-3"
-                      onChange={itemChecked}
-                      value={13}
-                      checked={itemsSelected.includes(13)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="absolute top-3 right-3"
-                      onChange={itemChecked}
-                      value={14}
-                      checked={itemsSelected.includes(14)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="absolute top-3 right-3"
-                      onChange={itemChecked}
-                      value={15}
-                      checked={itemsSelected.includes(15)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="absolute top-3 right-3"
-                      onChange={itemChecked}
-                      value={16}
-                      checked={itemsSelected.includes(16)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="absolute top-3 right-3"
-                      onChange={itemChecked}
-                      value={17}
-                      checked={itemsSelected.includes(17)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="absolute top-3 right-3"
-                      onChange={itemChecked}
-                      value={18}
-                      checked={itemsSelected.includes(18)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="absolute top-3 right-3"
-                      onChange={itemChecked}
-                      value={19}
-                      checked={itemsSelected.includes(19)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="w-full h-[180px] md:w-52 md:h-52 relative cursor-pointer border-primary-200 bg-primary-50 rounded-md flex flex-col justify-center items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="absolute top-3 right-3"
-                      onChange={itemChecked}
-                      value={20}
-                      checked={itemsSelected.includes(20)}
-                    />
-                  </div>
-                </div>
+                ))}
               </form>
             </Tab.Panel>
             <Tab.Panel>
