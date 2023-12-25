@@ -21,7 +21,7 @@ export const DesignLoader = () => {
     );
   }
 
-  const saveProject = (obj: { formattedData?: string; name?: string }) => {
+  const saveProject = (obj: { formattedData?: string; name?: string }, time:number = 300000) => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -40,7 +40,7 @@ export const DesignLoader = () => {
       };
       // @ts-ignore
       saveProjectHook.mutate({ ...projData, ...obj });
-    }, 5000);
+    }, time);
   };
 
   console.log(data);

@@ -84,7 +84,10 @@ export default function Design({
 
   const deleteObject = () => {
     if (fabricRef.current) {
-      fabricRef.current.remove(fabricRef.current._activeObject);
+      const activeObject = fabricRef.current.getActiveObject();
+      if (activeObject) {
+        fabricRef.current.remove(activeObject);
+      }
       recordChange();
     }
   };
@@ -127,8 +130,7 @@ export default function Design({
     }
   };
 
-  const onKeyPress = (e: KeyboardEvent) => {
-    console.log(e);
+  const onKeyUp = (e: KeyboardEvent) => {
     if (fabricRef.current) {
       if (e.key == "Delete") {
         deleteObject();
@@ -171,8 +173,6 @@ export default function Design({
       setCurrentIndex(0);
     }
   };
-
-  console.log(currentIndex);
 
   const resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
@@ -230,7 +230,7 @@ export default function Design({
     // @ts-ignore
     resizeObserver.observe(document.querySelector(".observe"));
 
-    window.addEventListener("keypress", onKeyPress);
+    window.addEventListener("keyup", onKeyUp);
     window.addEventListener("keydown", onKeyDown);
     return () => {
       // window.removeEventListener("keypress", onKeyPress);
@@ -239,7 +239,7 @@ export default function Design({
   }, []);
 
   useEffect(() => {
-    saveProject({ formattedData: JSON.stringify(slides) });
+    saveProject({ formattedData: JSON.stringify(slides) },300000);
   }, [slides]);
 
   useEffect(() => {
@@ -260,6 +260,7 @@ export default function Design({
           setSlides,
           activeSlide,
           setActiveSlide,
+          deleteObject
         }}
       >
         <EditorHeader

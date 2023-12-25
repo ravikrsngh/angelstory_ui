@@ -16,6 +16,7 @@ import {
 import { CanvasContextType, GoogleFontResponseType } from "../../types";
 import WebFont from 'webfontloader';
 import EditInputBox from "./components/edit-inputbox";
+import { DeleteObjectButton } from "../editor/delete-object-btn";
 
 export default function EditText({object} : {object: fabric.Text}) {
   const { recordChange } = useContext(
@@ -105,7 +106,7 @@ export default function EditText({object} : {object: fabric.Text}) {
 
   return (
     <div className="p-5">
-      <h3 className="font-medium text-lg text-primary-700 mb-4">Edit Text</h3>
+      <h3 className="font-medium text-lg text-primary-700 mb-4 flex justify-between">Edit Text <DeleteObjectButton /></h3>
       <div className="flex flex-col gap-4">
         <div className="flex gap-4 flex-wrap">
           <select

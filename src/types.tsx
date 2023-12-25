@@ -35,6 +35,7 @@ export type CanvasContextType = {
   setSlides: Dispatch<SetStateAction<SlideType[]>>;
   activeSlide: number;
   setActiveSlide: Dispatch<SetStateAction<number>>;
+  deleteObject: () => void;
 };
 
 export type EditObjectType = {
@@ -149,7 +150,7 @@ export type DesignLoaderPropType = {
   originalWidth: number;
   name: string;
   projectType: string;
-  saveProject: (obj: { formattedData?: string; name?: string }) => void;
+  saveProject: (obj: { formattedData?: string|undefined; name?: string|undefined }, time:number) => void;
   initialSlides: SlideType[];
 };
 
@@ -175,7 +176,7 @@ export type EditorHeaderPropType = {
   deleteObject: () => void;
   goBackInHistory: () => void;
   name: string;
-  saveProject: (obj: { formattedData?: string; name?: string }) => void;
+  saveProject: (obj: { formattedData?: string; name?: string }, time:number) => void;
 };
 
 export type FullScreenDialogPropType = {

@@ -6,7 +6,7 @@ import { CanvasContext } from "../../context/canvasContext";
 import { useCreateTemplate } from "../../hooks/templates/use-create-template";
 import { fabric } from "fabric";
 import { DownloadButton } from "./download-btn";
-import { IconArrowBackUp, IconShare, IconTrash } from "@tabler/icons-react";
+import { IconArrowBackUp, IconDeviceFloppy, IconShare, IconTrash } from "@tabler/icons-react";
 import { CanvasContextType, EditorHeaderPropType } from "../../types";
 
 export default function EditorHeader({deleteObject,goBackInHistory, name, saveProject}:EditorHeaderPropType) {
@@ -38,10 +38,14 @@ export default function EditorHeader({deleteObject,goBackInHistory, name, savePr
 
   const saveProjectName = (e:React.FocusEvent) => {
     if((e.target as HTMLInputElement).value) {
-      saveProject({name:(e.target as HTMLInputElement).value})
+      saveProject({name:(e.target as HTMLInputElement).value}, 0)
     } else {
-      saveProject({name: "Untitled"})
+      saveProject({name: "Untitled"}, 0)
     }
+  }
+
+  const saveProjectStatus = () => {
+    saveProject({ formattedData: JSON.stringify(slides) },0);
   }
 
   return (
@@ -62,6 +66,7 @@ export default function EditorHeader({deleteObject,goBackInHistory, name, savePr
           />
         </div>
         <div className="flex flex-1 items-center justify-end gap-x-6">
+          <button onClick={saveProjectStatus}><IconDeviceFloppy /></button>
         <button
             className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900"
             onClick={generateTemplateData}
@@ -75,7 +80,16 @@ export default function EditorHeader({deleteObject,goBackInHistory, name, savePr
         </div>
       </nav>
       <nav className="flex lg:hidden items-center justify-end gap-x-6 px-4 md:px-10 lg:px-16 py-4">
-      <div className="mr-auto flex items-center gap-x-6">
+      
+      <div className="flex grow justify-center overflow-hidden">
+          <input
+            type="text"
+            className="w-full p-2 bg-transparent"
+            defaultValue={name}
+            onBlur={saveProjectName}
+          />
+        </div>
+        <div className="flex items-center gap-x-6">
         <button className=" text-primary-400" onClick={goBackInHistory}>
           <IconArrowBackUp />
         </button>
@@ -87,6 +101,7 @@ export default function EditorHeader({deleteObject,goBackInHistory, name, savePr
             <IconTrash />
           </button> : null
         }
+        <button className="text-primary-400" onClick={saveProjectStatus}><IconDeviceFloppy /></button>
         <DownloadButton/>
         <button className="text-primary-400">
           <IconShare />

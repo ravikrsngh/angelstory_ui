@@ -11,6 +11,7 @@ import { CanvasContextType } from "../../../types";
 // Tab4 - TextFormat
 // Tab5 - TextFamily
 // Tab6 - TextSize
+// Tab7 - TextSpacing
 
 export const MobileEditFooter = () => {
   const { fabricRef } = useContext(

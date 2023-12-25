@@ -1,18 +1,21 @@
 import React, { useContext, useState } from "react";
 import { CanvasContext } from "../../context/canvasContext";
 import {
+  IconArrowMoveDown,
+  IconArrowMoveUp,
   IconBackslash,
   IconCircle,
   IconLetterT,
   IconPictureInPicture,
   IconRectangle,
+  IconTrash,
   IconTriangle,
 } from "@tabler/icons-react";
 import { cn } from "../../utils";
 import { CanvasContextType } from "../../types";
 
 export default function LayersPanel() {
-  const { fabricRef } = useContext(
+  const { fabricRef, deleteObject } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
   const [currentOrder, setCurrentOrder] = useState(
@@ -61,6 +64,7 @@ export default function LayersPanel() {
   };
 
   const onClickLayer = (item: fabric.Object, index: number) => {
+    
     if (fabricRef.current) {
       fabricRef.current.setActiveObject(item);
       fabricRef.current.renderAll()
@@ -83,6 +87,7 @@ export default function LayersPanel() {
       );
       fabricRef.current.renderAll();
       const all_objs = [...fabricRef.current.getObjects()].reverse();
+      setSelectedItem(parseInt(e.currentTarget.id))
       setCurrentOrder(all_objs);
     }
   };
@@ -96,6 +101,34 @@ export default function LayersPanel() {
     }
   };
 
+  const deleteObjectFromLayers = (e:React.MouseEvent) => {
+    e.stopPropagation()
+    if(fabricRef.current) {
+      deleteObject();
+      setSelectedItem(-1);
+      setCurrentOrder([...fabricRef.current.getObjects()])
+    }
+    
+  }
+
+  const moveUpinLayer = (e:React.MouseEvent) => {
+    e.stopPropagation()
+    if(fabricRef.current) {
+      fabricRef.current.bringForward(currentOrder[selectedItem])
+      setCurrentOrder([...fabricRef.current.getObjects()].reverse())
+      setSelectedItem((prev) => prev > 0? prev - 1 : prev);
+    }
+  }
+
+  const moveDowninLayer = (e:React.MouseEvent) => {
+    e.stopPropagation()
+    if(fabricRef.current) {
+      fabricRef.current.sendBackwards(currentOrder[selectedItem])
+      setCurrentOrder([...fabricRef.current.getObjects()].reverse())
+      setSelectedItem((prev) => prev < currentOrder.length-1? prev + 1 : prev);
+    }
+  }
+
   return (
     <div className="p-5">
       <h4 className="text-base text-primary-700 font-medium mb-1">Layers</h4>
@@ -107,7 +140,7 @@ export default function LayersPanel() {
           <li
             id={String(index)}
             className={cn(
-              "bg-primary-100 p-3 cursor-pointer mb-4 ",
+              "bg-primary-100 p-3 cursor-pointer mb-4 flex justify-between",
               index == selectedItem && "border-2 border-primary-400"
             )}
             draggable="true"
@@ -119,6 +152,19 @@ export default function LayersPanel() {
             <span className="flex gap-2 items-center">
               {index + 1} - {getLayerLabel(item.type)}
             </span>
+            {
+            index == selectedItem && <div className="flex gap-1 items-center">
+              <button onClick={moveUpinLayer}>
+                <IconArrowMoveUp size={18} />
+              </button>
+              <button onClick={moveDowninLayer}>
+                <IconArrowMoveDown size={18} />
+              </button>
+              <button onClick={deleteObjectFromLayers}>
+                <IconTrash size={18} />
+              </button>
+            </div> 
+            }
           </li>
         ))}
       </ul>
