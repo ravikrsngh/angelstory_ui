@@ -3,6 +3,10 @@ import EditBorder from "../../edit-panel/components/border";
 import EditFill from "../../edit-panel/components/fill";
 import EditShadow from "../../edit-panel/components/shadow";
 import { MobileEditPanelPropType } from "../../../types";
+import EditFontFamily from "../../edit-panel/edit-font-family";
+import EditFontFormat from "../../edit-panel/edit-font-format";
+import EditFontSize from "../../edit-panel/edit-font-size";
+import EditFontSpacing from "../../edit-panel/edit-font-spacing";
 
 export const MobileEditPanel = ({
   object,
@@ -25,6 +29,10 @@ export const MobileEditPanel = ({
                 {tabClicked == 1 ? <EditBorder object={object} /> : null}
                 {tabClicked == 2 ? <EditFill object={object} /> : null}
                 {tabClicked == 3 ? <EditShadow object={object} /> : null}
+                {tabClicked == 4 ? <EditFontFormat object={object as fabric.Text} /> : null}
+                {tabClicked == 5 ? <EditFontFamily object={object as fabric.Text} /> : null}
+                {tabClicked == 6 ? <EditFontSize object={object as fabric.Text} /> : null}
+                {tabClicked == 7 ? <EditFontSpacing object={object as fabric.Text} /> : null}
               </div>
               
             </Dialog.Panel>

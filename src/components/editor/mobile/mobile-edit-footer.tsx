@@ -44,14 +44,14 @@ export const MobileEditFooter = () => {
                 label="Format"
               />
             </div>
-            <div onClick={() => editTabClicked(4)}>
+            <div onClick={() => editTabClicked(6)}>
               <ToolBarButton
                 key="size"
                 icon={<IconTextSize color="rgb(30 83 134)" size={26} />}
                 label="Size"
               />
             </div>
-            <div onClick={() => editTabClicked(4)}>
+            <div onClick={() => editTabClicked(7)}>
               <ToolBarButton
                 key="spacing"
                 icon={<IconLetterSpacing color="rgb(30 83 134)" size={26} />}
