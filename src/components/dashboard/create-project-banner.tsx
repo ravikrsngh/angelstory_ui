@@ -1,7 +1,7 @@
 import { IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
 import { CreateProject } from "../create-project";
-import dashboard_hero_img from './../../assets/dashboard_hero.svg'
+import dashboard_hero_img from './../../assets/banner-1@3x.png'
 
 export const CreateProjectBanner = () => {
     const [displayCreateProject,setDisplayCreateProject] = useState<boolean>(false);
