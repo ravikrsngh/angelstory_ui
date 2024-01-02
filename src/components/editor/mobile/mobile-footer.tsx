@@ -38,14 +38,14 @@ export const MobileFooter = () => {
         <div onClick={() => openMobileTab(1)}>
           <ToolBarButton
             key="upload"
-            icon={<IconCloudUpload color="rgb(30 83 134)" size={26} />}
+            icon={<IconCloudUpload color="#AD7A5B" size={26} />}
             label="Upload"
           />
         </div>
         <div onClick={() => openMobileTab(2)}>
           <ToolBarButton
             key="background"
-            icon={<IconTexture color="rgb(30 83 134)" size={26} />}
+            icon={<IconTexture color="#AD7A5B" size={26} />}
             label="Background"
           />
         </div>
@@ -53,7 +53,7 @@ export const MobileFooter = () => {
         <div onClick={() => openMobileTab(3)}>
           <ToolBarButton
             key="shapes"
-            icon={<IconCategory2 color="rgb(30 83 134)" size={26} />}
+            icon={<IconCategory2 color="#AD7A5B" size={26} />}
             label="Shapes"
           />
         </div>
@@ -61,7 +61,7 @@ export const MobileFooter = () => {
         <div onClick={() => openMobileTab(4)}>
           <ToolBarButton
             key="text"
-            icon={<IconLetterT color="rgb(30 83 134)" size={26} />}
+            icon={<IconLetterT color="#AD7A5B" size={26} />}
             label="Text"
           />
         </div>
@@ -69,27 +69,24 @@ export const MobileFooter = () => {
         <div onClick={() => openMobileTab(5)}>
           <ToolBarButton
             key="templates"
-            icon={<IconTemplate color="rgb(30 83 134)" size={26} />}
+            icon={<IconTemplate color="#AD7A5B" size={26} />}
             label="Templates"
           />
         </div>
         <div onClick={() => openMobileTab(6)}>
-                <ToolBarButton
-                  key="slideshow"
-                  icon={<IconSlideshow color="rgb(30 83 134)" size={26} />}
-                  label="Slideshow"
-                />
-              </div>
+          <ToolBarButton
+            key="slideshow"
+            icon={<IconSlideshow color="#AD7A5B" size={26} />}
+            label="Slideshow"
+          />
+        </div>
       </div>
       <FullScreenDialog
         mobileFullDisplay={mobileFullDisplay}
         setMobileFullDisplay={setMobileFullDisplay}
         tab={tabClicked}
       />
-      {
-        tabClicked == 6? <MobileSlideShowPanel /> : null
-      }
-
+      {tabClicked == 6 ? <MobileSlideShowPanel /> : null}
     </>
   );
 };
