@@ -1,21 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 //@ts-nocheck
 import { IconPlayerPlay } from "@tabler/icons-react";
-import React, { useContext, useState } from "react";
-import {
-  SlideCardType,
-  CanvasContextType,
-  SlideMusic,
-} from "../../types";
+import React, { useContext, useEffect, useState, useRef } from "react";
+import { SlideCardType, CanvasContextType, SlideMusic } from "../../types";
 import { cn } from "../../utils";
 import { CanvasContext } from "../../context/canvasContext";
 import AudioPlayer from "../../components/audio-player";
+import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { toBlobURL } from "@ffmpeg/util";
 
 const Slide = ({
   isActive,
   slideNumber,
   slide,
-  setSelectedMusic
+  setSelectedMusic,
 }: SlideCardType) => {
   const { fabricRef, setActiveSlide, setSlides, slides } = useContext(
     CanvasContext as React.Context<CanvasContextType>
@@ -35,31 +33,36 @@ const Slide = ({
     }
   };
 
-  const onSelectMusic = (event:React.ChangeEvent) => {
+  const onSelectMusic = (event: React.ChangeEvent) => {
     const file = event.target.files[0];
     if (file) {
       // const objectUrl = URL.createObjectURL(file);
-      setSelectedMusic({ name: file.name, url: "https://www.computerhope.com/jargon/m/example.mp3", startTime: 0, duration: 0 });
+      setSelectedMusic({
+        name: file.name,
+        url: "https://www.computerhope.com/jargon/m/example.mp3",
+        startTime: 0,
+        duration: 0,
+      });
     }
   };
 
   const changeDuration = (e, index) => {
-    console.log(e.target.value, index)
-    const slides_copy = [...slides]
-    slides_copy[index].duration = parseInt(e.target.value)
-    setSlides(slides_copy)
-  }
+    console.log(e.target.value, index);
+    const slides_copy = [...slides];
+    slides_copy[index].duration = parseInt(e.target.value);
+    setSlides(slides_copy);
+  };
 
   const getMusicDetails = () => {
-    console.log(slides[slideNumber])
+    console.log(slides[slideNumber]);
     setSelectedMusic({
-      name: slides[slideNumber].music?.name || '',
-      url: slides[slideNumber].music?.url || '',
+      name: slides[slideNumber].music?.name || "",
+      url: slides[slideNumber].music?.url || "",
       duration: slides[slideNumber].music?.duration || 0,
       startTime: slides[slideNumber].music?.startTime || 0,
-      x: slides[slideNumber].music?.x || 0
-    })
-  }
+      x: slides[slideNumber].music?.x || 0,
+    });
+  };
 
   return (
     <div>
@@ -76,45 +79,57 @@ const Slide = ({
             type="text"
             className=" w-3 text-xs bg-transparent outline-none"
             defaultValue={slide.duration}
-            onChange={(e) => changeDuration(e,slideNumber)}
+            onChange={(e) => changeDuration(e, slideNumber)}
           />
           <span className="-ml-1 text-xs">s</span>
         </div>
       </div>
-      {isActive && 
-      <div className="">
-        {slides[slideNumber].music? 
-        <button onClick={getMusicDetails} className="text-center text-xs mt-2 inline-block bg-primary-400 text-white w-full py-1">Edit Music</button> :
-          <>
-            <input
-          type="file"
-          name="file"
-          id="music-upload-file"
-          className="w-0 h-0 overflow-hidden"
-          onChange={onSelectMusic}
-        />
-        <label
-          htmlFor="music-upload-file"
-          className="text-center text-xs mt-2 inline-block bg-primary-400 text-white w-full py-1"
-        >
-          Add Music
-        </label>
-          </>
-        }
-      </div>}
+      {isActive && (
+        <div className="">
+          {slides[slideNumber].music ? (
+            <button
+              onClick={getMusicDetails}
+              className="text-center text-xs mt-2 inline-block bg-primary-400 text-white w-full py-1"
+            >
+              Edit Music
+            </button>
+          ) : (
+            <>
+              <input
+                type="file"
+                name="file"
+                id="music-upload-file"
+                className="w-0 h-0 overflow-hidden"
+                onChange={onSelectMusic}
+              />
+              <label
+                htmlFor="music-upload-file"
+                className="text-center text-xs mt-2 inline-block bg-primary-400 text-white w-full py-1"
+              >
+                Add Music
+              </label>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
 export default function SlideshowPane() {
-  const {slides, setSlides, activeSlide} = useContext(
+  const { slides, setSlides, activeSlide } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const ffmpegRef = useRef(new FFmpeg());
 
-  const [selectedMusic, setSelectedMusic] = useState<SlideMusic | null>(null)
+  const [selectedMusic, setSelectedMusic] = useState<SlideMusic | null>(null);
 
   const addSlide = () => {
-    setSlides([...slides, { content: "", duration: 2, previewImg: "", history:[] }]);
+    setSlides([
+      ...slides,
+      { content: "", duration: 2, previewImg: "", history: [] },
+    ]);
   };
 
   const getTotalDuration = () => {
@@ -122,20 +137,52 @@ export default function SlideshowPane() {
     for (let i = 0; i < slides.length; i++) {
       t += slides[i].duration || 0;
     }
-    return <>{t}</>
-  }
+    return <>{t}</>;
+  };
 
+  const createEachSlideVideo = (slide: SlideType) => {
+    console.log(slide);
+  };
+
+  const createPreview = async () => {
+    console.log("Loading FFMPEG");
+    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
+    const ffmpeg = ffmpegRef.current;
+    await ffmpeg.load({
+      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
+      wasmURL: await toBlobURL(
+        `${baseURL}/ffmpeg-core.wasm`,
+        "application/wasm"
+      ),
+    });
+    console.log("Loaded FFMPEG");
+    for (let i = 0; i < slides.length; i++) {
+      createEachSlideVideo(slides[i]);
+    }
+  };
+
+  const loadFFMPEG = async () => {
+    // toBlobURL is used to bypass CORS issue, urls with the same
+    // domain can be used directly.
+  };
+
+  useEffect(() => {
+    loadFFMPEG();
+  }, []);
 
   return (
     <div className=" bg-white w-full p-5">
       <div className="slide_section flex gap-4">
         <div className="flex flex-col items-center gap-2">
-        <button className="h-14 w-14 rounded-full text-primary-700 hover:text-white bg-primary-50 hover:bg-primary-500 flex justify-center items-center">
-          <IconPlayerPlay />
-        </button>
-        <span className="text-xs">Total - {getTotalDuration()}s</span>
+          <button
+            className="h-14 w-14 rounded-full text-primary-700 hover:text-white bg-primary-50 hover:bg-primary-500 flex justify-center items-center"
+            onClick={createPreview}
+          >
+            <IconPlayerPlay />
+          </button>
+          <span className="text-xs">Total - {getTotalDuration()}s</span>
         </div>
-        
+
         {slides.map((slide, index) => (
           <Slide
             key={index}
@@ -155,7 +202,16 @@ export default function SlideshowPane() {
         </div>
       </div>
       <div className="my-4">
-        {selectedMusic && <AudioPlayer name={selectedMusic.name} url={selectedMusic.url} startTime={selectedMusic.startTime} duration={slides[activeSlide].duration || 0} setSelectedMusic={setSelectedMusic} x={selectedMusic.x || 0} />}
+        {selectedMusic && (
+          <AudioPlayer
+            name={selectedMusic.name}
+            url={selectedMusic.url}
+            startTime={selectedMusic.startTime}
+            duration={slides[activeSlide].duration || 0}
+            setSelectedMusic={setSelectedMusic}
+            x={selectedMusic.x || 0}
+          />
+        )}
       </div>
     </div>
   );
