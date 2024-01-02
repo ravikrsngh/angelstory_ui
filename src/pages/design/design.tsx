@@ -239,7 +239,7 @@ export default function Design({
   }, []);
 
   useEffect(() => {
-    saveProject({ formattedData: JSON.stringify(slides) },300000);
+    saveProject({ formattedData: JSON.stringify(slides) }, 300000);
   }, [slides]);
 
   useEffect(() => {
@@ -260,7 +260,7 @@ export default function Design({
           setSlides,
           activeSlide,
           setActiveSlide,
-          deleteObject
+          deleteObject,
         }}
       >
         <EditorHeader
@@ -280,42 +280,42 @@ export default function Design({
               <Tab className="outline-none">
                 <ToolBarButton
                   key="upload"
-                  icon={<IconCloudUpload color="rgb(30 83 134)" size={26} />}
+                  icon={<IconCloudUpload color="#AD7A5B" size={26} />}
                   label="Upload"
                 />
               </Tab>
               <Tab className="outline-none">
                 <ToolBarButton
                   key="background"
-                  icon={<IconTexture color="rgb(30 83 134)" size={26} />}
+                  icon={<IconTexture color="#AD7A5B" size={26} />}
                   label="Background"
                 />
               </Tab>
               <Tab className="outline-none">
                 <ToolBarButton
                   key="shapes"
-                  icon={<IconCategory2 color="rgb(30 83 134)" size={26} />}
+                  icon={<IconCategory2 color="#AD7A5B" size={26} />}
                   label="Shapes"
                 />
               </Tab>
               <Tab className="outline-none">
                 <ToolBarButton
                   key="text"
-                  icon={<IconLetterT color="rgb(30 83 134)" size={26} />}
+                  icon={<IconLetterT color="#AD7A5B" size={26} />}
                   label="Text"
                 />
               </Tab>
               <Tab className="outline-none">
                 <ToolBarButton
                   key="layers"
-                  icon={<IconLayersSubtract color="rgb(30 83 134)" size={26} />}
+                  icon={<IconLayersSubtract color="#AD7A5B" size={26} />}
                   label="Layers"
                 />
               </Tab>
               <Tab className="outline-none">
                 <ToolBarButton
                   key="templates"
-                  icon={<IconTemplate color="rgb(30 83 134)" size={26} />}
+                  icon={<IconTemplate color="#AD7A5B" size={26} />}
                   label="Templates"
                 />
               </Tab>
@@ -323,7 +323,7 @@ export default function Design({
                 <div onClick={() => setSlideShowMode(true)}>
                   <ToolBarButton
                     key="slideshow"
-                    icon={<IconSlideshow color="rgb(30 83 134)" size={26} />}
+                    icon={<IconSlideshow color="#AD7A5B" size={26} />}
                     label="Slideshow"
                   />
                 </div>

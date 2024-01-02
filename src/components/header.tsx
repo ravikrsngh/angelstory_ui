@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import logoimg from "./../assets/logo.svg";
+import logoimg from "./../assets/logo-angel-journey.svg";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { Dropdown } from "./ui/dropdown";
@@ -16,17 +16,17 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const logoutUser = () => {
-    Cookies.remove('access');
-    navigate('/login')
-  }
+    Cookies.remove("access");
+    navigate("/login");
+  };
 
   useEffect(() => {
-    setMobileMenuOpen(false )
-  },[location])
+    setMobileMenuOpen(false);
+  }, [location]);
 
   return (
     <header className="bg-primary-50 fixed top-0 left-0 w-full z-10 shadow-md">
@@ -35,10 +35,10 @@ export default function Header() {
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
-              <Link to="/" className="-m-1.5 p-1.5">
-                <img className="h-10 md:h-12 w-auto" src={logoimg} alt="" />
-              </Link>
-            </div>
+          <Link to="/" className="-m-1.5 p-1.5">
+            <img className="h-10 md:h-12 w-auto" src={logoimg} alt="" />
+          </Link>
+        </div>
         {Cookies.get("access") ? (
           <>
             <Dropdown
@@ -46,13 +46,22 @@ export default function Header() {
                 <button className="w-10 h-10 rounded-full bg-slate-200"></button>
               }
               options={[
-                <Link to='/dashboard' className="block p-2 hover:bg-primary-50 w-full text-left">
+                <Link
+                  to="/dashboard"
+                  className="block p-2 hover:bg-primary-50 w-full text-left"
+                >
                   Dashboard
                 </Link>,
-                <Link to='/account-dashboard' className="block p-2 hover:bg-primary-50 w-full text-left">
+                <Link
+                  to="/account-dashboard"
+                  className="block p-2 hover:bg-primary-50 w-full text-left"
+                >
                   My Account
                 </Link>,
-                <button onClick={logoutUser} className="block p-2 hover:bg-primary-50 w-full text-left">
+                <button
+                  onClick={logoutUser}
+                  className="block p-2 hover:bg-primary-50 w-full text-left"
+                >
                   Logout
                 </button>,
               ]}
@@ -107,15 +116,15 @@ export default function Header() {
         <div className="fixed inset-0 z-10" />
         <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex justify-between items-center gap-x-6">
-          <Link to="/" className="-m-1.5 p-1.5">
-                <img className="h-10 md:h-12 w-auto" src={logoimg} alt="" />
-              </Link>
+            <Link to="/" className="-m-1.5 p-1.5">
+              <img className="h-10 md:h-12 w-auto" src={logoimg} alt="" />
+            </Link>
             <Link
-                to="/signup"
-                className=" bg-primary-500 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign up
-              </Link>
+              to="/signup"
+              className=" bg-primary-500 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Sign up
+            </Link>
             <button
               type="button"
               className="-m-2.5 rounded-md p-2.5 text-gray-700"

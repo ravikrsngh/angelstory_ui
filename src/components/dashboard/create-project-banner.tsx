@@ -1,10 +1,11 @@
 import { IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
 import { CreateProject } from "../create-project";
-import dashboard_hero_img from './../../assets/banner-1@3x.png'
+import dashboard_hero_img from "./../../assets/banner-updated-final-2024.png";
 
 export const CreateProjectBanner = () => {
-    const [displayCreateProject,setDisplayCreateProject] = useState<boolean>(false);
+  const [displayCreateProject, setDisplayCreateProject] =
+    useState<boolean>(false);
   return (
     <>
       <div className="relative rounded-md overflow-hidden h-40 md:h-56 lg:h-auto max-h-96">
