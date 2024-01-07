@@ -8,6 +8,7 @@ import { CanvasContext } from "../../context/canvasContext";
 import AudioPlayer from "../../components/audio-player";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
+import testmp3 from "./../../assets/test.mp3";
 
 const Slide = ({
   isActive,
@@ -120,6 +121,9 @@ export default function SlideshowPane() {
   const { fabricRef, slides, setSlides, activeSlide } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
+
+  const [videoURL, setVideoURL] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const ffmpegRef = useRef(new FFmpeg());
 
   const [selectedMusic, setSelectedMusic] = useState<SlideMusic | null>(null);
@@ -139,8 +143,7 @@ export default function SlideshowPane() {
     return <>{t}</>;
   };
 
-  const createEachSlideVideo = async (slide: SlideType) => {
-    console.log(slide);
+  const createEachSlideVideo = async (slide: SlideType, idx: number) => {
     const virtualCanvas = new fabric.Canvas("");
     virtualCanvas.setDimensions({
       //@ts-ignore
@@ -148,52 +151,80 @@ export default function SlideshowPane() {
       //@ts-ignore
       height: fabricRef.current.getHeight() / fabricRef.current.getZoom(),
     });
-    virtualCanvas.loadFromJSON(slide.content, async () => {
-      console.log(virtualCanvas.toDataURL({ format: "png" }));
-      const imgBlob = dataURLtoBlob(virtualCanvas.toDataURL({ format: "png" }));
-      await ffmpegRef.current.writeFile("image.png", await fetchFile(imgBlob));
-      console.log("Loaded Image");
-      const music = await fetch(slide.music.url);
-      console.log(music);
-      await ffmpegRef.current.writeFile(
-        "sound.mp3",
-        await fetchFile(slide.music.url)
-      );
-      console.log("Loaded Music");
-      await ffmpeg.run(
-        "-framerate",
-        "1/10",
-        "-i",
-        "image.png",
-        "-i",
-        "sound.mp3",
-        "-c:v",
-        "libx264",
-        "-t",
-        "10",
-        "-pix_fmt",
-        "yuv420p",
-        "-vf",
-        "scale=1080:1080",
-        "test.mp4"
-      );
-      console.log("Video Made");
-      const createdVideo = await ffmpegRef.current.readFile("test.mp4");
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(new Blob([createdVideo.buffer]));
-      link.download = "abc.png";
-      link.click();
+    return new Promise((resolve) => {
+      virtualCanvas.loadFromJSON(slide.content, async () => {
+        console.log("Loading new slide");
+        const imgBlob = dataURLtoBlob(
+          virtualCanvas.toDataURL({ format: "png" })
+        );
+        await ffmpegRef.current.writeFile(
+          `image${idx}.png`,
+          await fetchFile(imgBlob)
+        );
+        console.log("Loaded Image");
+        await ffmpegRef.current.writeFile(
+          `sound${idx}.mp3`,
+          await fetchFile(testmp3)
+        );
+        console.log("Loaded Music");
+        await ffmpegRef.current.exec([
+          "-framerate",
+          "30",
+          "-loop",
+          "1",
+          "-i",
+          `image${idx}.png`,
+          "-i",
+          `sound${idx}.mp3`,
+          "-c:v",
+          "libx264",
+          "-t",
+          `${slide.duration}`,
+          "-pix_fmt",
+          "yuv420p",
+          "-vf",
+          "scale=1080:1080",
+          `test${idx}.mp4`,
+        ]);
+        console.log("Video Made", `test${idx}.mp4`);
+        resolve();
+      });
     });
   };
 
   const createPreview = async () => {
+    setLoading(true);
+    const fileList = [];
     for (let i = 0; i < slides.length; i++) {
-      createEachSlideVideo(slides[i]);
+      await createEachSlideVideo(slides[i], i);
+      fileList.push(`file test${i}.mp4`);
     }
+    console.log(fileList);
+    await ffmpegRef.current.writeFile(
+      "fileList.txt",
+      new TextEncoder().encode(fileList.join("\n"))
+    );
+    console.log("Started Merging");
+    await ffmpegRef.current.exec([
+      "-f",
+      "concat",
+      "-safe",
+      "0",
+      "-i",
+      "fileList.txt",
+      "-c",
+      "copy",
+      "output.mp4",
+    ]);
+    console.log("Merging Complete");
+    const createdVideo = await ffmpegRef.current.readFile("output.mp4");
+    setVideoURL(URL.createObjectURL(new Blob([createdVideo.buffer])));
+    setLoading(false);
   };
 
   const loadFFMPEG = async () => {
     console.log("Loading FFMPEG");
+    setLoading(true);
     const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
     const ffmpeg = ffmpegRef.current;
     await ffmpeg.load({
@@ -203,12 +234,31 @@ export default function SlideshowPane() {
         "application/wasm"
       ),
     });
+    setLoading(false);
     console.log("Loaded FFMPEG");
   };
 
   useEffect(() => {
     loadFFMPEG();
   }, []);
+
+  if (loading) {
+    return <span>Loading...</span>;
+  }
+
+  if (videoURL) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-full p-4 md:p-10 lg:p-16 z-50 bg-black/75 flex flex-col justify-center items-center">
+        <video className="w-full max-w-xl" src={videoURL} controls></video>
+        <button
+          className="text-center text-sm mt-10 inline-block bg-primary-400 text-white py-2 px-5 w-fit"
+          onClick={() => setVideoURL(null)}
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className=" bg-white w-full p-5">
