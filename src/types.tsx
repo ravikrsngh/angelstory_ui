@@ -150,7 +150,10 @@ export type DesignLoaderPropType = {
   originalWidth: number;
   name: string;
   projectType: string;
-  saveProject: (obj: { formattedData?: string|undefined; name?: string|undefined }, time:number) => void;
+  saveProject: (
+    obj: { formattedData?: string | undefined; name?: string | undefined },
+    time: number
+  ) => void;
   initialSlides: SlideType[];
 };
 
@@ -176,7 +179,10 @@ export type EditorHeaderPropType = {
   deleteObject: () => void;
   goBackInHistory: () => void;
   name: string;
-  saveProject: (obj: { formattedData?: string; name?: string }, time:number) => void;
+  saveProject: (
+    obj: { formattedData?: string; name?: string },
+    time: number
+  ) => void;
 };
 
 export type FullScreenDialogPropType = {
@@ -204,46 +210,45 @@ export type TextPhrase = {
 };
 
 export type AssetResType = {
-  assetType: string
-  assetUrl: string
-  collectionId: number
-  id: number
-  projectId: number
-  uploadedAt: string
-  uploadedBy: number
-}
+  assetType: string;
+  assetUrl: string;
+  collectionId: number;
+  id: number;
+  projectId: number;
+  uploadedAt: string;
+  uploadedBy: number;
+};
 
-
-export type UserDetailsResType = { 
-  name: string; 
-  mobileNumber: string; 
-  active?: boolean | undefined; 
-  birthDate?: string | undefined; 
-  country?: string | undefined; 
-  email?: string | undefined; 
-  gender?: string | undefined; 
-  id?: number | undefined; 
-  profileImage?: string | undefined; 
-}
+export type UserDetailsResType = {
+  name: string;
+  mobileNumber: string;
+  active?: boolean | undefined;
+  birthDate?: string | undefined;
+  country?: string | undefined;
+  email?: string | undefined;
+  gender?: string | undefined;
+  id?: number | undefined;
+  profileImage?: string | undefined;
+};
 
 export type ProjectInCollectionType = {
-  collectionId: number
-  createdAt: string
-  createdBy: number
-  height: number
-  id: number
-  name: string
-  projectType: string
-  updatedAt: string
-  width: number
-}
+  collectionId: number;
+  createdAt: string;
+  createdBy: number;
+  height: number;
+  id: number;
+  name: string;
+  projectType: string;
+  updatedAt: string;
+  width: number;
+};
 
-export type CollectionDetailsResType ={
-  assetList: AssetResType[]
-  bgColor: string
-  createdAt: string
-  createdBy: number
-  id: number
-  name: string
-  projectDtoList: ProjectInCollectionType[]
-}
+export type CollectionDetailsResType = {
+  assetList: AssetResType[];
+  bgColor: string;
+  createdAt: string;
+  createdBy: number;
+  id: number;
+  name: string;
+  projectDtoList: ProjectInCollectionType[];
+};

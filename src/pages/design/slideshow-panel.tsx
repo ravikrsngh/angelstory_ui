@@ -3,11 +3,11 @@
 import { IconPlayerPlay } from "@tabler/icons-react";
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { SlideCardType, CanvasContextType, SlideMusic } from "../../types";
-import { cn } from "../../utils";
+import { cn, dataURLtoBlob } from "../../utils";
 import { CanvasContext } from "../../context/canvasContext";
 import AudioPlayer from "../../components/audio-player";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { toBlobURL } from "@ffmpeg/util";
+import { fetchFile, toBlobURL } from "@ffmpeg/util";
 
 const Slide = ({
   isActive,
@@ -117,10 +117,9 @@ const Slide = ({
 };
 
 export default function SlideshowPane() {
-  const { slides, setSlides, activeSlide } = useContext(
+  const { fabricRef, slides, setSlides, activeSlide } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
-  const [loaded, setLoaded] = useState<boolean>(false);
   const ffmpegRef = useRef(new FFmpeg());
 
   const [selectedMusic, setSelectedMusic] = useState<SlideMusic | null>(null);
@@ -140,11 +139,60 @@ export default function SlideshowPane() {
     return <>{t}</>;
   };
 
-  const createEachSlideVideo = (slide: SlideType) => {
+  const createEachSlideVideo = async (slide: SlideType) => {
     console.log(slide);
+    const virtualCanvas = new fabric.Canvas("");
+    virtualCanvas.setDimensions({
+      //@ts-ignore
+      width: fabricRef.current.getWidth() / fabricRef.current.getZoom(),
+      //@ts-ignore
+      height: fabricRef.current.getHeight() / fabricRef.current.getZoom(),
+    });
+    virtualCanvas.loadFromJSON(slide.content, async () => {
+      console.log(virtualCanvas.toDataURL({ format: "png" }));
+      const imgBlob = dataURLtoBlob(virtualCanvas.toDataURL({ format: "png" }));
+      await ffmpegRef.current.writeFile("image.png", await fetchFile(imgBlob));
+      console.log("Loaded Image");
+      const music = await fetch(slide.music.url);
+      console.log(music);
+      await ffmpegRef.current.writeFile(
+        "sound.mp3",
+        await fetchFile(slide.music.url)
+      );
+      console.log("Loaded Music");
+      await ffmpeg.run(
+        "-framerate",
+        "1/10",
+        "-i",
+        "image.png",
+        "-i",
+        "sound.mp3",
+        "-c:v",
+        "libx264",
+        "-t",
+        "10",
+        "-pix_fmt",
+        "yuv420p",
+        "-vf",
+        "scale=1080:1080",
+        "test.mp4"
+      );
+      console.log("Video Made");
+      const createdVideo = await ffmpegRef.current.readFile("test.mp4");
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(new Blob([createdVideo.buffer]));
+      link.download = "abc.png";
+      link.click();
+    });
   };
 
   const createPreview = async () => {
+    for (let i = 0; i < slides.length; i++) {
+      createEachSlideVideo(slides[i]);
+    }
+  };
+
+  const loadFFMPEG = async () => {
     console.log("Loading FFMPEG");
     const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
     const ffmpeg = ffmpegRef.current;
@@ -156,14 +204,6 @@ export default function SlideshowPane() {
       ),
     });
     console.log("Loaded FFMPEG");
-    for (let i = 0; i < slides.length; i++) {
-      createEachSlideVideo(slides[i]);
-    }
-  };
-
-  const loadFFMPEG = async () => {
-    // toBlobURL is used to bypass CORS issue, urls with the same
-    // domain can be used directly.
   };
 
   useEffect(() => {
