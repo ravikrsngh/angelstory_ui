@@ -9,9 +9,9 @@ export const DesignLoader = () => {
   const timeoutRef = useRef<number>(null);
   const params = useParams();
   const { data, isLoading, isFetching } = useGetProjectDetails(
-    parseInt(params.projectId? params.projectId : "-1")
+    parseInt(params.projectId ? params.projectId : "-1")
   );
-  const saveProjectHook = useSaveProject()
+  const saveProjectHook = useSaveProject();
 
   if (isLoading || isFetching) {
     return (
@@ -21,7 +21,10 @@ export const DesignLoader = () => {
     );
   }
 
-  const saveProject = (obj: { formattedData?: string; name?: string }, time:number = 300000) => {
+  const saveProject = (
+    obj: { formattedData?: string; name?: string },
+    time: number = 300000
+  ) => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }

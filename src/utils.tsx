@@ -20,3 +20,21 @@ export function dataURLtoBlob(dataUrl) {
 
   return new Blob([uint8Array], { type: "image/png" });
 }
+
+function padWithZero(value) {
+  return value < 10 ? "0" + value : value;
+}
+
+export function secondsToHHMMSS(seconds: number) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  const formattedTime = [
+    padWithZero(hours),
+    padWithZero(minutes),
+    padWithZero(remainingSeconds),
+  ].join(":");
+
+  return formattedTime;
+}

@@ -11,7 +11,7 @@ export default function EditInputBox({
   onChange,
   step,
   min,
-  max
+  max,
 }: EditInputBoxType) {
   return (
     <div

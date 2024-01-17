@@ -10,9 +10,10 @@ import { CollectionType } from "../../types";
 import { CollectionCard } from "./collection-card";
 
 export const DashboardCollection = () => {
-  
-    const {data, isLoading, isFetching, isError} = useGetAllCollectionForUser(Cookies.get('user') || '')
-    const createCollectionHook = useCreateCollection()
+  const { data, isLoading, isFetching, isError } = useGetAllCollectionForUser(
+    Cookies.get("user") || ""
+  );
+  const createCollectionHook = useCreateCollection();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,28 +28,30 @@ export const DashboardCollection = () => {
   const handleSubmitCreateCollection = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
-    const formData = new FormData(form)
-    createCollectionHook.mutate({collectionName: formData.get('collection') as string})
+    const formData = new FormData(form);
+    createCollectionHook.mutate({
+      collectionName: formData.get("collection") as string,
+    });
+  };
+
+  if (isLoading || isFetching) {
+    return (
+      <>
+        <div>
+          <span>Loading...</span>
+        </div>
+      </>
+    );
   }
 
-  if(isLoading || isFetching) {
+  if (isError) {
     return (
-        <>
-            <div>
-                <span>Loading...</span>
-            </div>
-        </>
-    )
-  }
-
-  if(isError) {
-    return (
-        <>
-            <div>
-                <span>Something went wrong !!</span>
-            </div>
-        </>
-    )
+      <>
+        <div>
+          <span>Something went wrong !!</span>
+        </div>
+      </>
+    );
   }
 
   return (
@@ -57,12 +60,12 @@ export const DashboardCollection = () => {
         <h4 className="text-base font-medium mb-4 md:mb-10 md:text-xl flex justify-between items-center">
           My Collection
           <div
-                    onClick={openModal}
-                    className="flex hover:text-primary-400 cursor-pointer border-primary-200 text-primary-300 rounded-md md:hidden justify-center items-center gap-2"
-                  >
-                    <IconPlus size={18} />
-                    <span>Create</span>
-                  </div>
+            onClick={openModal}
+            className="flex hover:text-primary-400 cursor-pointer border-primary-200 text-primary-300 rounded-md md:hidden justify-center items-center gap-2"
+          >
+            <IconPlus size={18} />
+            <span>Create</span>
+          </div>
         </h4>
         <div>
           <Tab.Group>
@@ -122,7 +125,14 @@ export const DashboardCollection = () => {
                     <IconPlus />
                     <span>Create</span>
                   </div>
-                  {data.map((cc:CollectionType) => <CollectionCard key={cc.id} id={cc.id} name={cc.name} bgColor={cc.bgColor} /> )}
+                  {data.map((cc: CollectionType) => (
+                    <CollectionCard
+                      key={cc.id}
+                      id={cc.id}
+                      name={cc.name}
+                      bgColor={cc.bgColor}
+                    />
+                  ))}
                 </div>
               </Tab.Panel>
               <Tab.Panel>
@@ -167,13 +177,16 @@ export const DashboardCollection = () => {
                   >
                     Create Collection
                   </Dialog.Title>
-                  <form action="" className="my-10" onSubmit={handleSubmitCreateCollection}>
+                  <form
+                    action=""
+                    className="my-10"
+                    onSubmit={handleSubmitCreateCollection}
+                  >
                     <Input label="Collection Name" name="collection" />
                     <div className="mt-4 flex justify-end">
                       <button
                         type="submit"
                         className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        
                       >
                         Create
                       </button>

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   IconPlayerPauseFilled,
@@ -10,8 +11,7 @@ import Draggable from "react-draggable";
 import { CanvasContext } from "../context/canvasContext";
 import { CanvasContextType } from "../types";
 
-// @ts-ignore
-const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) => {
+const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic }) => {
   const { setSlides, slides, activeSlide } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
@@ -19,7 +19,7 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [newStartTime, setNewStartTime] = useState(startTime);
-  const [defaultX, setDefaultX] = useState(x)
+  const [defaultX, setDefaultX] = useState(x);
   const [isLoaded, setIsLoaded] = useState(false);
 
   console.log(newStartTime);
@@ -27,23 +27,22 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
   useEffect(() => {
     const audio = audioRef.current;
 
-    if(audio) {
+    if (audio) {
       const updateTime = () => {
         setCurrentTime(audio.currentTime);
       };
-  
+
       audio.addEventListener("timeupdate", updateTime);
-  
+
       return () => {
         audio.removeEventListener("timeupdate", updateTime);
       };
     }
-
   }, []);
 
   const playPauseHandler = () => {
     const audio = audioRef.current;
-    if(audio) {
+    if (audio) {
       if (isPlaying) {
         audio.pause();
       } else {
@@ -55,28 +54,26 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
 
   const backHandler = () => {
     const audio = audioRef.current;
-    if(audio) {
+    if (audio) {
       audio.currentTime -= 5;
     }
   };
 
   const forwardHandler = () => {
     const audio = audioRef.current;
-    if(audio) {
+    if (audio) {
       audio.currentTime += 5;
     }
   };
 
   const calculateProgress = () => {
     const audio = audioRef.current;
-    if(audio)
-    return (currentTime / audio.duration) * 100 || 0;
+    if (audio) return (currentTime / audio.duration) * 100 || 0;
   };
 
   const getSelectedWidth = () => {
     const audio = audioRef.current;
-    if(audio)
-    return (duration / audio?.duration) * 100 || 0;
+    if (audio) return (duration / audio?.duration) * 100 || 0;
   };
 
   const handleProgressBarClick = (e: React.MouseEvent) => {
@@ -99,7 +96,7 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
     const duration_to_width = audioRef.current?.duration / w2;
     // @ts-ignore
     setNewStartTime(parseInt(data.x * duration_to_width));
-    setDefaultX(data.x)
+    setDefaultX(data.x);
   };
 
   const saveMusic = () => {
@@ -108,7 +105,7 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
       name: name,
       url: url,
       startTime: newStartTime,
-      duration: duration
+      duration: duration,
     };
     setSlides(slides_copy);
     setSelectedMusic(null);
@@ -129,7 +126,6 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
       }
     };
   }, []);
-
 
   return (
     <div className="audio-player">
@@ -154,7 +150,12 @@ const AudioPlayer = ({ name, url, startTime, duration, setSelectedMusic, x }) =>
               ></div>
             </div>
 
-            <Draggable defaultPosition={{x: defaultX, y:0}} bounds="parent" axis="x" onStop={onMusicDragStop}>
+            <Draggable
+              defaultPosition={{ x: defaultX, y: 0 }}
+              bounds="parent"
+              axis="x"
+              onStop={onMusicDragStop}
+            >
               <div
                 className="absolute h-full border-2 border-primary-600 rounded-md z-10 cursor-move"
                 style={{

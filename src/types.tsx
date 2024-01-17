@@ -252,3 +252,25 @@ export type CollectionDetailsResType = {
   name: string;
   projectDtoList: ProjectInCollectionType[];
 };
+
+export type MusicElementType = {
+  id: number;
+  name: string;
+  url: string;
+  slideFrom: number;
+  slideTo: number;
+  startFrom: number;
+  duration: number;
+};
+
+export type MusicModalPropType = {
+  musicModalOpen: boolean;
+  setMusicModalOpen: Dispatch<SetStateAction<boolean>>;
+  defaultData: MusicElementType | null;
+  setMusicArr: Dispatch<SetStateAction<MusicElementType[] | null>>;
+};
+
+export type AddMusicModalPropType = {
+  addMusicModal: boolean;
+  setAddMusicModal: Dispatch<SetStateAction<boolean>>;
+};
