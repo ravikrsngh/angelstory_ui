@@ -9,7 +9,7 @@ const client = new S3Client({
     secretAccessKey: import.meta.env.VITE_AWS_SECRET_KEY,
   },
 });
-console.log(import.meta.env.VITE_AWS_SECRET_KEY)
+console.log(import.meta.env.VITE_AWS_SECRET_KEY);
 export const uploadFileToS3 = async (file, bucket_name, filename) => {
   const command = new PutObjectCommand({
     Bucket: bucket_name,

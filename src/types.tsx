@@ -267,6 +267,7 @@ export type MusicModalPropType = {
   musicModalOpen: boolean;
   setMusicModalOpen: Dispatch<SetStateAction<boolean>>;
   defaultData: MusicElementType | null;
+  musicArr: MusicElementType[];
   setMusicArr: Dispatch<SetStateAction<MusicElementType[] | null>>;
 };
 

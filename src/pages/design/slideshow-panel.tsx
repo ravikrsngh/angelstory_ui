@@ -39,18 +39,18 @@ const Slide = ({
     }
   };
 
-  const onSelectMusic = (event: React.ChangeEvent) => {
-    const file = event.target.files[0];
-    if (file) {
-      // const objectUrl = URL.createObjectURL(file);
-      setSelectedMusic({
-        name: file.name,
-        url: "https://www.computerhope.com/jargon/m/example.mp3",
-        startTime: 0,
-        duration: 0,
-      });
-    }
-  };
+  // const onSelectMusic = (event: React.ChangeEvent) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     // const objectUrl = URL.createObjectURL(file);
+  //     setSelectedMusic({
+  //       name: file.name,
+  //       url: "https://www.computerhope.com/jargon/m/example.mp3",
+  //       startTime: 0,
+  //       duration: 0,
+  //     });
+  //   }
+  // };
 
   const changeDuration = (e, index) => {
     console.log(e.target.value, index);
@@ -59,16 +59,16 @@ const Slide = ({
     setSlides(slides_copy);
   };
 
-  const getMusicDetails = () => {
-    console.log(slides[slideNumber]);
-    setSelectedMusic({
-      name: slides[slideNumber].music?.name || "",
-      url: slides[slideNumber].music?.url || "",
-      duration: slides[slideNumber].music?.duration || 0,
-      startTime: slides[slideNumber].music?.startTime || 0,
-      x: slides[slideNumber].music?.x || 0,
-    });
-  };
+  // const getMusicDetails = () => {
+  //   console.log(slides[slideNumber]);
+  //   setSelectedMusic({
+  //     name: slides[slideNumber].music?.name || "",
+  //     url: slides[slideNumber].music?.url || "",
+  //     duration: slides[slideNumber].music?.duration || 0,
+  //     startTime: slides[slideNumber].music?.startTime || 0,
+  //     x: slides[slideNumber].music?.x || 0,
+  //   });
+  // };
 
   return (
     <div>
@@ -134,7 +134,7 @@ export default function SlideshowPane() {
 
   const [selectedMusic, setSelectedMusic] = useState<SlideMusic | null>(null);
 
-  const [musicArr, setMusicArr] = useState<MusicElementType[] | null>(null);
+  const [musicArr, setMusicArr] = useState<MusicElementType[] | null>([]);
   const [editMusicData, setEditMusicData] = useState<MusicElementType | null>(
     null
   );
@@ -337,6 +337,11 @@ export default function SlideshowPane() {
     setMusicModalOpen(true);
   };
 
+  const deleteMusic = (id: number) => {
+    const musicArrCopy = musicArr?.filter((music) => music.id != id);
+    setMusicArr(musicArrCopy);
+  };
+
   useEffect(() => {
     loadFFMPEG();
   }, []);
@@ -385,6 +390,7 @@ export default function SlideshowPane() {
               setMusicModalOpen={setMusicModalOpen}
               defaultData={editMusicData}
               setMusicArr={setMusicArr}
+              musicArr={musicArr}
             />
           )}
         </div>
@@ -429,7 +435,7 @@ export default function SlideshowPane() {
                 <button onClick={() => editThisMusic(music)}>
                   <IconEdit size={14} />
                 </button>
-                <button>
+                <button onClick={() => deleteMusic(music.id)}>
                   <IconTrash size={14} />
                 </button>
               </div>

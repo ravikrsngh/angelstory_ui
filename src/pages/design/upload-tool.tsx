@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 //@ts-nocheck
 import { Tab } from "@headlessui/react";
 import { cn } from "../../utils";
@@ -12,69 +13,14 @@ import { useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useGetAssetsFromCollection } from "../../hooks/assets/use-get-collection-assets";
 
-
-
-
-const StockImagesComp = ({addImage}:{addImage:(url:string) => void}) => {
+const StockImagesComp = ({ addImage }: { addImage: (url: string) => void }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { data, isLoading, isFetching, isError } = useGetStockImages(searchQuery);
-    const handleSearchSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      setSearchQuery(e.target.search.value);
-    };
-  
-    if (isLoading || isFetching) {
-      return (
-        <>
-          <div className="p-5">
-            <span>Loading ...</span>
-          </div>
-        </>
-      );
-    }
-  
-    if (isError) {
-      return (
-        <>
-          <div className="p-5">
-            <span>Something went wrong ...</span>
-          </div>
-        </>
-      );
-    }
-
-  return (
-    <>
-      <form className="my-4" onSubmit={handleSearchSubmit}>
-        <input
-          className="w-full py-2 px-4 border border-slate-200 text-md"
-          type="text"
-          name="search"
-          placeholder="Search images, audio"
-          required
-        />
-      </form>
-      <div className="w-full grid grid-cols-2 gap-4">
-            {data.results.map((ins) => (
-              <div
-                key={ins.id}
-                className="bg-slate-100 flex items-center justify-center"
-                onClick={() => addImage(ins.urls.small)}
-              >
-                <img src={ins.urls.small} alt="" className="w-full" />
-              </div>
-            ))}
-          </div>
-
-    </>
-  )
-}
-
-
-const CollectionAssetComp = ({addImage}:{addImage:(url:string) => void}) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const params = useParams();
-  const {data, isLoading, isFetching, isError} = useGetAssetsFromCollection(parseInt(params.collectionId))
+  const { data, isLoading, isFetching, isError } =
+    useGetStockImages(searchQuery);
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchQuery(e.target.search.value);
+  };
 
   if (isLoading || isFetching) {
     return (
@@ -96,6 +42,62 @@ const CollectionAssetComp = ({addImage}:{addImage:(url:string) => void}) => {
     );
   }
 
+  return (
+    <>
+      <form className="my-4" onSubmit={handleSearchSubmit}>
+        <input
+          className="w-full py-2 px-4 border border-slate-200 text-md"
+          type="text"
+          name="search"
+          placeholder="Search images, audio"
+          required
+        />
+      </form>
+      <div className="w-full grid grid-cols-2 gap-4">
+        {data.results.map((ins) => (
+          <div
+            key={ins.id}
+            className="bg-slate-100 flex items-center justify-center"
+            onClick={() => addImage(ins.urls.small)}
+          >
+            <img src={ins.urls.small} alt="" className="w-full" />
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+const CollectionAssetComp = ({
+  addImage,
+}: {
+  addImage: (url: string) => void;
+}) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const params = useParams();
+  const { data, isLoading, isFetching, isError } = useGetAssetsFromCollection(
+    parseInt(params.collectionId)
+  );
+
+  if (isLoading || isFetching) {
+    return (
+      <>
+        <div className="p-5">
+          <span>Loading ...</span>
+        </div>
+      </>
+    );
+  }
+
+  if (isError) {
+    return (
+      <>
+        <div className="p-5">
+          <span>Something went wrong ...</span>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -132,7 +134,7 @@ const CollectionAssetComp = ({addImage}:{addImage:(url:string) => void}) => {
         </Tab.List>
         <Tab.Panels>
           <Tab.Panel className="w-full grid grid-cols-2 gap-4">
-            {data.map((ins:AssetResType) => (
+            {data.map((ins: AssetResType) => (
               <div
                 key={ins.id}
                 className="bg-slate-100 flex items-center justify-center"
@@ -146,16 +148,15 @@ const CollectionAssetComp = ({addImage}:{addImage:(url:string) => void}) => {
         </Tab.Panels>
       </Tab.Group>
     </>
-  )
-
-}
+  );
+};
 
 export default function UploadToolPanel() {
   const { fabricRef, recordChange } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
-  const [showStockImages, setShowStockImages] = useState<boolean>(false)
-  
+  const [showStockImages, setShowStockImages] = useState<boolean>(false);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const createAssetHook = useCreateAssets();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -178,9 +179,16 @@ export default function UploadToolPanel() {
       await uploadFileToS3(
         file,
         `${import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME}`,
-        `users/${Cookies.get("user")}/project/${file.name.replace(" ","%2B")}`
+        `users/${Cookies.get("user")}/project/images/${file.name.replace(
+          " ",
+          "%2B"
+        )}`
       );
-      const assetUrl = `https://${import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME}.s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/users/${Cookies.get("user")}/project/${file.name.replace(" ","%2B")}`
+      const assetUrl = `https://${
+        import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME
+      }.s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/users/${Cookies.get(
+        "user"
+      )}/project/images/${file.name.replace(" ", "%2B")}`;
       await createAssetHook.mutate({
         assetType: "IMAGE",
         assetUrl: assetUrl,
@@ -188,10 +196,8 @@ export default function UploadToolPanel() {
         collectionId: parseInt(params.collectionId),
       });
       addImage(assetUrl);
+    }
   };
-}
-
-  
 
   return (
     <div className="p-5">
@@ -211,16 +217,36 @@ export default function UploadToolPanel() {
         </label>
       </form>
       <div className="flex items-center gap-4 my-4">
-        <div className="flex items-center text-xs gap-1" onClick={() => setShowStockImages(false)}>
-          <input type="radio" name="asset_type" id="your_assets" defaultChecked={!showStockImages} />
+        <div
+          className="flex items-center text-xs gap-1"
+          onClick={() => setShowStockImages(false)}
+        >
+          <input
+            type="radio"
+            name="asset_type"
+            id="your_assets"
+            defaultChecked={!showStockImages}
+          />
           <label htmlFor="your_assets">Your Assets</label>
         </div>
-        <div className="flex items-center text-xs gap-1" onClick={() => setShowStockImages(true)}>
-          <input type="radio" name="asset_type" id="stock_assets" defaultChecked={showStockImages} />
+        <div
+          className="flex items-center text-xs gap-1"
+          onClick={() => setShowStockImages(true)}
+        >
+          <input
+            type="radio"
+            name="asset_type"
+            id="stock_assets"
+            defaultChecked={showStockImages}
+          />
           <label htmlFor="stock_assets">Stock Collection</label>
         </div>
       </div>
-      {showStockImages? <StockImagesComp addImage={addImage} /> : <CollectionAssetComp addImage={addImage} /> }
+      {showStockImages ? (
+        <StockImagesComp addImage={addImage} />
+      ) : (
+        <CollectionAssetComp addImage={addImage} />
+      )}
     </div>
   );
 }

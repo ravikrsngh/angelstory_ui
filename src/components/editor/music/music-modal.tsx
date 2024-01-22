@@ -8,12 +8,17 @@ import {
 import EditInputBox from "../../edit-panel/components/edit-inputbox";
 import toast from "react-hot-toast";
 import { CanvasContext } from "../../../context/canvasContext";
+import { uploadFileToS3 } from "../../../service/aws";
+import Cookies from "js-cookie";
+import { useCreateAssets } from "../../../hooks/assets/use-create-assets";
+import { useParams } from "react-router-dom";
 
 export default function MusicModal({
   musicModalOpen,
   setMusicModalOpen,
   defaultData,
   setMusicArr,
+  musicArr,
 }: MusicModalPropType) {
   const { slides } = useContext(
     CanvasContext as React.Context<CanvasContextType>
@@ -21,15 +26,19 @@ export default function MusicModal({
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const auidoRef = useRef<HTMLAudioElement | null>(null);
 
-  const [sldieFrom, setSlideFrom] = useState<number>(
+  const [slideFrom, setSlideFrom] = useState<number>(
     defaultData ? defaultData.slideFrom : 1
   );
-  const [sldieTo, setSlideTo] = useState<number>(
-    defaultData ? defaultData.slideTo : 1
+  const [slideTo, setSlideTo] = useState<number>(
+    defaultData ? defaultData.slideTo : slideFrom
   );
   const [startFrom, setStartFrom] = useState<number>(
     defaultData ? defaultData.startFrom : 1
   );
+
+  const createAssetHook = useCreateAssets();
+
+  const params = useParams();
 
   console.log(startFrom);
 
@@ -47,67 +56,114 @@ export default function MusicModal({
   }
 
   const validateMusic = () => {
-    if (sldieFrom > sldieTo) {
+    if (slideFrom > slideTo) {
       toast.error("Slide To should be greater than Slide From");
-      return;
+      return false;
     }
-    if (sldieFrom <= 0 || sldieTo <= 0) {
+    if (slideFrom <= 0 || slideTo <= 0) {
       toast.error("Slide numbers cannot be negative or zero");
-      return;
+      return false;
     }
+    for (const music of musicArr) {
+      if (music.id != defaultData?.id) {
+        const slideNumbers = Array.from(
+          { length: music.slideTo - music.slideFrom + 1 },
+          (_, index) => music.slideFrom + index
+        );
+        console.log(slideNumbers);
+        if (
+          slideNumbers.includes(slideTo) ||
+          slideNumbers.includes(slideFrom)
+        ) {
+          toast.error("Music are getting overlapped.");
+          return false;
+        }
+      }
+    }
+    return true;
   };
 
   const calculateDurationOfMusic = () => {
     let t = 0;
-    for (let i = sldieFrom - 1; i < sldieTo; i++) {
+    for (let i = slideFrom - 1; i < slideTo; i++) {
       t += slides[i].duration;
     }
     return t;
   };
 
-  const addThisMusic = () => {
-    validateMusic();
-    const t = calculateDurationOfMusic();
-    setMusicArr((prev: MusicElementType[] | null) => {
-      let arr = prev;
-      if (arr) {
-        if (defaultData) {
-          for (let i = 0; i < arr.length; i++) {
-            if (arr[i].id == defaultData.id) {
-              arr[i].name = audioFile ? audioFile.name : "";
-              arr[i].slideFrom = sldieFrom;
-              arr[i].slideTo = sldieTo;
-              arr[i].startFrom = startFrom;
-              arr[i].duration = t;
-            }
-          }
-        } else {
-          arr.push({
-            id: Math.floor(Math.random() * 10000) + 1,
-            name: audioFile ? audioFile.name : "",
-            url: audioFile ? URL.createObjectURL(audioFile) : "",
-            slideFrom: sldieFrom,
-            slideTo: sldieTo,
-            startFrom: startFrom,
-            duration: t,
-          });
-        }
-      } else {
-        arr = [];
-        arr.push({
-          id: Math.floor(Math.random() * 10000) + 1,
-          name: audioFile ? audioFile.name : "",
-          url: audioFile ? URL.createObjectURL(audioFile) : "",
-          slideFrom: sldieFrom,
-          slideTo: sldieTo,
-          startFrom: startFrom,
-          duration: t,
-        });
-      }
-      return arr;
-    });
-    closeModal();
+  const uploadMusicToS3 = async () => {
+    if (params.projectId && params.collectionId) {
+      await uploadFileToS3(
+        audioFile,
+        `${import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME}`,
+        `users/${Cookies.get("user")}/project/audio/${audioFile?.name.replace(
+          " ",
+          "%2B"
+        )}`
+      );
+      const assetUrl = `https://${
+        import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME
+      }.s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/users/${Cookies.get(
+        "user"
+      )}/project/audio/${audioFile?.name.replace(" ", "%2B")}`;
+      await createAssetHook.mutate({
+        assetType: "AUDIO",
+        assetUrl: assetUrl,
+        projectId: parseInt(params.projectId),
+        collectionId: parseInt(params.collectionId),
+      });
+      return assetUrl;
+    }
   };
+
+  const addThisMusic = async () => {
+    if (validateMusic()) {
+      const assetURL = await uploadMusicToS3();
+      const t = calculateDurationOfMusic();
+      if (assetURL) {
+        setMusicArr((prev: MusicElementType[] | null) => {
+          let arr = prev;
+          if (arr) {
+            if (defaultData) {
+              for (let i = 0; i < arr.length; i++) {
+                if (arr[i].id == defaultData.id) {
+                  arr[i].slideFrom = slideFrom;
+                  arr[i].slideTo = slideTo;
+                  arr[i].startFrom = startFrom;
+                  arr[i].duration = t;
+                }
+              }
+            } else {
+              arr.push({
+                id: Math.floor(Math.random() * 10000) + 1,
+                name: audioFile ? audioFile.name : "",
+                url: assetURL,
+                slideFrom: slideFrom,
+                slideTo: slideTo,
+                startFrom: startFrom,
+                duration: t,
+              });
+            }
+          } else {
+            arr = [];
+            arr.push({
+              id: Math.floor(Math.random() * 10000) + 1,
+              name: audioFile ? audioFile.name : "",
+              url: assetURL,
+              slideFrom: slideFrom,
+              slideTo: slideTo,
+              startFrom: startFrom,
+              duration: t,
+            });
+          }
+          return arr;
+        });
+        closeModal();
+      }
+    }
+  };
+
+  console.log(slideTo);
 
   useEffect(() => {
     console.log("Reload");
@@ -191,10 +247,11 @@ export default function MusicModal({
                           inputClassName="border border-slate-200 py-2"
                           type="number"
                           id="slideFrom"
-                          defaultValue={sldieFrom}
-                          onChange={(e) =>
-                            setSlideFrom(parseInt(e.target.value))
-                          }
+                          defaultValue={slideFrom}
+                          onChange={(e) => {
+                            setSlideFrom(parseInt(e.target.value));
+                            setSlideTo(parseInt(e.target.value));
+                          }}
                           min={1}
                           max={slides.length}
                         />
@@ -204,9 +261,9 @@ export default function MusicModal({
                           inputClassName="border border-slate-200 py-2"
                           type="number"
                           id="slideTo"
-                          defaultValue={sldieTo}
+                          defaultValue={slideTo}
                           onChange={(e) => setSlideTo(parseInt(e.target.value))}
-                          min={1}
+                          min={slideFrom}
                           max={slides.length}
                         />
                         <EditInputBox
