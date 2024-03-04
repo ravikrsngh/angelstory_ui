@@ -1,20 +1,79 @@
-import { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import logoimg from "./../assets/logo-angel-journey.svg";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { IconMenu2 } from "@tabler/icons-react";
 import Cookies from "js-cookie";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import logoimg from "./../assets/logo-angel-journey.svg";
 import { Dropdown } from "./ui/dropdown";
 
 const navigation = [
-  { name: "Product", href: "#" },
-  { name: "Features", href: "#" },
-  { name: "Marketplace", href: "#" },
-  { name: "Company", href: "#" },
+  { name: "", href: "#" },
+  // { name: "Features", href: "#" },
+  // { name: "Marketplace", href: "#" },
+  // { name: "Company", href: "#" },
 ];
+
+const sideMenuOptions = [
+  {
+    name: "Collections and Journeys",
+    url: "",
+  },
+  {
+    name: "Uploads",
+    url: "",
+  },
+  {
+    name: "Editor",
+    url: "",
+  },
+  {
+    name: "Events",
+    url: "",
+  },
+  {
+    name: "Create videos/slides",
+    url: "",
+  },
+  {
+    name: "Journal",
+    url: "",
+  },
+  {
+    name: "Print products",
+    url: "",
+  },
+];
+
+const SideMenuBar = ({
+  setSideMenuDisplay,
+}: {
+  setSideMenuDisplay: Dispatch<SetStateAction<boolean>>;
+}) => {
+  return (
+    <div
+      className="fixed top-0 left-0 w-full h-screen bg-black/80 flex justify-end"
+      onClick={() => setSideMenuDisplay(false)}
+    >
+      <div className="w-80 py-5 bg-white" onClick={(e) => e.stopPropagation()}>
+        <Link to="/" className="block mb-8 px-5">
+          <img className="h-6 md:h-10 w-auto" src={logoimg} alt="" />
+        </Link>
+        <div>
+          {sideMenuOptions.map((opt) => (
+            <div className="py-2 px-5 hover:bg-slate-100">
+              <Link to={opt.url}>{opt.name}</Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sideMenuDisplay, setSideMenuDisplay] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -93,6 +152,9 @@ export default function Header() {
               >
                 Sign up
               </Link>
+              <button onClick={() => setSideMenuDisplay((prev) => !prev)}>
+                <IconMenu2 />
+              </button>
             </div>
             <div className="flex lg:hidden">
               <button
@@ -104,6 +166,9 @@ export default function Header() {
                 <Bars3Icon className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
+            {sideMenuDisplay && (
+              <SideMenuBar setSideMenuDisplay={setSideMenuDisplay} />
+            )}
           </>
         )}
       </nav>

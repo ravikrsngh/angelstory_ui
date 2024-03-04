@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useContext } from "react";
-import logoimg from "./../../assets/logo-angel-journey.svg";
-import { Link } from "react-router-dom";
-import { CanvasContext } from "../../context/canvasContext";
-import { useCreateTemplate } from "../../hooks/templates/use-create-template";
-import { fabric } from "fabric";
-import { DownloadButton } from "./download-btn";
 import {
   IconArrowBackUp,
   IconDeviceFloppy,
   IconShare,
   IconTrash,
 } from "@tabler/icons-react";
+import { fabric } from "fabric";
+import { useContext } from "react";
+import { Link } from "react-router-dom";
+import { CanvasContext } from "../../context/canvasContext";
+import { useCreateTemplate } from "../../hooks/templates/use-create-template";
 import { CanvasContextType, EditorHeaderPropType } from "../../types";
+import logoimg from "./../../assets/logo-angel-journey.svg";
+import { DownloadButton } from "./download-btn";
 
 export default function EditorHeader({
   deleteObject,
@@ -55,7 +55,22 @@ export default function EditorHeader({
   };
 
   const saveProjectStatus = () => {
-    saveProject({ formattedData: JSON.stringify(slides) }, 0);
+    const virtualCanvas = new fabric.Canvas("");
+    virtualCanvas.setDimensions({
+      //@ts-ignore
+      width: fabricRef.current.getWidth() / fabricRef.current.getZoom(),
+      //@ts-ignore
+      height: fabricRef.current.getHeight() / fabricRef.current.getZoom(),
+    });
+    virtualCanvas.loadFromJSON(slides[0].content, () => {
+      saveProject(
+        {
+          formattedData: JSON.stringify(slides),
+          previewImage: virtualCanvas.toDataURL({ format: "png" }),
+        },
+        0
+      );
+    });
   };
 
   return (

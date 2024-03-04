@@ -1,7 +1,7 @@
 import { IconSearch } from "@tabler/icons-react";
 import { DashboardCollection } from "../components/dashboard/collection";
-import { DashboardTemplates } from "../components/dashboard/template";
 import { CreateProjectBanner } from "../components/dashboard/create-project-banner";
+import { DashboardTemplates } from "../components/dashboard/template";
 
 export default function Dashboard() {
   return (

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useGetProjectDetails } from "../../hooks/project/use-get-project";
-import Design from "./design";
 import { useSaveProject } from "../../hooks/project/use-save-project";
-import { useRef } from "react";
+import Design from "./design";
 
 export const DesignLoader = () => {
   const timeoutRef = useRef<number>(null);
@@ -22,7 +22,7 @@ export const DesignLoader = () => {
   }
 
   const saveProject = (
-    obj: { formattedData?: string; name?: string },
+    obj: { formattedData?: string; name?: string; previewImage?: string },
     time: number = 300000
   ) => {
     if (timeoutRef.current) {
@@ -33,6 +33,7 @@ export const DesignLoader = () => {
     timeoutRef.current = setTimeout(() => {
       const projData = {
         collectionId: data?.collectionId,
+        journeyId: data?.journeyId,
         formattedData: data?.formattedData,
         height: data?.height,
         name: data?.name,
@@ -55,7 +56,7 @@ export const DesignLoader = () => {
           originalWidth={data?.width}
           ratio={data.height / data.width}
           initialSlides={
-            data.formattedData
+            data.formattedData != ""
               ? JSON.parse(data.formattedData)
               : [{ content: "", duration: 2, previewImg: "", history: [] }]
           }

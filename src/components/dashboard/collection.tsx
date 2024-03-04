@@ -1,18 +1,21 @@
-import { Dialog, Tab, Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import { IconPlus } from "@tabler/icons-react";
-import { cn } from "../../utils";
-import { useState, Fragment } from "react";
-import { Input } from "../ui/input";
 import Cookies from "js-cookie";
-import { useGetAllCollectionForUser } from "../../hooks/collection/use-get-collection";
+import { Fragment, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCreateCollection } from "../../hooks/collection/use-create-collection";
-import { CollectionType } from "../../types";
-import { CollectionCard } from "./collection-card";
+import { useGetAllCollectionForUser } from "../../hooks/collection/use-get-collection";
+import { AssetTypes, CollectionType } from "../../types";
+import { NewCard } from "../ui/cards";
+import { CollectionDropdownList } from "../ui/dropdown-action-buttons";
+import { Input } from "../ui/input";
 
 export const DashboardCollection = () => {
   const { data, isLoading, isFetching, isError } = useGetAllCollectionForUser(
     Cookies.get("user") || ""
   );
+
+  const navigate = useNavigate();
   const createCollectionHook = useCreateCollection();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -54,6 +57,8 @@ export const DashboardCollection = () => {
     );
   }
 
+  console.log(data);
+
   return (
     <>
       <div>
@@ -61,88 +66,33 @@ export const DashboardCollection = () => {
           My Collection
           <div
             onClick={openModal}
-            className="flex hover:text-primary-400 cursor-pointer border-primary-200 text-primary-300 rounded-md md:hidden justify-center items-center gap-2"
+            className="flex hover:text-primary-400 cursor-pointer border-primary-200 text-primary-300 rounded-md justify-center items-center gap-2"
           >
             <IconPlus size={18} />
             <span>Create</span>
           </div>
         </h4>
         <div>
-          <Tab.Group>
-            <Tab.List>
-              <div className="flex gap-4 border-b border-slate-300 items-center mb-6 md:mb-8">
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "text-xs md:text-base px-5 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Recent
-                    </button>
-                  )}
-                </Tab>
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "text-xs md:text-base px-5 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Yours
-                    </button>
-                  )}
-                </Tab>
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "text-xs md:text-base px-5 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Shared with you
-                    </button>
-                  )}
-                </Tab>
-              </div>
-            </Tab.List>
-            <Tab.Panels>
-              <Tab.Panel>
-                <div className="flex gap-4 overflow-auto">
-                  <div
-                    onClick={openModal}
-                    className="hidden w-52 h-52 border-2 hover:border-primary-400 hover:text-primary-400 cursor-pointer border-primary-200 text-primary-300 rounded-md md:flex flex-col justify-center items-center gap-2"
-                  >
-                    <IconPlus />
-                    <span>Create</span>
-                  </div>
-                  {data.map((cc: CollectionType) => (
-                    <CollectionCard
-                      key={cc.id}
-                      id={cc.id}
-                      name={cc.name}
-                      bgColor={cc.bgColor}
-                    />
-                  ))}
-                </div>
-              </Tab.Panel>
-              <Tab.Panel>
-                <p>Fetch all Collection</p>
-              </Tab.Panel>
-              <Tab.Panel>
-                <p>Shared with you </p>
-              </Tab.Panel>
-            </Tab.Panels>
-          </Tab.Group>
+          <div className="flex gap-4">
+            {/* <div
+              key={0}
+              onClick={openModal}
+              className="hidden w-52 h-[308px] border-2 hover:border-primary-400 hover:text-primary-400 cursor-pointer border-primary-200 text-primary-300 rounded-md md:flex flex-col justify-center items-center gap-2"
+            >
+              <IconPlus />
+              <span>Create</span>
+            </div> */}
+            {data.map((cc: CollectionType) => (
+              <NewCard
+                key={cc.entityId}
+                type={AssetTypes.FOLDER}
+                name={cc.name}
+                dropdownOptions={CollectionDropdownList}
+                onClickHandler={() => navigate(`/collection/${cc.entityId}`)}
+                dataObject={cc}
+              />
+            ))}
+          </div>
         </div>
       </div>
       <Transition appear show={isOpen} as={Fragment}>
@@ -186,7 +136,7 @@ export const DashboardCollection = () => {
                     <div className="mt-4 flex justify-end">
                       <button
                         type="submit"
-                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-primary-400 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       >
                         Create
                       </button>

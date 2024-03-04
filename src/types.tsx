@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, PropsWithChildren, SetStateAction } from "react";
 
 export type SlideMusic = {
   name: string;
@@ -83,7 +83,7 @@ export type TemplateType = {
 export type CollectionType = {
   createdAt: string;
   createdBy: number;
-  id: number;
+  entityId: number;
   name: string;
   bgColor: string;
 };
@@ -136,13 +136,17 @@ export type DesignType = {
 };
 
 export type DesignUpdateType = {
-  width: number;
-  height: number;
-  formattedData: string;
-  projectType: string;
-  name: string;
-  collectionId: number;
-  previewImage: string;
+  caption?: string;
+  collectionId?: number;
+  formattedData?: string;
+  height?: number;
+  journeyId?: number;
+  name?: string;
+  previewImage?: string;
+  projectId?: number;
+  projectType?: string;
+  title?: string;
+  width?: number;
 };
 
 export type DesignLoaderPropType = {
@@ -180,7 +184,7 @@ export type EditorHeaderPropType = {
   goBackInHistory: () => void;
   name: string;
   saveProject: (
-    obj: { formattedData?: string; name?: string },
+    obj: { formattedData?: string; name?: string; previewImage?: string },
     time: number
   ) => void;
 };
@@ -214,7 +218,8 @@ export type AssetResType = {
   assetUrl: string;
   collectionId: number;
   id: number;
-  projectId: number;
+  journeyId: number;
+  memoryId: number;
   uploadedAt: string;
   uploadedBy: number;
 };
@@ -243,15 +248,62 @@ export type ProjectInCollectionType = {
   width: number;
 };
 
-export type CollectionDetailsResType = {
+export type JourneyType = {
+  accessRight: string;
+  bgColor: string;
+  collectionId: number;
+  createdAt: string;
+  createdBy: number;
+  id: number;
+  name: string;
+};
+
+export type MemoryType = {
+  collectionId: number;
+  createdAt: string;
+  createdBy: number;
+  formattedData: string;
+  height: number;
+  id: number;
+  journeyId: number;
+  name: string;
+  previewImage: string;
+  projectType: string;
+  updatedAt: string;
+  width: number;
+  title: string;
+  caption: string;
+};
+
+export type JourneyDetailsResType = JourneyType & {
   assetList: AssetResType[];
+  projectList: MemoryType[];
+};
+
+export type JourneyWithAssetType = JourneyType & {
+  assetList: AssetResType[];
+};
+
+export type JourneyWithMemoriesType = JourneyType & {
+  projectList: MemoryType[];
+};
+
+export type CollectionDetailsResType = {
   bgColor: string;
   createdAt: string;
   createdBy: number;
   id: number;
   name: string;
-  projectDtoList: ProjectInCollectionType[];
+  accessRight: string;
+  assetList: AssetResType[];
+  journeyList: JourneyType[];
 };
+
+export type CollectionAssetsResType = CollectionDetailsResType &
+  Omit<{ journeyList: JourneyType[] }, keyof CollectionDetailsResType>;
+
+export type CollectionJourneyResType = CollectionDetailsResType &
+  Omit<{ assetList: AssetResType[] }, keyof CollectionDetailsResType>;
 
 export type MusicElementType = {
   id: number;
@@ -274,4 +326,190 @@ export type MusicModalPropType = {
 export type AddMusicModalPropType = {
   addMusicModal: boolean;
   setAddMusicModal: Dispatch<SetStateAction<boolean>>;
+};
+
+export type ModalPropsType = PropsWithChildren<{
+  openModal: boolean;
+  setOpenModal: Dispatch<SetStateAction<boolean>>;
+  onClose?: () => void;
+  headerLabel: string;
+}>;
+
+export type DropdownOptionsType = {
+  id: number;
+  icon: React.ReactNode;
+  name: string;
+};
+
+export type DataObjectType =
+  | CollectionType
+  | AssetResType
+  | JourneyType
+  | MemoryType
+  | null;
+
+export type NewCardPropsType = {
+  type: string;
+  name: string;
+  needs_approval?: boolean;
+  dropdownOptions: DropdownOptionsType[];
+  onClickHandler?: () => void;
+  dataObject?: DataObjectType;
+};
+
+export type TempPropType = {
+  entityType: string;
+  entityID: number;
+  value: number | string;
+};
+
+export type DropdownActionModalsPropType = {
+  dataObject?: DataObjectType;
+  action: number | null;
+  actionModal: boolean;
+  setActionModal: Dispatch<SetStateAction<boolean>>;
+};
+
+export type DropdownButtonPropType = {
+  icon: React.ReactNode;
+  name: string;
+  onClickHandler: () => void;
+};
+
+export const AssetTypes = {
+  IMAGE: "IMAGE",
+  AUDIO: "AUDIO",
+  VIDEO: "VIDEO",
+  FOLDER: "FOLDER",
+  PDF: "PDF",
+};
+
+export const MemoryTypes = {
+  IMAGE: "IMAGE",
+  AUDIO: "AUDIO",
+  VIDEO: "VIDEO",
+  PDF: "PDF",
+  CARD: "CARD",
+  SLIDESHOW: "SLIDE_SHOW",
+};
+
+export const EntityType = {
+  COLLECTION: "COLLECTION",
+  ASSET: "ASSET",
+  JOURNEY: "JOURNEY",
+  MEMORY: "MEMORY",
+};
+
+export type ProjectDimensionType = {
+  width: number;
+  height: number;
+};
+
+export type UploadAreaCompPropType = {
+  setFiles: Dispatch<SetStateAction<File[]>>;
+  nextBtnHandler: () => void;
+};
+
+export type ViewUploadCompPropType = {
+  files: File[];
+  setFiles: Dispatch<SetStateAction<File[]>>;
+  nextBtnHandler: () => void;
+  backBtnHandler: () => void;
+  nextBtnLabel?: string;
+  backBtnLabel?: string;
+};
+
+export type SelectFolderPropType = {
+  toCollectionId: number;
+  toJourneyId: number;
+  setToCollectionId: Dispatch<SetStateAction<number>>;
+  setToJourneyId: Dispatch<SetStateAction<number>>;
+  nextBtnHandler: () => void;
+  backBtnHandler: () => void;
+  nextBtnLabel?: string;
+  backBtnLabel?: string;
+  showJourney?: boolean;
+};
+
+export type SelectCardSizePropType = {
+  setProjectDimension: Dispatch<SetStateAction<ProjectDimensionType | null>>;
+  nextBtnHandler: () => void;
+  backBtnHandler: () => void;
+  nextBtnLabel?: string;
+  backBtnLabel?: string;
+};
+
+export type LevelResType = {
+  name: string;
+  id: number;
+  accessType: string;
+  childList: any[];
+};
+
+export type CollectionLevelResType = {
+  name: string;
+  id: number;
+  accessType: string;
+  childList: LevelResType[];
+};
+
+export type FolderRowPropType = {
+  toCollectionId: number;
+  toJourneyId: number;
+  setToCollectionId: Dispatch<SetStateAction<number>>;
+  setToJourneyId: Dispatch<SetStateAction<number>>;
+  collectionDetails: CollectionLevelResType;
+  showJourney?: boolean;
+};
+
+export type CreateProjectPayloadType = {
+  caption: string;
+  collectionId: number;
+  formattedData: string;
+  height: number;
+  journeyId: number;
+  name: string;
+  previewImage: string;
+  projectType: string;
+  title: string;
+  width: number;
+};
+
+export type ProjectResType = CreateProjectPayloadType & {
+  id: number;
+};
+
+export type MoveCopyModalPropType = {
+  mode: string;
+  entityType: string;
+  dataObject?: DataObjectType;
+  setActionModal: Dispatch<SetStateAction<boolean>>;
+};
+
+export type DropEventHandlerType = React.DragEventHandler<HTMLLabelElement>;
+export type DragOverEventHandlerType = React.DragEventHandler<HTMLLabelElement>;
+
+export const StageLists = {
+  UPLOAD_SELECT: 1,
+  VIEW_UPLOADS: 2,
+  CARD_SIZE: 3,
+  SELECT_FOLDER: 4,
+  SAVE_AS: 5,
+};
+
+export const FileTypeMap: { [key: string]: string } = {
+  png: MemoryTypes.IMAGE,
+  jpg: MemoryTypes.IMAGE,
+  jpeg: MemoryTypes.IMAGE,
+  webp: MemoryTypes.IMAGE,
+  svg: MemoryTypes.IMAGE,
+  mp3: MemoryTypes.AUDIO,
+  wav: MemoryTypes.AUDIO,
+  ogg: MemoryTypes.AUDIO,
+  aac: MemoryTypes.AUDIO,
+  mp4: MemoryTypes.VIDEO,
+  mov: MemoryTypes.VIDEO,
+  avi: MemoryTypes.VIDEO,
+  webm: MemoryTypes.VIDEO,
+  pdf: MemoryTypes.PDF,
 };

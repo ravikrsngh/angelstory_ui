@@ -1,14 +1,14 @@
-import { Link } from "react-router-dom";
-import { Input } from "./ui/input";
 import { IconBrandGoogle, IconBrandMeta } from "@tabler/icons-react";
-import { useSingUp } from "../hooks/user/use-signup";
 import { useState } from "react";
-import EnterOTP from "./enter-otp";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import { useSingUp } from "../hooks/user/use-signup";
 import { userId } from "../signals/user-signal";
+import EnterOTP from "./enter-otp";
+import { Input } from "./ui/input";
 
 export default function SignUp() {
-  const [showEnterOTP, setSetEnterOTP] = useState(false)
+  const [showEnterOTP, setSetEnterOTP] = useState(false);
 
   const signup = useSingUp();
 
@@ -16,20 +16,23 @@ export default function SignUp() {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    signup.mutate({name:name, email:email, password:password}, {
-      onSuccess: (response) => {
-        userId.value = (response as {userId:number}).userId;
-        toast.success("OTP sent successfully to your email");
-        setSetEnterOTP(true);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    signup.mutate(
+      { name: name, email: email, password: password },
+      {
+        onSuccess: (response) => {
+          userId.value = (response as { userId: number }).userId;
+          toast.success("OTP sent successfully to your email");
+          setSetEnterOTP(true);
+        },
       }
-    })
-  }
+    );
+  };
 
-  if(showEnterOTP) {
-    return <EnterOTP/>
+  if (showEnterOTP) {
+    return <EnterOTP />;
   }
 
   return (
@@ -44,9 +47,9 @@ export default function SignUp() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-0 md:py-12 md:shadow sm:rounded-lg sm:px-12">
             <form className="space-y-6" onSubmit={handleSubmitSignUp}>
-              <Input label="Name" name="name"/>
-              <Input label="Email" type="email" name="email"/>
-              <Input label="Password" type="password" name="password"/>
+              <Input label="Name" name="name" />
+              <Input label="Email" type="email" name="email" />
+              <Input label="Password" type="password" name="password" />
 
               <div>
                 <button
@@ -83,7 +86,7 @@ export default function SignUp() {
                 <button className="flex w-full items-center justify-center gap-3 rounded-md px-3 py-1.5focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D9BF0]">
                   <IconBrandMeta className="text-[#1D9BF0]" />
                   <span className="text-sm font-semibold leading-6 text-[#1D9BF0]">
-                    Facebook
+                    Meta
                   </span>
                 </button>
               </div>

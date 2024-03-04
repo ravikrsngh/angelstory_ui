@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 //@ts-nocheck
 import { Tab } from "@headlessui/react";
-import { cn } from "../../utils";
-import { useContext, useState } from "react";
-import { useGetStockImages } from "../../hooks/others/use-stock-photos";
 import { fabric } from "fabric";
-import { CanvasContext } from "../../context/canvasContext";
-import { AssetResType, CanvasContextType } from "../../types";
-import { uploadFileToS3 } from "../../service/aws";
-import { useCreateAssets } from "../../hooks/assets/use-create-assets";
-import { useParams } from "react-router-dom";
 import Cookies from "js-cookie";
+import { useContext, useState } from "react";
+import { useParams } from "react-router-dom";
+import { CanvasContext } from "../../context/canvasContext";
+import { useCreateAssets } from "../../hooks/assets/use-create-assets";
 import { useGetAssetsFromCollection } from "../../hooks/assets/use-get-collection-assets";
+import { useGetStockImages } from "../../hooks/others/use-stock-photos";
+import { uploadFileToS3 } from "../../service/aws";
+import { AssetResType, CanvasContextType } from "../../types";
+import { cn } from "../../utils";
 
 const StockImagesComp = ({ addImage }: { addImage: (url: string) => void }) => {
   const [searchQuery, setSearchQuery] = useState("");

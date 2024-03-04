@@ -1,18 +1,20 @@
-import { Link } from "react-router-dom";
-import { Input } from "./ui/input";
 import { IconBrandGoogle, IconBrandMeta } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 import { useLogin } from "../hooks/user/use-login";
+import { Input } from "./ui/input";
 
 export default function Login() {
-
   const loginHook = useLogin();
 
   const handleSubmitLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    loginHook.mutate({username: formData.get('email') as string, password:formData.get('password') as string});
-  }
+    loginHook.mutate({
+      username: formData.get("email") as string,
+      password: formData.get("password") as string,
+    });
+  };
 
   return (
     <>
@@ -47,7 +49,7 @@ export default function Login() {
 
                 <div className="text-sm leading-6">
                   <Link
-                    to='/forgot-password'
+                    to="/forgot-password"
                     className="font-semibold text-primary-400 hover:text-primary-600"
                   >
                     Forgot password?
@@ -90,7 +92,7 @@ export default function Login() {
                 <button className="flex w-full items-center justify-center gap-3 rounded-md px-3 py-1.5focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D9BF0]">
                   <IconBrandMeta className="text-[#1D9BF0]" />
                   <span className="text-sm font-semibold leading-6 text-[#1D9BF0]">
-                    Facebook
+                    Meta
                   </span>
                 </button>
               </div>

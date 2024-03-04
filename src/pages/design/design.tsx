@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useEffect, useRef, useState } from "react";
-import { fabric } from "fabric";
+import { Tab } from "@headlessui/react";
 import {
   IconCategory2,
   IconCloudUpload,
@@ -10,21 +9,22 @@ import {
   IconTemplate,
   IconTexture,
 } from "@tabler/icons-react";
-import { Tab } from "@headlessui/react";
-import UploadToolPanel from "./upload-tool";
-import BackgroundPanel from "./background-panel";
-import { CanvasContext } from "../../context/canvasContext";
+import { fabric } from "fabric";
+import { useEffect, useRef, useState } from "react";
 import EditPanel from "../../components/edit-panel";
-import ShapesPanel from "./shapes-panel";
-import TextPanel from "./text";
-import LayersPanel from "./layers";
 import EditorHeader from "../../components/editor/editor-header";
-import SlideshowPanel from "./slideshow-panel";
-import { DesignLoaderPropType, SlideType } from "../../types";
-import { TemplatePanel } from "./templates-panel";
-import { ToolBarButton } from "../../components/editor/toolbar-btn";
 import { MobileToolbar } from "../../components/editor/mobile/mobile-toolbar";
+import { ToolBarButton } from "../../components/editor/toolbar-btn";
+import { CanvasContext } from "../../context/canvasContext";
 import { useCreateTextPhrase } from "../../hooks/textphrases/use-create-textphrase";
+import { DesignLoaderPropType, SlideType } from "../../types";
+import BackgroundPanel from "./background-panel";
+import LayersPanel from "./layers";
+import ShapesPanel from "./shapes-panel";
+import SlideshowPanel from "./slideshow-panel";
+import { TemplatePanel } from "./templates-panel";
+import TextPanel from "./text";
+import UploadToolPanel from "./upload-tool";
 
 export default function Design({
   ratio,
