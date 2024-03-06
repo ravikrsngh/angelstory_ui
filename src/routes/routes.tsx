@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import { Template } from "../components/templates-reference/template";
-import ViewAllTemplate from "../components/templates-reference/view-all";
 import ViewCollection from "../components/templates-reference/view-collection";
 import ViewJourney from "../components/templates-reference/view-journey";
 import { BasicPage } from "../components/ui/basic-page";
@@ -14,6 +13,8 @@ import Journey from "../pages/journey";
 import LoginPage from "../pages/login";
 import SignUpPage from "../pages/signup";
 import Templates from "../pages/templates";
+import ViewAll from "../pages/view-all";
+import { ViewAllCollection } from "../pages/view-all/collection";
 import { PrivateRoutes } from "./private-route";
 
 const RouteData = () => {
@@ -34,10 +35,17 @@ const RouteData = () => {
             element={<CollectionAssets />}
           />
         </Route>
+        <Route path="/" element={<PrivateRoutes />}>
+          <Route path="/view-all" element={<ViewAll />}>
+            <Route
+              path="collection/:collectionId"
+              element={<ViewAllCollection />}
+            />
+          </Route>
+        </Route>
         <Route path="/view" element={<Template />} />
         <Route path="/view-collection" element={<ViewCollection />} />
         <Route path="/view-journey" element={<ViewJourney />} />
-        <Route path="/view-all" element={<ViewAllTemplate />} />
       </Route>
       <Route path="/">
         <Route path="/" element={<PrivateRoutes />}>

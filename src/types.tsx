@@ -443,7 +443,7 @@ export type LevelResType = {
   name: string;
   id: number;
   accessType: string;
-  childList: any[];
+  childList: unknown[];
 };
 
 export type CollectionLevelResType = {
@@ -486,8 +486,33 @@ export type MoveCopyModalPropType = {
   setActionModal: Dispatch<SetStateAction<boolean>>;
 };
 
+export type CommonHierarchyType = {
+  name: string;
+  id: number;
+  url: string;
+  childs: { name: string; id: number; url: string; childs: never[] }[];
+};
+
+export type HierarchyType = {
+  name: string;
+  id: number;
+  url: string;
+  childs: {
+    name: string;
+    id: number;
+    url: string;
+    childs: { name: string; id: number; url: string; childs: never[] }[];
+  }[];
+};
+
 export type DropEventHandlerType = React.DragEventHandler<HTMLLabelElement>;
 export type DragOverEventHandlerType = React.DragEventHandler<HTMLLabelElement>;
+
+export type ToolTipIconPropType = {
+  icon: React.ReactNode;
+  label: string;
+  onClickHandler?: () => void;
+};
 
 export const StageLists = {
   UPLOAD_SELECT: 1,
