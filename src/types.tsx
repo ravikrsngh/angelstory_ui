@@ -348,13 +348,16 @@ export type DataObjectType =
   | MemoryType
   | null;
 
-export type NewCardPropsType = {
+export type BasicStyleCardPropType = PropsWithChildren<{
   type: string;
   name: string;
-  needs_approval?: boolean;
-  dropdownOptions: DropdownOptionsType[];
   onClickHandler?: () => void;
   dataObject?: DataObjectType;
+}>;
+
+export type NewCardPropsType = BasicStyleCardPropType & {
+  needs_approval?: boolean;
+  dropdownOptions: DropdownOptionsType[];
 };
 
 export type TempPropType = {
