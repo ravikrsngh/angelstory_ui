@@ -14,7 +14,10 @@ import LoginPage from "../pages/login";
 import SignUpPage from "../pages/signup";
 import Templates from "../pages/templates";
 import ViewAll from "../pages/view-all";
-import { ViewAllCollection } from "../pages/view-all/collection";
+import { ViewAllCollectionAssets } from "../pages/view-all/collection-assets";
+import { ViewAllCollectionJournies } from "../pages/view-all/collection-journey";
+import { ViewAllJourneyAssets } from "../pages/view-all/journey-assets";
+import { ViewAllJourneyMemories } from "../pages/view-all/journey-memories";
 import { PrivateRoutes } from "./private-route";
 
 const RouteData = () => {
@@ -38,8 +41,20 @@ const RouteData = () => {
         <Route path="/" element={<PrivateRoutes />}>
           <Route path="/view-all" element={<ViewAll />}>
             <Route
-              path="collection/:collectionId"
-              element={<ViewAllCollection />}
+              path="collection/:collectionId/assets"
+              element={<ViewAllCollectionAssets />}
+            />
+            <Route
+              path="collection/:collectionId/journies"
+              element={<ViewAllCollectionJournies />}
+            />
+            <Route
+              path="journey/:journeyId/assets"
+              element={<ViewAllJourneyAssets />}
+            />
+            <Route
+              path="journey/:journeyId/memory"
+              element={<ViewAllJourneyMemories />}
             />
           </Route>
         </Route>
@@ -50,7 +65,7 @@ const RouteData = () => {
       <Route path="/">
         <Route path="/" element={<PrivateRoutes />}>
           <Route
-            path="/design/:collectionId/:projectId"
+            path="/design/:collectionId/:journeyId/:projectId"
             element={<DesignLoader />}
           />
         </Route>

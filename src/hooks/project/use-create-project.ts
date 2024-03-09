@@ -19,12 +19,20 @@ export function useCreateProject() {
   const navigate = useNavigate();
   return useMutation({
     mutationFn: (input: CreateProjectPayloadType) => createProject(input),
-    onSuccess: (res: ProjectResType) => {
+    onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
-      if ([MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(res.projectType)) {
-        navigate(`/design/${res.collectionId}/${res.id}`);
+      if (
+        [MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(
+          (res as ProjectResType).projectType
+        )
+      ) {
+        navigate(
+          `/design/${(res as ProjectResType).collectionId}/${
+            (res as ProjectResType).journeyId
+          }/${(res as ProjectResType).id}`
+        );
       } else {
-        navigate(`/journey/${res.journeyId}`);
+        navigate(`/journey/${(res as ProjectResType).journeyId}`);
       }
     },
     onError: (error: {

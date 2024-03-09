@@ -113,7 +113,7 @@ const CollectionAssets = ({
               </Tab>
               <Link
                 className="ml-auto text-xs md:text-sm lg:text-base"
-                to={`/collection/${collectionId}/assets`}
+                to={`/view-all/collection/${collectionId}/assets`}
               >
                 View all assets
               </Link>
@@ -208,8 +208,7 @@ export default function Collection() {
 
   const getDataObject = () => {
     if (data) {
-      let obj: CollectionType;
-      obj = {
+      const obj: CollectionType = {
         entityId: data.id,
         createdAt: data.createdAt,
         createdBy: data.createdBy,

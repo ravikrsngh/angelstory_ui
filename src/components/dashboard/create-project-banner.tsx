@@ -26,7 +26,7 @@ export const CreateProjectBanner = () => {
               >
                 <input
                   type="text"
-                  placeholder="Search templates"
+                  placeholder="Search files / folders"
                   className="grow px-4 py-3 outline-none"
                 />
                 <button className="px-4 py-3">

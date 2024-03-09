@@ -7,7 +7,7 @@ export default function ViewAll() {
       <div>
         <ViewAllHierarchy />
       </div>
-      <div className="grow">
+      <div className="grow overflow-y-auto">
         <Outlet />
       </div>
     </div>

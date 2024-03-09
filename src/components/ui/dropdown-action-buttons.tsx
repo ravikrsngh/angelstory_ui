@@ -17,12 +17,13 @@ import {
   EntityType,
   JourneyType,
   MemoryType,
+  SourceMemory,
 } from "../../types";
 import { ShareModalTemp } from "../templates-reference/all-modals";
 import {
   AddJournalModal,
   AddJourneyModal,
-  AddMemoryModal,
+  AddMemoryUploadModal,
   ChangeBackgroundCollection,
   CollectionRenameModal,
   DeleteModal,
@@ -110,7 +111,7 @@ export const DropdownActions = {
   },
   UPLOAD: {
     id: 16,
-    name: "Share",
+    name: "Upload",
     icon: <IconUserShare />,
   },
   RENAME_MEMORY: {
@@ -130,6 +131,16 @@ export const DropdownActions = {
   },
   COPY_MEMORY: {
     id: 20,
+    name: "Copy",
+    icon: <IconCopy />,
+  },
+  MOVE_ASSET: {
+    id: 21,
+    name: "Move",
+    icon: <IconArrowBarToRight />,
+  },
+  COPY_ASSET: {
+    id: 22,
     name: "Copy",
     icon: <IconCopy />,
   },
@@ -153,6 +164,8 @@ export const CollectionDetailsBannerDropdown = [
 export const AssetDropdownList = [
   DropdownActions.VIEW,
   DropdownActions.DELETE_ASSET,
+  DropdownActions.MOVE_ASSET,
+  DropdownActions.COPY_ASSET,
 ];
 
 export const JourneyCardDropdownList = [
@@ -188,6 +201,7 @@ export const DropdownActionModals = ({
   action,
   actionModal,
   setActionModal,
+  bulkIds,
 }: DropdownActionModalsPropType) => {
   return (
     <>
@@ -215,6 +229,7 @@ export const DropdownActionModals = ({
             entityType={EntityType.JOURNEY}
             dataObject={dataObject as JourneyType}
             setActionModal={setActionModal}
+            bulkIds={bulkIds}
           />
         </Modal>
       )}
@@ -229,6 +244,7 @@ export const DropdownActionModals = ({
             entityType={EntityType.JOURNEY}
             dataObject={dataObject as JourneyType}
             setActionModal={setActionModal}
+            bulkIds={bulkIds}
           />
         </Modal>
       )}
@@ -300,6 +316,7 @@ export const DropdownActionModals = ({
             entityType={EntityType.ASSET}
             dataObject={dataObject as AssetResType}
             setActionModal={setActionModal}
+            bulkIds={bulkIds}
           />
         </Modal>
       )}
@@ -348,12 +365,19 @@ export const DropdownActionModals = ({
           setOpenModal={setActionModal}
         >
           {dataObject ? (
-            <AddMemoryModal
+            <AddMemoryUploadModal
               collectionId={(dataObject as JourneyType).collectionId}
               journeyId={(dataObject as JourneyType).id}
+              source={SourceMemory.MEMORY}
+              setActionModal={setActionModal}
             />
           ) : (
-            <AddMemoryModal collectionId={-1} journeyId={-1} />
+            <AddMemoryUploadModal
+              collectionId={-1}
+              journeyId={-1}
+              source={SourceMemory.MEMORY_DASHBOARD}
+              setActionModal={setActionModal}
+            />
           )}
         </Modal>
       )}
@@ -393,6 +417,7 @@ export const DropdownActionModals = ({
             entityType={EntityType.MEMORY}
             dataObject={dataObject as MemoryType}
             setActionModal={setActionModal}
+            bulkIds={bulkIds}
           />
         </Modal>
       )}
@@ -406,6 +431,51 @@ export const DropdownActionModals = ({
             mode="COPY"
             entityType={EntityType.MEMORY}
             dataObject={dataObject as MemoryType}
+            setActionModal={setActionModal}
+            bulkIds={bulkIds}
+          />
+        </Modal>
+      )}
+      {action == 21 && (
+        <Modal
+          headerLabel="Move"
+          openModal={actionModal}
+          setOpenModal={setActionModal}
+        >
+          <MoveCopyModal
+            mode="MOVE"
+            entityType={EntityType.ASSET}
+            dataObject={dataObject as AssetResType}
+            setActionModal={setActionModal}
+            bulkIds={bulkIds}
+          />
+        </Modal>
+      )}
+      {action == 22 && (
+        <Modal
+          headerLabel="Copy"
+          openModal={actionModal}
+          setOpenModal={setActionModal}
+        >
+          <MoveCopyModal
+            mode="COPY"
+            entityType={EntityType.ASSET}
+            dataObject={dataObject as AssetResType}
+            setActionModal={setActionModal}
+            bulkIds={bulkIds}
+          />
+        </Modal>
+      )}
+      {action == DropdownActions.UPLOAD.id && (
+        <Modal
+          headerLabel=""
+          openModal={actionModal}
+          setOpenModal={setActionModal}
+        >
+          <AddMemoryUploadModal
+            collectionId={-1}
+            journeyId={-1}
+            source={SourceMemory.UPLOAD}
             setActionModal={setActionModal}
           />
         </Modal>

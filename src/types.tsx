@@ -348,6 +348,8 @@ export type DataObjectType =
   | MemoryType
   | null;
 
+export type CollectionJourneyType = CollectionType | JourneyType;
+
 export type BasicStyleCardPropType = PropsWithChildren<{
   type: string;
   name: string;
@@ -358,6 +360,12 @@ export type BasicStyleCardPropType = PropsWithChildren<{
 export type NewCardPropsType = BasicStyleCardPropType & {
   needs_approval?: boolean;
   dropdownOptions: DropdownOptionsType[];
+};
+
+export type ViewAllCardPropType = BasicStyleCardPropType & {
+  needs_approval?: boolean;
+  defaultChecked?: boolean;
+  onChangeHandler?: () => void;
 };
 
 export type TempPropType = {
@@ -371,6 +379,7 @@ export type DropdownActionModalsPropType = {
   action: number | null;
   actionModal: boolean;
   setActionModal: Dispatch<SetStateAction<boolean>>;
+  bulkIds?: number[];
 };
 
 export type DropdownButtonPropType = {
@@ -487,6 +496,7 @@ export type MoveCopyModalPropType = {
   entityType: string;
   dataObject?: DataObjectType;
   setActionModal: Dispatch<SetStateAction<boolean>>;
+  bulkIds?: number[];
 };
 
 export type CommonHierarchyType = {
@@ -540,4 +550,10 @@ export const FileTypeMap: { [key: string]: string } = {
   avi: MemoryTypes.VIDEO,
   webm: MemoryTypes.VIDEO,
   pdf: MemoryTypes.PDF,
+};
+
+export const SourceMemory = {
+  MEMORY: "MEMORY",
+  MEMORY_DASHBOARD: "MEMORY-DASHBOARD",
+  UPLOAD: "UPLOAD",
 };

@@ -1,13 +1,11 @@
-import { IconSearch } from "@tabler/icons-react";
 import { DashboardCollection } from "../components/dashboard/collection";
 import { CreateProjectBanner } from "../components/dashboard/create-project-banner";
-import { DashboardTemplates } from "../components/dashboard/template";
 
 export default function Dashboard() {
   return (
     <>
       <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-8 md:gap-10">
-        <div>
+        {/* <div>
           <form
             action=""
             className="flex border-[1px] border-slate-400 bg-white rounded-sm"
@@ -21,14 +19,14 @@ export default function Dashboard() {
               <IconSearch />
             </button>
           </form>
-        </div>
+        </div> */}
         <CreateProjectBanner />
         <div className="">
           <DashboardCollection />
         </div>
-        <div className="mt-3 md:mt-10">
+        {/* <div className="mt-3 md:mt-10">
           <DashboardTemplates />
-        </div>
+        </div> */}
       </div>
     </>
   );

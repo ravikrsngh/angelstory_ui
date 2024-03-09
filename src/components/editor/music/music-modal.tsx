@@ -1,17 +1,17 @@
-import { Transition, Dialog } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
+import Cookies from "js-cookie";
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
+import { CanvasContext } from "../../../context/canvasContext";
+import { useCreateAssets } from "../../../hooks/assets/use-create-assets";
+import { uploadFileToS3 } from "../../../service/aws";
 import {
   CanvasContextType,
   MusicElementType,
   MusicModalPropType,
 } from "../../../types";
 import EditInputBox from "../../edit-panel/components/edit-inputbox";
-import toast from "react-hot-toast";
-import { CanvasContext } from "../../../context/canvasContext";
-import { uploadFileToS3 } from "../../../service/aws";
-import Cookies from "js-cookie";
-import { useCreateAssets } from "../../../hooks/assets/use-create-assets";
-import { useParams } from "react-router-dom";
 
 export default function MusicModal({
   musicModalOpen,
@@ -92,7 +92,7 @@ export default function MusicModal({
   };
 
   const uploadMusicToS3 = async () => {
-    if (params.projectId && params.collectionId) {
+    if (params.projectId && params.collectionId && params.journeyId) {
       await uploadFileToS3(
         audioFile,
         `${import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME}`,
@@ -110,6 +110,7 @@ export default function MusicModal({
         assetType: "AUDIO",
         assetUrl: assetUrl,
         projectId: parseInt(params.projectId),
+        journeyId: parseInt(params.journeyId),
         collectionId: parseInt(params.collectionId),
       });
       return assetUrl;

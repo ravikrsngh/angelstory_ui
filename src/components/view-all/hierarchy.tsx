@@ -5,6 +5,7 @@ import {
   IconFolderFilled,
 } from "@tabler/icons-react";
 import { Fragment, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGetCollectionLevel } from "../../hooks/collection/use-collection-level";
 import { CollectionLevelResType, HierarchyType } from "../../types";
 import { cn } from "../../utils";
@@ -12,6 +13,7 @@ import { cn } from "../../utils";
 export const ViewAllHierarchy = () => {
   const { data, isLoading, isFetching, isError } = useGetCollectionLevel();
   const [hierarchy, setHierarchy] = useState<HierarchyType[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const obj: HierarchyType[] = [];
@@ -25,6 +27,12 @@ export const ViewAllHierarchy = () => {
             name: "Assets",
             id: 0,
             url: `/view-all/collection/${lvl.id}/assets`,
+            childs: [],
+          },
+          {
+            name: "Journies",
+            id: 0,
+            url: `/view-all/collection/${lvl.id}/journies`,
             childs: [],
           },
           ...lvl.childList.map((subLvl) => {
@@ -89,6 +97,7 @@ export const ViewAllHierarchy = () => {
                       <div
                         className="px-9 flex gap-2 items-center text-sm py-2 hover:bg-primary-50"
                         key={h_child.id}
+                        onClick={() => navigate(h_child.url)}
                       >
                         {h_child.id ? <IconFolderFilled size={20} /> : null}
                         {h_child.name}
@@ -117,6 +126,7 @@ export const ViewAllHierarchy = () => {
                                     <div
                                       className="px-9 flex gap-2 items-center text-sm py-2 hover:bg-primary-50"
                                       key={hcc.id}
+                                      onClick={() => navigate(hcc.url)}
                                     >
                                       {hcc.name}
                                     </div>

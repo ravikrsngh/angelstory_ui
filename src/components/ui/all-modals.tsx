@@ -1,7 +1,15 @@
 import { IconArrowLeft } from "@tabler/icons-react";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import {
+  createBulkAssetType,
+  useBulkCreateAssets,
+} from "../../hooks/assets/use-bulk-upload";
 import { useDeleteAssets } from "../../hooks/assets/use-delete-assets";
+import {
+  moveAssetType,
+  useMoveAssets,
+} from "../../hooks/assets/use-move-asses";
 import { useDeleteCollection } from "../../hooks/collection/use-delete-collection";
 import { useUpdateCollection } from "../../hooks/collection/use-update-collection";
 import { useCreateJourney } from "../../hooks/journey/use-create-journey";
@@ -12,16 +20,20 @@ import { useCreateProject } from "../../hooks/project/use-create-project";
 import { useDeleteProject } from "../../hooks/project/use-delete-project";
 import { useMoveProjects } from "../../hooks/project/use-move-projects";
 import { useSaveProject } from "../../hooks/project/use-save-project";
+import { uploadFiles } from "../../service/aws";
 import {
   AssetResType,
+  CollectionJourneyType,
   CollectionType,
   DataObjectType,
   EntityType,
+  FileTypeMap,
   JourneyType,
   MemoryType,
   MemoryTypes,
   MoveCopyModalPropType,
   ProjectDimensionType,
+  SourceMemory,
   StageLists,
 } from "../../types";
 import { cn } from "../../utils";
@@ -45,8 +57,8 @@ export const CollectionRenameModal = ({
     const formData = new FormData(form);
     if (dataObject) {
       updateCollectionHook.mutate({
-        collectionId: dataObject.entityId,
-        bgColor: dataObject.bgColor,
+        collectionId: (dataObject as CollectionType).entityId,
+        bgColor: (dataObject as CollectionType).bgColor,
         collectionName: formData.get("collection") as string,
       });
     }
@@ -58,7 +70,7 @@ export const CollectionRenameModal = ({
         <Input
           label="Collection Name"
           name="collection"
-          defaultValue={dataObject?.name}
+          defaultValue={(dataObject as CollectionType)?.name}
         />
         <div className="mt-4 flex justify-end">
           <button
@@ -83,7 +95,9 @@ export const ChangeBackgroundCollection = ({
   setActionModal: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [bgColorSelected, setBgColorSelected] = useState<string | undefined>(
-    dataObject?.bgColor?.length == 6 ? dataObject.bgColor : "#FEF8F1"
+    (dataObject as CollectionJourneyType)?.bgColor?.length == 6
+      ? (dataObject as CollectionJourneyType).bgColor
+      : "#FEF8F1"
   );
   const updateCollectionHook = useUpdateCollection();
   const updateJourneyHook = useUpdateJourney();
@@ -152,11 +166,13 @@ export const ChangeBackgroundCollection = ({
 
 export const DeleteModal = ({
   entityType,
+  bulkIds,
   dataObject,
   setActionModal,
 }: {
   entityType: string;
   dataObject: DataObjectType;
+  bulkIds?: number[];
   setActionModal: Dispatch<SetStateAction<boolean>>;
 }) => {
   const deleteCollectionHook = useDeleteCollection();
@@ -175,6 +191,12 @@ export const DeleteModal = ({
       } else if (entityType == EntityType.MEMORY) {
         deleteMemoryHook.mutate((dataObject as MemoryType).id);
       }
+    } else if (bulkIds && bulkIds.length > 0) {
+      if (entityType == EntityType.ASSET) {
+        deleteAssetHook.mutate(bulkIds);
+      } else if (entityType == EntityType.JOURNEY) {
+        deleteJourneyHook.mutate(bulkIds);
+      }
     }
     setActionModal(false);
   };
@@ -182,7 +204,8 @@ export const DeleteModal = ({
     <>
       <div className="delete-modal">
         <span className="block mt-4">
-          Are you sure you want to delete {dataObject?.name} ?
+          Are you sure you want to delete{" "}
+          {(dataObject as CollectionJourneyType)?.name} ?
         </span>
         <div className="flex gap-4 justify-end mt-10">
           <button
@@ -276,12 +299,16 @@ export const JourneyRenameModal = ({
   );
 };
 
-export const AddMemoryModal = ({
+export const AddMemoryUploadModal = ({
   collectionId,
   journeyId,
+  source,
+  setActionModal,
 }: {
+  source: string;
   collectionId: number;
   journeyId: number;
+  setActionModal: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [memoryType, setMemoryType] = useState<string>("");
@@ -290,8 +317,10 @@ export const AddMemoryModal = ({
   const [stage, setStage] = useState<number>(StageLists.UPLOAD_SELECT);
   const [toCollectionId, setToCollectionId] = useState<number>(collectionId);
   const [toJourneyId, setToJourneyId] = useState<number>(journeyId);
+  const [saveAsMemory, setSaveAsMemory] = useState<boolean>(true);
 
   const createProjectHook = useCreateProject();
+  const bullUploadHook = useBulkCreateAssets();
 
   const createProject = (name: string) => {
     const payload = {
@@ -307,27 +336,95 @@ export const AddMemoryModal = ({
       width: projectDimension?.width || 0,
     };
     createProjectHook.mutate(payload);
-    console.log(payload);
   };
 
-  const createProjectOrMoveToNext = () => {
+  const afterSelectingCardSize = () => {
     if (files.length == 0 && memoryType == "") {
       return;
     } else if (
-      ([MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(memoryType) &&
-        toCollectionId == -1) ||
-      toJourneyId == -1
+      [MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(memoryType) &&
+      !projectDimension
     ) {
       setStage(StageLists.CARD_SIZE);
-    } else if (toCollectionId != -1 && toJourneyId != -1) {
+    } else if (
+      toCollectionId != -1 &&
+      toJourneyId != -1 &&
+      [MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(memoryType) &&
+      projectDimension
+    ) {
       createProject("Untitled");
     } else {
       setStage(StageLists.SELECT_FOLDER);
     }
   };
 
+  const bulkUpload = async () => {
+    const urlLists = await uploadFiles(files);
+    console.log(urlLists);
+    const payload: createBulkAssetType = {
+      assetList: urlLists.map((url) => {
+        return {
+          assetType: FileTypeMap[url.file.name.split(".")[1]],
+          assetUrl: url.url,
+          name: url.file.name,
+        };
+      }),
+      collectionId: toCollectionId,
+      memory: saveAsMemory,
+    };
+    if (toJourneyId != -1) {
+      payload.journeyId = toJourneyId;
+    }
+    bullUploadHook.mutate(payload);
+  };
+
+  const afterSelectingFolders = async () => {
+    // Validate Selection
+    if (
+      ([SourceMemory.MEMORY, SourceMemory.MEMORY_DASHBOARD].includes(source) ||
+        saveAsMemory) &&
+      (toCollectionId == -1 || toJourneyId == -1)
+    ) {
+      toast.error(
+        "To save a memory we need to select both a collection and journey."
+      );
+      return;
+    }
+    if (
+      source == SourceMemory.UPLOAD &&
+      !saveAsMemory &&
+      toCollectionId == -1
+    ) {
+      toast.error(
+        "You need to select a valid location to save your uploaded files."
+      );
+      return;
+    }
+
+    //After all validations are passed, we call create project or move next.
+    if (files.length == 0) {
+      afterSelectingCardSize();
+    } else {
+      await bulkUpload();
+      setActionModal(false);
+    }
+  };
+
+  const afterViewModal = async () => {
+    if (files.length == 0) {
+      toast.error("Please select some file.");
+      return;
+    }
+    if (source == SourceMemory.MEMORY) {
+      await bulkUpload();
+      setActionModal(false);
+    } else {
+      setStage(StageLists.SELECT_FOLDER);
+    }
+  };
+
   useEffect(() => {
-    createProjectOrMoveToNext();
+    afterSelectingCardSize();
   }, [projectDimension]);
 
   console.log(stage);
@@ -343,39 +440,55 @@ export const AddMemoryModal = ({
                 setFiles={setFiles}
                 nextBtnHandler={() => setStage(StageLists.VIEW_UPLOADS)}
               />
-              <div className="flex p-6">
-                <span>OR</span>
-              </div>
-              <div className="h-full flex flex-col gap-4">
-                <div
-                  className="w-[200px] bg-primary-200 rounded-md flex-grow flex justify-center items-center"
-                  onClick={() => {
-                    setMemoryType(MemoryTypes.CARD);
-                    setStage(StageLists.CARD_SIZE);
-                  }}
-                >
-                  <span>CARD</span>
-                </div>
-                <div
-                  className="w-[200px] bg-primary-200 rounded-md flex-grow flex justify-center items-center"
-                  onClick={() => {
-                    setMemoryType(MemoryTypes.SLIDESHOW);
-                    setStage(StageLists.CARD_SIZE);
-                  }}
-                >
-                  <span>SLIDESHOW</span>
-                </div>
-              </div>
+              {source == SourceMemory.UPLOAD ? null : (
+                <>
+                  <div className="flex p-6">
+                    <span>OR</span>
+                  </div>
+                  <div className="h-full flex flex-col gap-4">
+                    <div
+                      className="w-[200px] bg-primary-200 rounded-md flex-grow flex justify-center items-center"
+                      onClick={() => {
+                        setMemoryType(MemoryTypes.CARD);
+                        setStage(StageLists.CARD_SIZE);
+                      }}
+                    >
+                      <span>CARD</span>
+                    </div>
+                    <div
+                      className="w-[200px] bg-primary-200 rounded-md flex-grow flex justify-center items-center"
+                      onClick={() => {
+                        setMemoryType(MemoryTypes.SLIDESHOW);
+                        setStage(StageLists.CARD_SIZE);
+                      }}
+                    >
+                      <span>SLIDESHOW</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </>
         ) : null}
         {stage == StageLists.VIEW_UPLOADS ? (
           <>
             <h3 className="text-xl">Selected Files</h3>
+            {source == SourceMemory.UPLOAD && (
+              <div className="my-2 flex gap-2 items-center">
+                <input
+                  type="checkbox"
+                  name=""
+                  id=""
+                  defaultChecked={saveAsMemory}
+                  onChange={() => setSaveAsMemory((prev) => !prev)}
+                />
+                <span>Save as Memory</span>
+              </div>
+            )}
             <ViewUploadModalContent
               files={files}
               setFiles={setFiles}
-              nextBtnHandler={() => setStage(StageLists.SELECT_FOLDER)}
+              nextBtnHandler={afterViewModal}
               backBtnHandler={() => {
                 setFiles([]);
                 setStage(StageLists.UPLOAD_SELECT);
@@ -390,13 +503,13 @@ export const AddMemoryModal = ({
         ) : null}
         {stage == StageLists.SELECT_FOLDER ? (
           <>
-            <h3 className="text-xl">Where to save this memory ?</h3>
+            <h3 className="text-xl"> Choose Location</h3>
             <SelectFolder
               toCollectionId={toCollectionId}
               toJourneyId={toJourneyId}
               setToCollectionId={setToCollectionId}
               setToJourneyId={setToJourneyId}
-              nextBtnHandler={() => setStage(StageLists.SELECT_FOLDER)}
+              nextBtnHandler={afterSelectingFolders}
               backBtnHandler={() => {
                 setStage(StageLists.VIEW_UPLOADS);
                 setToCollectionId(-1);
@@ -544,12 +657,14 @@ export const MoveCopyModal = ({
   mode,
   entityType,
   dataObject,
+  bulkIds,
   setActionModal,
 }: MoveCopyModalPropType) => {
   const [toCollectionId, setToCollectionId] = useState<number>(-1);
   const [toJourneyId, setToJourneyId] = useState<number>(-1);
   const moveJourneyHook = useMoveJourney();
   const moveProjectHook = useMoveProjects();
+  const moveAssetHook = useMoveAssets();
   const moveOrCopy = () => {
     if (entityType == EntityType.JOURNEY) {
       if (toCollectionId == -1) {
@@ -559,7 +674,7 @@ export const MoveCopyModal = ({
       moveJourneyHook.mutate({
         mode: mode,
         collectionId: toCollectionId,
-        journeyId: [(dataObject as JourneyType).id],
+        journeyId: bulkIds ? bulkIds : [(dataObject as JourneyType).id],
       });
     } else if (entityType == EntityType.MEMORY) {
       if (toCollectionId == -1 || toJourneyId == -1) {
@@ -570,8 +685,22 @@ export const MoveCopyModal = ({
         mode: mode,
         collectionId: toCollectionId,
         journeyId: toJourneyId,
-        projectId: [(dataObject as MemoryType).id],
+        projectId: bulkIds ? bulkIds : [(dataObject as MemoryType).id],
       });
+    } else if (entityType == EntityType.ASSET) {
+      if (toCollectionId == -1 && toJourneyId == -1) {
+        toast.error("Please select a valid location.");
+        return;
+      }
+      const payload: moveAssetType = {
+        mode: mode,
+        newCollectionId: toCollectionId,
+        assetId: bulkIds ? bulkIds : [(dataObject as AssetResType).id],
+      };
+      if (toJourneyId != -1) {
+        payload.newJourneyId = toJourneyId;
+      }
+      moveAssetHook.mutate(payload);
     }
     setActionModal(false);
   };

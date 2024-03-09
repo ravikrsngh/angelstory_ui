@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import {

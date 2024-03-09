@@ -46,7 +46,7 @@ export default function ViewUploadModalContent({
   backBtnLabel,
 }: ViewUploadCompPropType) {
   const deleteFile = (idx: number) => {
-    let filesCopy = [...files];
+    const filesCopy = [...files];
     filesCopy.splice(idx, 1);
     setFiles(filesCopy);
   };

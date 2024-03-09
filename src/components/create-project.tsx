@@ -1,23 +1,32 @@
-import { Transition, Dialog } from "@headlessui/react";
-import { Fragment, useState } from "react";
-import { useGetAllSizes } from "../hooks/collection/use-get-size";
-import { useGetAllCollectionForUser } from "../hooks/collection/use-get-collection";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+import { Dialog, Transition } from "@headlessui/react";
 import Cookies from "js-cookie";
-import { useCreateCollection } from "../hooks/collection/use-create-collection";
+import { Fragment, useState } from "react";
 import toast from "react-hot-toast";
-import { CreateProjectInputType, CreateProjectPropType, CreateProjectStepPropType, SizeResType } from "../types";
+import { useCreateCollection } from "../hooks/collection/use-create-collection";
+import { useGetAllCollectionForUser } from "../hooks/collection/use-get-collection";
+import { useGetAllSizes } from "../hooks/collection/use-get-size";
 import { useCreateProject } from "../hooks/project/use-create-project";
+import {
+  CreateProjectInputType,
+  CreateProjectPropType,
+  CreateProjectStepPropType,
+  SizeResType,
+} from "../types";
 
-const SelectProjectTypeSection = ({ setProjData, setStep }: CreateProjectStepPropType) => {
-
-    const selectProjectType = (t:string) => {
-        setProjData((prev) => {
-            const temp = {...prev}
-            temp.projectType = t
-            return temp
-        })
-        setStep(2)
-    }
+const SelectProjectTypeSection = ({
+  setProjData,
+  setStep,
+}: CreateProjectStepPropType) => {
+  const selectProjectType = (t: string) => {
+    setProjData((prev) => {
+      const temp = { ...prev };
+      temp.projectType = t;
+      return temp;
+    });
+    setStep(2);
+  };
 
   return (
     <>
@@ -28,11 +37,17 @@ const SelectProjectTypeSection = ({ setProjData, setStep }: CreateProjectStepPro
         What do you want to create ?
       </Dialog.Title>
       <div className="flex gap-4 justify-center items-center mt-10  md:mt-16">
-        <div onClick={() => selectProjectType("CARD")} className="w-40 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
+        <div
+          onClick={() => selectProjectType("CARD")}
+          className="w-40 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer"
+        >
           {" "}
           <span>Card</span>{" "}
         </div>
-        <div onClick={() => selectProjectType("SLIDE_SHOW")} className="w-40 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
+        <div
+          onClick={() => selectProjectType("SLIDE_SHOW")}
+          className="w-40 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer"
+        >
           {" "}
           <span>Slideshow</span>{" "}
         </div>
@@ -41,28 +56,30 @@ const SelectProjectTypeSection = ({ setProjData, setStep }: CreateProjectStepPro
   );
 };
 
+const SelectProjectSizeSection = ({
+  setProjData,
+  setStep,
+}: CreateProjectStepPropType) => {
+  const { data, isLoading, isFetching } = useGetAllSizes();
 
-const SelectProjectSizeSection = ({ setProjData, setStep }:CreateProjectStepPropType) => {
+  const selectProjectSize = (width: number, height: number) => {
+    setProjData((prev) => {
+      const temp = { ...prev };
+      temp.width = width;
+      temp.height = height;
+      return temp;
+    });
+    setStep(3);
+  };
 
-    const {data, isLoading, isFetching} = useGetAllSizes()
+  if (isLoading || isFetching) {
+    return (
+      <>
+        <span>Loading...</span>
+      </>
+    );
+  }
 
-    const selectProjectSize = (width: number, height: number) => {
-        setProjData((prev) => {
-            const temp = {...prev}
-            temp.width = width
-            temp.height = height
-            return temp
-        })
-        setStep(3)
-    }
-
-    if (isLoading || isFetching) {
-        return <>
-            <span>Loading...</span>
-        </>
-    }
-
-    
   return (
     <>
       <Dialog.Title
@@ -73,52 +90,62 @@ const SelectProjectSizeSection = ({ setProjData, setStep }:CreateProjectStepProp
       </Dialog.Title>
       <div className="flex overflow-x-auto gap-4 items-center mt-10  md:mt-16">
         {data?.map((size: SizeResType) => (
-            <div key={size.id} onClick={() => selectProjectSize(size.width, size.height)} style={{aspectRatio: `${size.width/size.height}`}} className="p-4 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer">
+          <div
+            key={size.id}
+            onClick={() => selectProjectSize(size.width, size.height)}
+            style={{ aspectRatio: `${size.width / size.height}` }}
+            className="p-4 h-40 bg-primary-100 rounded-sm flex justify-center items-center hover:shadow-md hover:cursor-pointer"
+          >
             {" "}
             <span className="text-sm text-center">{size.label}</span>{" "}
           </div>
-        ) )}
+        ))}
       </div>
     </>
   );
 };
 
-const SelectCollectionSection = ({ projData, setProjData }: CreateProjectStepPropType) => {
-    const {data, isLoading, isFetching } = useGetAllCollectionForUser(Cookies.get('user') || '')
-    const createCollectionHook = useCreateCollection()
-    const createProjectHook = useCreateProject()
+const SelectCollectionSection = ({
+  projData,
+  setProjData,
+}: CreateProjectStepPropType) => {
+  const { data, isLoading, isFetching } = useGetAllCollectionForUser(
+    Cookies.get("user") || ""
+  );
+  const createCollectionHook = useCreateCollection();
+  const createProjectHook = useCreateProject();
 
-    const selectThisCollection = (collectionId: number) => {
-        setProjData((prev) => {
-          const temp = {...prev}
-          temp.collectionId = collectionId
-          return temp
-      })
+  const selectThisCollection = (collectionId: number) => {
+    setProjData((prev) => {
+      const temp = { ...prev };
+      temp.collectionId = collectionId;
+      return temp;
+    });
+  };
+
+  const handleSubmitCreateCollection = (e: React.FormEvent) => {
+    e.preventDefault();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    createCollectionHook.mutate({ collectionName: e.target.collection.value });
+  };
+
+  const createNewProject = async () => {
+    if (!projData.collectionId) {
+      toast.error("Please select a collection.");
+      return;
     }
+    await createProjectHook.mutate(projData);
+  };
 
-    const handleSubmitCreateCollection = (e: React.FormEvent) => {
-        e.preventDefault();
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        createCollectionHook.mutate({collectionName: e.target.collection.value}) 
-      }
+  if (isLoading || isFetching) {
+    return (
+      <>
+        <span>Loading...</span>
+      </>
+    );
+  }
 
-      const createNewProject = async () => {
-        if(!projData.collectionId) {
-          toast.error('Please select a collection.')
-          return
-        }
-        await createProjectHook.mutate(projData)
-
-      }
-
-    if (isLoading || isFetching) {
-        return <>
-            <span>Loading...</span>
-        </>
-    }
-
-    
   return (
     <div className="md:px-10">
       <Dialog.Title
@@ -129,18 +156,46 @@ const SelectCollectionSection = ({ projData, setProjData }: CreateProjectStepPro
       </Dialog.Title>
       <form className="mt-6 md:mt-10 overflow-y-auto max-h-52">
         {data?.map((c) => (
-            <div key={c.id} className="bg-primary-50 px-4 flex items-center gap-2 mb-4">
-                <input type="radio" name="collection" id={`collection${c.id}`} onChange={() => selectThisCollection(c.id)} />
-                <label htmlFor={`collection${c.id}`} className="grow h-full block text-sm md:text-base py-3 md:py-4">{c.name}</label>
-            </div>
-        ) )}
+          <div
+            key={c.id}
+            className="bg-primary-50 px-4 flex items-center gap-2 mb-4"
+          >
+            <input
+              type="radio"
+              name="collection"
+              id={`collection${c.id}`}
+              onChange={() => selectThisCollection(c.id)}
+            />
+            <label
+              htmlFor={`collection${c.id}`}
+              className="grow h-full block text-sm md:text-base py-3 md:py-4"
+            >
+              {c.name}
+            </label>
+          </div>
+        ))}
       </form>
       <form className="flex gap-4" onSubmit={handleSubmitCreateCollection}>
-            <input type="text" placeholder="Enter new collection name" name="collection" className=" rounded-md py-2 px-3 outline-none focus:shadow grow border border-slate-200"/>
-            <button type="submit" className="bg-primary-300 px-3 py-2 text-white rounded-md">Add</button>
+        <input
+          type="text"
+          placeholder="Enter new collection name"
+          name="collection"
+          className=" rounded-md py-2 px-3 outline-none focus:shadow grow border border-slate-200"
+        />
+        <button
+          type="submit"
+          className="bg-primary-300 px-3 py-2 text-white rounded-md"
+        >
+          Add
+        </button>
       </form>
       <div className="flex justify-center mt-10">
-        <button className="bg-primary-400 px-8 py-2 text-white rounded-md" onClick={createNewProject}>Create Project</button>
+        <button
+          className="bg-primary-400 px-8 py-2 text-white rounded-md"
+          onClick={createNewProject}
+        >
+          Create Project
+        </button>
       </div>
     </div>
   );
@@ -151,24 +206,24 @@ export const CreateProject = ({
   initalValue,
   displayCreateProject,
   setDisplayCreateProject,
-}:CreateProjectPropType) => {
+}: CreateProjectPropType) => {
   const [step, setStep] = useState<number>(initialStep);
   const [projData, setProjData] = useState<CreateProjectInputType>(initalValue);
 
   const closeProjectModal = () => {
-    setStep(1)
+    setStep(1);
     setProjData({
-        collectionId: null,
-        height: null,
-        name: "Untitled",
-        projectType: null,
-        width: null,
-        formattedData: '',
-        previewImage: ''
-      })
-    setDisplayCreateProject(false)
-  }
-  
+      collectionId: null,
+      height: null,
+      name: "Untitled",
+      projectType: null,
+      width: null,
+      formattedData: "",
+      previewImage: "",
+    });
+    setDisplayCreateProject(false);
+  };
+
   return (
     <Transition appear show={displayCreateProject} as={Fragment}>
       <Dialog
@@ -201,13 +256,25 @@ export const CreateProject = ({
             >
               <Dialog.Panel className="py-12 md:py-20 px-5 w-full max-w-3xl transform overflow-hidden rounded-md bg-white text-left align-middle shadow-xl transition-all">
                 {step == 1 ? (
-                  <SelectProjectTypeSection projData={projData} setProjData={setProjData} setStep={setStep} />
+                  <SelectProjectTypeSection
+                    projData={projData}
+                    setProjData={setProjData}
+                    setStep={setStep}
+                  />
                 ) : null}
                 {step == 2 ? (
-                  <SelectProjectSizeSection projData={projData} setProjData={setProjData} setStep={setStep} />
+                  <SelectProjectSizeSection
+                    projData={projData}
+                    setProjData={setProjData}
+                    setStep={setStep}
+                  />
                 ) : null}
                 {step == 3 ? (
-                  <SelectCollectionSection projData={projData} setProjData={setProjData} setStep={setStep} />
+                  <SelectCollectionSection
+                    projData={projData}
+                    setProjData={setProjData}
+                    setStep={setStep}
+                  />
                 ) : null}
               </Dialog.Panel>
             </Transition.Child>

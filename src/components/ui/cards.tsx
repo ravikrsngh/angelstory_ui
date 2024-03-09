@@ -17,6 +17,7 @@ import {
   MemoryType,
   MemoryTypes,
   NewCardPropsType,
+  ViewAllCardPropType,
 } from "../../types";
 import { cn } from "../../utils";
 import {
@@ -50,8 +51,8 @@ const BasicStyleCard = ({
     <div>
       <div className="p-3 bg-primary-100 w-64 h-min" onClick={onClickHandler}>
         <div className="flex justify-between items-center">
-          <div className="flex gap-2 items-center">
-            <div className=" text-primary-400">{getHeaderIcon()}</div>
+          <div className="flex gap-2 items-center overflow-hidden">
+            <div className="text-primary-400">{getHeaderIcon()}</div>
             <span className="overflow-hidden whitespace-nowrap text-ellipsis">
               {name}
             </span>
@@ -80,7 +81,6 @@ const BasicStyleCard = ({
 export const NewCard = ({
   type,
   name,
-  needs_approval,
   dropdownOptions,
   onClickHandler,
   dataObject,
@@ -98,7 +98,7 @@ export const NewCard = ({
     } else if (type == MemoryTypes.CARD || type == MemoryTypes.SLIDESHOW) {
       const obj = dataObject as MemoryType;
       console.log(obj);
-      navigate(`/design/${obj.collectionId}/${obj.id}`);
+      navigate(`/design/${obj.collectionId}/${obj.journeyId}/${obj.id}`);
     }
   };
 
@@ -111,7 +111,7 @@ export const NewCard = ({
       } else if (type == MemoryTypes.CARD || type == MemoryTypes.SLIDESHOW) {
         const obj = dataObject as MemoryType;
         console.log(obj);
-        navigate(`/design/${obj.collectionId}/${obj.id}`);
+        navigate(`/design/${obj.collectionId}/${obj.journeyId}/${obj.id}`);
       }
     } else {
       setAction(action);
@@ -180,13 +180,19 @@ export const NewCard = ({
         <div className="max-h-[800px] flex justify-center items-center overflow-hidden">
           {type == AssetTypes.IMAGE && (
             <img
-              src={(dataObject as AssetResType).assetUrl}
+              src={
+                (dataObject as AssetResType).assetUrl ||
+                (dataObject as MemoryType).previewImage
+              }
               className="w-full"
             />
           )}
           {type == AssetTypes.AUDIO && (
             <audio
-              src={(dataObject as AssetResType).assetUrl}
+              src={
+                (dataObject as AssetResType).assetUrl ||
+                (dataObject as MemoryType).previewImage
+              }
               controls
               className="w-full"
             ></audio>
@@ -200,11 +206,11 @@ export const NewCard = ({
 export const ViewAllCard = ({
   type,
   name,
-  needs_approval,
-  dropdownOptions,
   onClickHandler,
+  defaultChecked,
+  onChangeHandler,
   dataObject,
-}: NewCardPropsType) => {
+}: ViewAllCardPropType) => {
   return (
     <BasicStyleCard
       type={type}
@@ -213,7 +219,13 @@ export const ViewAllCard = ({
       dataObject={dataObject}
     >
       <div>
-        <input type="checkbox" name="" id="" defaultChecked={false} />
+        <input
+          type="checkbox"
+          name=""
+          id=""
+          defaultChecked={defaultChecked}
+          onChange={onChangeHandler}
+        />
       </div>
     </BasicStyleCard>
   );

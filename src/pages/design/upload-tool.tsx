@@ -10,7 +10,7 @@ import { useCreateAssets } from "../../hooks/assets/use-create-assets";
 import { useGetAssetsFromCollection } from "../../hooks/assets/use-get-collection-assets";
 import { useGetStockImages } from "../../hooks/others/use-stock-photos";
 import { uploadFileToS3 } from "../../service/aws";
-import { AssetResType, CanvasContextType } from "../../types";
+import { AssetResType, AssetTypes, CanvasContextType } from "../../types";
 import { cn } from "../../utils";
 
 const StockImagesComp = ({ addImage }: { addImage: (url: string) => void }) => {
@@ -190,9 +190,10 @@ export default function UploadToolPanel() {
         "user"
       )}/project/images/${file.name.replace(" ", "%2B")}`;
       await createAssetHook.mutate({
-        assetType: "IMAGE",
+        assetType: AssetTypes.IMAGE,
         assetUrl: assetUrl,
         projectId: parseInt(params.projectId),
+        journeyId: parseInt(params.journeyId),
         collectionId: parseInt(params.collectionId),
       });
       addImage(assetUrl);

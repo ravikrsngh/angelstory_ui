@@ -1,7 +1,7 @@
 import { Menu, Tab, Transition } from "@headlessui/react";
 import { IconDots } from "@tabler/icons-react";
 import { Fragment, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { NewCard } from "../components/ui/cards";
 import {
   AssetDropdownList,
@@ -187,7 +187,6 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
 
 const JourneyMemories = () => {
   const params = useParams();
-  const navigate = useNavigate();
   const { data, isLoading, isFetching, isError } = useGetJourneysMemories(
     params.journeyId ? params.journeyId : "-1"
   );

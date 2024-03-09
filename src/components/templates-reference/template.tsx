@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { Menu, Transition } from "@headlessui/react";
 import {
   IconArrowBarToRight,
