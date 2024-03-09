@@ -108,7 +108,10 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                   </button>
                 )}
               </Tab>
-              <Link className="ml-auto text-xs md:text-sm lg:text-base" to={""}>
+              <Link
+                className="ml-auto text-xs md:text-sm lg:text-base"
+                to={`/view-all/journey/${journeyId}/assets`}
+              >
                 View all assets
               </Link>
             </div>
