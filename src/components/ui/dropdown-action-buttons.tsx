@@ -19,7 +19,6 @@ import {
   MemoryType,
   SourceMemory,
 } from "../../types";
-import { ShareModalTemp } from "../templates-reference/all-modals";
 import {
   AddJournalModal,
   AddJourneyModal,
@@ -30,6 +29,7 @@ import {
   JourneyRenameModal,
   MemoryRenameModal,
   MoveCopyModal,
+  ShareModal,
 } from "./all-modals";
 import { Modal } from "./modal";
 
@@ -248,13 +248,30 @@ export const DropdownActionModals = ({
           />
         </Modal>
       )}
-      {action == 5 && (
+      {action == DropdownActions.SHARE_COLLECTION.id && (
         <Modal
-          headerLabel="Share Modal"
+          headerLabel="Share Collection"
           openModal={actionModal}
           setOpenModal={setActionModal}
         >
-          <ShareModalTemp />
+          <ShareModal
+            entityType={EntityType.COLLECTION}
+            dataObject={dataObject as CollectionType}
+            setActionModal={setActionModal}
+          />
+        </Modal>
+      )}
+      {action == DropdownActions.SHARE_JOURNEY.id && (
+        <Modal
+          headerLabel="Share Journey"
+          openModal={actionModal}
+          setOpenModal={setActionModal}
+        >
+          <ShareModal
+            entityType={EntityType.JOURNEY}
+            dataObject={dataObject as JourneyType}
+            setActionModal={setActionModal}
+          />
         </Modal>
       )}
       {action == 6 && (

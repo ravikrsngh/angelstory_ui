@@ -1,6 +1,15 @@
+import { Menu, Transition } from "@headlessui/react";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import { IconArrowLeft } from "@tabler/icons-react";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  Fragment,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "react-hot-toast";
+import { useGetAllAccessRightForEntity } from "../../hooks/access-rights/use-get-all-access";
 import {
   createBulkAssetType,
   useBulkCreateAssets,
@@ -33,6 +42,7 @@ import {
   MemoryTypes,
   MoveCopyModalPropType,
   ProjectDimensionType,
+  ShareModalPropType,
   SourceMemory,
   StageLists,
 } from "../../types";
@@ -720,5 +730,128 @@ export const MoveCopyModal = ({
         nextBtnLabel={`${mode} here`}
       />
     </>
+  );
+};
+
+export const ShareModal = ({ entityType }: ShareModalPropType) => {
+  const { data } = useGetAllAccessRightForEntity(entityType);
+
+  return (
+    <div className="share-modal overflow-scroll">
+      <div className="search-bar relative w-full mt-4">
+        <div>
+          <form
+            action=""
+            className="flex border-[1px] border-slate-400 bg-white rounded-sm mt-4"
+          >
+            <input
+              type="text"
+              placeholder="Search users"
+              className="grow px-4 py-3 outline-none"
+            />
+          </form>
+        </div>
+        <div className="selected-user flex flex-wrap items-center pl-3 py-3">
+          <Tooltip.Provider>
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <button className="w-7 h-7 border-2 border-white rounded-full bg-primary-400 hover:border-primary-700 "></button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content
+                  className="TooltipContent bg-white text-primary-700 rounded-sm shadow-md px-3 py-2 text-xs z-10"
+                  sideOffset={5}
+                >
+                  Ravi Kumar Singh
+                  <Tooltip.Arrow className="TooltipArrow" />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+          <Tooltip.Provider>
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <button className="w-7 h-7 border-2 border-white rounded-full bg-primary-400 hover:border-primary-700 -ml-2"></button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content
+                  className="TooltipContent bg-white text-primary-700 rounded-sm shadow-md px-3 py-2 text-xs z-10"
+                  sideOffset={5}
+                >
+                  Sabrina
+                  <Tooltip.Arrow className="TooltipArrow" />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+          <Tooltip.Provider>
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <button className="w-7 h-7 border-2 border-white rounded-full bg-primary-400 hover:border-primary-700 -ml-2"></button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content
+                  className="TooltipContent bg-white text-primary-700 rounded-sm shadow-md px-3 py-2 text-xs z-10"
+                  sideOffset={5}
+                >
+                  Ajay
+                  <Tooltip.Arrow className="TooltipArrow" />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+        </div>
+        <div>
+          <Menu
+            as="div"
+            className="relative w-full inline-block text-left ml-auto"
+          >
+            <div onClick={(e) => e.stopPropagation()}>
+              <Menu.Button className="inline-flex w-full justify-center rounded-md ">
+                <div className="border border-slate-200 py-2 px-3 w-full text-left">
+                  <span>Collection - View Only</span>
+                </div>
+              </Menu.Button>
+            </div>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="absolute left-0 mt-2 w-full origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                <div className="px-1 py-1 ">
+                  {data?.map((opt) => (
+                    <Menu.Item key={opt}>
+                      <div
+                        className="flex gap-4 p-2 hover:bg-primary-100 hover:cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <span>{opt}</span>
+                      </div>
+                    </Menu.Item>
+                  ))}
+                </div>
+              </Menu.Items>
+            </Transition>
+          </Menu>
+          <div className="flex flex-col gap-4 mt-4">
+            <div className="flex gap-3 items-center">
+              <input type="checkbox" id="checkbox1" />
+              <label htmlFor="checkbox1">Approve additions</label>
+            </div>
+            <div className="flex gap-3 items-center">
+              <input type="checkbox" id="checkbox2" />
+              <label htmlFor="checkbox2">Some other permission</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

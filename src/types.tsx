@@ -557,3 +557,9 @@ export const SourceMemory = {
   MEMORY_DASHBOARD: "MEMORY-DASHBOARD",
   UPLOAD: "UPLOAD",
 };
+
+export type ShareModalPropType = {
+  entityType: string;
+  dataObject?: DataObjectType;
+  setActionModal: Dispatch<SetStateAction<boolean>>;
+};
