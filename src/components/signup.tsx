@@ -17,10 +17,17 @@ export default function SignUp() {
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
     const name = formData.get("name") as string;
+    const userName = formData.get("username") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const cfmPassword = formData.get("cfm-password") as string;
+
+    if (password != cfmPassword) {
+      toast.error("Passwords did not match.");
+      return;
+    }
     signup.mutate(
-      { name: name, email: email, password: password },
+      { name: name, userName: userName, email: email, password: password },
       {
         onSuccess: (response) => {
           userId.value = (response as { userId: number }).userId;
@@ -48,9 +55,14 @@ export default function SignUp() {
           <div className="bg-white px-6 py-0 md:py-12 md:shadow sm:rounded-lg sm:px-12">
             <form className="space-y-6" onSubmit={handleSubmitSignUp}>
               <Input label="Name" name="name" />
+              <Input label="Username" type="text" name="username" />
               <Input label="Email" type="email" name="email" />
               <Input label="Password" type="password" name="password" />
-
+              <Input
+                label="Confirm Password"
+                type="password"
+                name="cfm-password"
+              />
               <div>
                 <button
                   type="submit"
