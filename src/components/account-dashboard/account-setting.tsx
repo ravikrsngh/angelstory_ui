@@ -1,30 +1,30 @@
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 import toast from "react-hot-toast";
 import { useGetUserDetails } from "../../hooks/user/use-get-user-details";
 import { useSaveUserDetails } from "../../hooks/user/use-save-user-details";
 import { Input } from "../ui/input";
 import AccountDashboardHeading from "./account-dashboard-heading";
-import { UserCircleIcon } from "@heroicons/react/24/solid";
 
 export default function AccountSetting() {
-  const {data, isLoading, isFetching, isError} = useGetUserDetails()
-  const saveUserDetailsHook = useSaveUserDetails()
+  const { data, isLoading, isFetching, isError } = useGetUserDetails();
+  const saveUserDetailsHook = useSaveUserDetails();
 
   const handleSaveSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
     const payload = {
       ...data,
-      name: formData.get('name') as string,
-      mobileNumber: formData.get('mobileNumber') as string
-    }
+      firstName: formData.get("firstName") as string,
+      lastName: formData.get("lastName") as string,
+      mobileNumber: formData.get("mobileNumber") as string,
+    };
     saveUserDetailsHook.mutate(payload, {
       onSuccess: () => {
-        toast.success("Details updated successfully.")
-      }
-    })
-
-  }
+        toast.success("Details updated successfully.");
+      },
+    });
+  };
 
   if (isLoading || isFetching) {
     return (
@@ -72,14 +72,42 @@ export default function AccountSetting() {
             </label>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="grow">
-              <Input label="Name" name="name" defaultValue={data.name} />
+            <div className="grow opacity-60">
+              <Input
+                label="Username"
+                name="userName"
+                defaultValue={data.userName}
+                disabled
+              />
             </div>
             <div className="grow opacity-60">
-              <Input label="Email" name="email" defaultValue={data.email} disabled />
+              <Input
+                label="Email"
+                name="email"
+                defaultValue={data.email}
+                disabled
+              />
             </div>
             <div className="grow">
-              <Input label="Phone Number" name="mobileNumber" defaultValue={data.mobileNumber} />
+              <Input
+                label="First Name"
+                name="firstName"
+                defaultValue={data.firstName}
+              />
+            </div>
+            <div className="grow">
+              <Input
+                label="Last Name"
+                name="lastName"
+                defaultValue={data.lastName}
+              />
+            </div>
+            <div className="grow">
+              <Input
+                label="Phone Number"
+                name="mobileNumber"
+                defaultValue={data.mobileNumber}
+              />
             </div>
             <div className=""></div>
             <div className="hidden md:block"></div>

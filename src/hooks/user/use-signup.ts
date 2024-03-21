@@ -5,7 +5,8 @@ import { userClient } from "..";
 
 type SignUpInputType = {
   email: string;
-  name: string;
+  lastName: string;
+  firstName: string;
   password: string;
   userName: string;
 };

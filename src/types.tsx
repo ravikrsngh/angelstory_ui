@@ -225,7 +225,9 @@ export type AssetResType = {
 };
 
 export type UserDetailsResType = {
-  name: string;
+  lastName: string;
+  firstName: string;
+  userName?: string;
   mobileNumber: string;
   active?: boolean | undefined;
   birthDate?: string | undefined;
@@ -234,6 +236,12 @@ export type UserDetailsResType = {
   gender?: string | undefined;
   id?: number | undefined;
   profileImage?: string | undefined;
+};
+
+export type UserSearchResType = {
+  userName: string;
+  userId: number;
+  firstName: string;
 };
 
 export type ProjectInCollectionType = {
@@ -562,4 +570,9 @@ export type ShareModalPropType = {
   entityType: string;
   dataObject?: DataObjectType;
   setActionModal: Dispatch<SetStateAction<boolean>>;
+};
+
+export type UserSearchCompPropType = {
+  selecteduser: UserSearchResType[];
+  setSelectedUsers: Dispatch<SetStateAction<UserSearchResType[]>>;
 };

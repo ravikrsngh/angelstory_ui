@@ -16,7 +16,8 @@ export default function SignUp() {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    const name = formData.get("name") as string;
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
     const userName = formData.get("username") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
@@ -27,7 +28,13 @@ export default function SignUp() {
       return;
     }
     signup.mutate(
-      { name: name, userName: userName, email: email, password: password },
+      {
+        firstName: firstName,
+        lastName: lastName,
+        userName: userName,
+        email: email,
+        password: password,
+      },
       {
         onSuccess: (response) => {
           userId.value = (response as { userId: number }).userId;
@@ -54,7 +61,8 @@ export default function SignUp() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-0 md:py-12 md:shadow sm:rounded-lg sm:px-12">
             <form className="space-y-6" onSubmit={handleSubmitSignUp}>
-              <Input label="Name" name="name" />
+              <Input label="First Name" name="firstName" />
+              <Input label="Last Name" name="lastName" />
               <Input label="Username" type="text" name="username" />
               <Input label="Email" type="email" name="email" />
               <Input label="Password" type="password" name="password" />

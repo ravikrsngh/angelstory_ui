@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Tab } from "@headlessui/react";
 import {
   ClipboardDocumentIcon,
@@ -6,12 +5,13 @@ import {
   NewspaperIcon,
   UsersIcon,
 } from "@heroicons/react/24/outline";
-import { cn } from "../utils";
-import SideNavProfile from "../components/account-dashboard/sidenav-profile";
+import { IconChevronDown } from "@tabler/icons-react";
+import { useState } from "react";
 import AccountSetting from "../components/account-dashboard/account-setting";
 import ChangePassword from "../components/account-dashboard/change-password";
+import SideNavProfile from "../components/account-dashboard/sidenav-profile";
 import YourTemplates from "../components/account-dashboard/your-templates";
-import { IconChevronDown } from "@tabler/icons-react";
+import { cn } from "../utils";
 
 import { Dropdown } from "../components/ui/dropdown";
 
@@ -111,22 +111,22 @@ export default function Example() {
                     (selectedIndex == 3 && "Purchase History")}
                 </h2>
                 <Dropdown
-                    trigger={
-                      <button className="text-white">
-                        <IconChevronDown />
-                      </button>
-                    }
-                    options={navigation.map((ins) => {
-                      return (
-                        <span
-                          className="w-full text-base font-normal block p-2 hover:bg-primary-50"
-                          onClick={() => setSelectedIndex(ins.value)}
-                        >
-                          {ins.name}
-                        </span>
-                      );
-                    })}
-                  />
+                  trigger={
+                    <button className="text-white">
+                      <IconChevronDown />
+                    </button>
+                  }
+                  options={navigation.map((ins) => {
+                    return (
+                      <span
+                        className="w-full text-base font-normal block p-2 hover:bg-primary-50"
+                        onClick={() => setSelectedIndex(ins.value)}
+                      >
+                        {ins.name}
+                      </span>
+                    );
+                  })}
+                />
               </div>
               <Tab.Panels>
                 <Tab.Panel>
