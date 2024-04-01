@@ -187,7 +187,7 @@ const permissions = [
   },
 ];
 
-const PermissionUserCard = () => {
+export const PermissionUserCard = () => {
   return (
     <Disclosure as={Fragment}>
       {({ open }) => (

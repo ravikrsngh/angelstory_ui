@@ -9,7 +9,9 @@ import React, {
   useState,
 } from "react";
 import { toast } from "react-hot-toast";
+import { useAddUserPermission } from "../../hooks/access-rights/use-add-user";
 import { useGetAllAccessRightForEntity } from "../../hooks/access-rights/use-get-all-access";
+import { useGetAllUserAccessForEntity } from "../../hooks/access-rights/use-get-all-access-for-entity";
 import {
   createBulkAssetType,
   useBulkCreateAssets,
@@ -48,6 +50,7 @@ import {
   UserSearchResType,
 } from "../../types";
 import { cn } from "../../utils";
+import { PermissionUserCard } from "../templates-reference/all-modals";
 import { Input } from "./input";
 import SelectCardSize from "./select-card-size";
 import SelectFolder from "./select-folder";
@@ -735,9 +738,53 @@ export const MoveCopyModal = ({
   );
 };
 
-export const ShareModal = ({ entityType }: ShareModalPropType) => {
+export const ShareModal = ({
+  entityType,
+  dataObject,
+  setActionModal,
+}: ShareModalPropType) => {
   const [selecteduser, setSelectedUsers] = useState<UserSearchResType[]>([]);
   const { data } = useGetAllAccessRightForEntity(entityType);
+  const [selectedPermission, setSelectedPermission] = useState<string | null>(
+    null
+  );
+  const addUserPermissionHook = useAddUserPermission();
+
+  const share = () => {
+    if (!selectedPermission) {
+      toast.error("Please select a valid permission.");
+      return;
+    }
+    if (selecteduser.length == 0) {
+      toast.error("Please select atleast one user to share permission.");
+      return;
+    }
+
+    let entityId = null;
+    if (dataObject) {
+      if ("entityId" in dataObject) {
+        entityId = dataObject.entityId;
+      } else {
+        entityId = dataObject.id;
+      }
+      addUserPermissionHook.mutate(
+        {
+          accessRight: selectedPermission,
+          entityId: entityId,
+          accessType: entityType,
+          userIds: selecteduser.map((user) => user.userId),
+        },
+        {
+          onSuccess: () => {
+            toast.success("Permissions added successfully.");
+            setActionModal(false);
+          },
+        }
+      );
+    } else {
+      toast.error("Invalid Object");
+    }
+  };
 
   return (
     <div className="share-modal overflow-scroll">
@@ -777,7 +824,7 @@ export const ShareModal = ({ entityType }: ShareModalPropType) => {
           <div onClick={(e) => e.stopPropagation()}>
             <Menu.Button className="inline-flex w-full justify-center rounded-md ">
               <div className="border border-slate-200 py-2 px-3 w-full text-left">
-                <span>Collection - View Only</span>
+                <span>{selectedPermission || "Select Permission"}</span>
               </div>
             </Menu.Button>
           </div>
@@ -798,6 +845,7 @@ export const ShareModal = ({ entityType }: ShareModalPropType) => {
                       className="flex gap-4 p-2 hover:bg-primary-100 hover:cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
+                        setSelectedPermission(opt);
                       }}
                     >
                       <span>{opt}</span>
@@ -822,10 +870,37 @@ export const ShareModal = ({ entityType }: ShareModalPropType) => {
           <button className="px-10 py-3 rounded-sm border border-primary-400 text-primary-400">
             Copy Public Link
           </button>
-          <button className="bg-primary-400 text-white px-10 py-3 rounded-sm disabled:opacity-75">
+          <button
+            className="bg-primary-400 text-white px-10 py-3 rounded-sm disabled:opacity-75"
+            onClick={share}
+          >
             Share
           </button>
         </div>
+      </div>
+    </div>
+  );
+};
+
+export const ManageAccessModal = ({
+  entityType,
+  dataObject,
+  setActionModal,
+}: ShareModalPropType) => {
+  const getAllUserAccessHook = useGetAllUserAccessForEntity(
+    entityType,
+    dataObject
+      ? "entityId" in dataObject
+        ? dataObject.entityId
+        : dataObject.id
+      : -1
+  );
+  console.log(setActionModal, getAllUserAccessHook);
+  return (
+    <div className="share-modal overflow-scroll">
+      <div className="mt-4 h-[240px] overflow-y-auto flex flex-col gap-3">
+        <PermissionUserCard />
+        <PermissionUserCard />
       </div>
     </div>
   );

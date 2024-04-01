@@ -27,6 +27,7 @@ import {
   CollectionRenameModal,
   DeleteModal,
   JourneyRenameModal,
+  ManageAccessModal,
   MemoryRenameModal,
   MoveCopyModal,
   ShareModal,
@@ -144,6 +145,16 @@ export const DropdownActions = {
     name: "Copy",
     icon: <IconCopy />,
   },
+  MANAGE_ACCESS_COLLECTION: {
+    id: 23,
+    name: "Manage Access",
+    icon: <></>,
+  },
+  MANAGE_ACCESS_JOURNEY: {
+    id: 24,
+    name: "Manage Access",
+    icon: <></>,
+  },
 };
 
 export const CollectionDropdownList = [
@@ -151,6 +162,7 @@ export const CollectionDropdownList = [
   DropdownActions.RENAME_COLLECTION,
   DropdownActions.SHARE_COLLECTION,
   DropdownActions.DELETE_COLLECTION,
+  DropdownActions.MANAGE_ACCESS_COLLECTION,
 ];
 
 export const CollectionDetailsBannerDropdown = [
@@ -159,6 +171,7 @@ export const CollectionDetailsBannerDropdown = [
   DropdownActions.ADD_JOURNEY,
   DropdownActions.SHARE_COLLECTION,
   DropdownActions.DELETE_COLLECTION,
+  DropdownActions.MANAGE_ACCESS_COLLECTION,
 ];
 
 export const AssetDropdownList = [
@@ -175,6 +188,7 @@ export const JourneyCardDropdownList = [
   DropdownActions.SHARE_JOURNEY,
   DropdownActions.MOVE_JOURNEY,
   DropdownActions.COPY_JOURNEY,
+  DropdownActions.MANAGE_ACCESS_JOURNEY,
 ];
 
 export const JourneyBannerDropdownList = [
@@ -185,6 +199,7 @@ export const JourneyBannerDropdownList = [
   DropdownActions.ADD_MEMORY,
   DropdownActions.MOVE_JOURNEY,
   DropdownActions.COPY_JOURNEY,
+  DropdownActions.MANAGE_ACCESS_JOURNEY,
 ];
 
 export const MemoryCardDropdownList = [
@@ -493,6 +508,32 @@ export const DropdownActionModals = ({
             collectionId={-1}
             journeyId={-1}
             source={SourceMemory.UPLOAD}
+            setActionModal={setActionModal}
+          />
+        </Modal>
+      )}
+      {action == DropdownActions.MANAGE_ACCESS_JOURNEY.id && (
+        <Modal
+          headerLabel="Manage Access"
+          openModal={actionModal}
+          setOpenModal={setActionModal}
+        >
+          <ManageAccessModal
+            entityType={EntityType.JOURNEY}
+            dataObject={dataObject as JourneyType}
+            setActionModal={setActionModal}
+          />
+        </Modal>
+      )}
+      {action == DropdownActions.MANAGE_ACCESS_COLLECTION.id && (
+        <Modal
+          headerLabel="Manage Access"
+          openModal={actionModal}
+          setOpenModal={setActionModal}
+        >
+          <ManageAccessModal
+            entityType={EntityType.COLLECTION}
+            dataObject={dataObject as CollectionType}
             setActionModal={setActionModal}
           />
         </Modal>
