@@ -8,7 +8,8 @@ import {
   IconFolderFilled,
 } from "@tabler/icons-react";
 import { Fragment, useState } from "react";
-import { TempPropType } from "../../types";
+import { useUpdateUserPermission } from "../../hooks/access-rights/use-update-user-access";
+import { PermissionUserCardPropType, TempPropType } from "../../types";
 import { cn } from "../../utils";
 import dummyImg from "./../../assets/download.jpeg";
 
@@ -187,7 +188,28 @@ const permissions = [
   },
 ];
 
-export const PermissionUserCard = () => {
+export const PermissionUserCard = (props: PermissionUserCardPropType) => {
+  const [selectedPermission, setSelectedPermission] = useState<string | null>(
+    props.accessRight
+  );
+  const updateUserAccessHook = useUpdateUserPermission();
+  const updateUserAccess = () => {
+    updateUserAccessHook.mutate(
+      {
+        accessRight: selectedPermission,
+        userId: props.userId,
+        entityId: props.entityId,
+        accessType: props.accessType,
+      },
+      {
+        onSuccess: () => {
+          setSelectedPermission(selectedPermission);
+          toast.success("Update the permission successfully.");
+        },
+      }
+    );
+  };
+
   return (
     <Disclosure as={Fragment}>
       {({ open }) => (
@@ -197,8 +219,8 @@ export const PermissionUserCard = () => {
               <div className="flex gap-3 items-center text-left">
                 <div className="h-7 w-7 bg-primary-400 rounded-full"></div>
                 <span>
-                  Ravi Kumar Singh <br />{" "}
-                  <span className="text-sm">Collection - View Only</span>
+                  {props.name} <br />{" "}
+                  <span className="text-sm">{props.accessRight}</span>
                 </span>
                 {open ? (
                   <IconChevronUp className="ml-auto" />
@@ -216,7 +238,7 @@ export const PermissionUserCard = () => {
               <div onClick={(e) => e.stopPropagation()}>
                 <Menu.Button className="inline-flex w-full justify-center rounded-md ">
                   <div className="border border-slate-200 py-2 px-3 w-full text-left">
-                    <span>Collection - View Only</span>
+                    <span>{selectedPermission}</span>
                   </div>
                 </Menu.Button>
               </div>
@@ -231,15 +253,16 @@ export const PermissionUserCard = () => {
               >
                 <Menu.Items className="absolute left-0 mt-2 w-full origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
                   <div className="px-1 py-1 ">
-                    {permissions.map((opt) => (
+                    {props.allAccessRights.map((opt) => (
                       <Menu.Item key={opt.id}>
                         <div
                           className="flex gap-4 p-2 hover:bg-primary-100 hover:cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
+                            setSelectedPermission(opt);
                           }}
                         >
-                          <span>{opt.name}</span>
+                          <span>{opt}</span>
                         </div>
                       </Menu.Item>
                     ))}
@@ -247,7 +270,7 @@ export const PermissionUserCard = () => {
                 </Menu.Items>
               </Transition>
             </Menu>
-            <div className="flex flex-col gap-4 mt-4">
+            {/* <div className="flex flex-col gap-4 mt-4">
               <div className="flex gap-3 items-center">
                 <input type="checkbox" id="checkbox1" />
                 <label htmlFor="checkbox1">Approve additions</label>
@@ -256,9 +279,13 @@ export const PermissionUserCard = () => {
                 <input type="checkbox" id="checkbox2" />
                 <label htmlFor="checkbox2">Some other permission</label>
               </div>
-            </div>
-            <div className="flex w-full justify-end">
-              <button className="bg-primary-400 text-sm text-white px-8 py-2 rounded-sm disabled:opacity-75">
+            </div> */}
+            <div className="flex w-full justify-end mt-4">
+              <button
+                className="bg-primary-400 text-sm text-white px-8 py-2 rounded-sm disabled:opacity-75"
+                disabled={selectedPermission == props.accessRight}
+                onClick={updateUserAccess}
+              >
                 Update
               </button>
             </div>

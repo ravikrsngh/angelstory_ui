@@ -12,7 +12,12 @@ import {
 } from "../components/ui/dropdown-action-buttons";
 import { useGetCollectionDetails } from "../hooks/collection/use-fetch-all-collection-details";
 import { useGetCollectionAssets } from "../hooks/collection/use-fetch-collection-assets";
-import { AssetResType, AssetTypes, CollectionType } from "../types";
+import {
+  AccessTypeGroups,
+  AssetResType,
+  AssetTypes,
+  CollectionType,
+} from "../types";
 import { cn } from "../utils";
 
 const CollectionAssets = ({
@@ -198,6 +203,9 @@ export default function Collection() {
   );
   const [actionModal, setActionModal] = useState<boolean>(false);
   const [action, setAction] = useState<number>(0);
+  const isEntityOwner = AccessTypeGroups.OWNER.includes(
+    data?.accessRight || ""
+  );
 
   const onClickDropdownOptions = (action: number) => {
     if (action != 1) {
@@ -214,6 +222,7 @@ export default function Collection() {
         createdBy: data.createdBy,
         name: data.name,
         bgColor: data.bgColor,
+        accessRight: data.accessRight,
       };
       return obj;
     }
@@ -237,41 +246,43 @@ export default function Collection() {
         <h4 className="text-3xl md:text-4xl lg:text-5xl font-medium">
           {data?.name}
         </h4>
-        <div className="absolute top-4 right-4">
-          <Menu as="div" className="relative inline-block text-left ml-auto">
-            <div onClick={(e) => e.stopPropagation()}>
-              <Menu.Button className="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-primary-700">
-                <IconDots
-                  className="-mr-1 ml-2 h-5 w-5 text-primary-700"
-                  aria-hidden="true"
-                />
-              </Menu.Button>
-            </div>
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
-                <div className="px-1 py-1 ">
-                  {CollectionDetailsBannerDropdown.map((opt) => (
-                    <Menu.Item key={opt.id}>
-                      <DropdownButton
-                        icon={opt.icon}
-                        name={opt.name}
-                        onClickHandler={() => onClickDropdownOptions(opt.id)}
-                      />
-                    </Menu.Item>
-                  ))}
-                </div>
-              </Menu.Items>
-            </Transition>
-          </Menu>
-        </div>
+        {isEntityOwner && (
+          <div className="absolute top-4 right-4">
+            <Menu as="div" className="relative inline-block text-left ml-auto">
+              <div onClick={(e) => e.stopPropagation()}>
+                <Menu.Button className="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-primary-700">
+                  <IconDots
+                    className="-mr-1 ml-2 h-5 w-5 text-primary-700"
+                    aria-hidden="true"
+                  />
+                </Menu.Button>
+              </div>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                  <div className="px-1 py-1 ">
+                    {CollectionDetailsBannerDropdown.map((opt) => (
+                      <Menu.Item key={opt.id}>
+                        <DropdownButton
+                          icon={opt.icon}
+                          name={opt.name}
+                          onClickHandler={() => onClickDropdownOptions(opt.id)}
+                        />
+                      </Menu.Item>
+                    ))}
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          </div>
+        )}
       </div>
       <CollectionAssets collectionId={data?.id} />
       <CollectionProjects />

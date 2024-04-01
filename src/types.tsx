@@ -86,6 +86,7 @@ export type CollectionType = {
   entityId: number;
   name: string;
   bgColor: string;
+  accessRight: string;
 };
 
 export type CollectionCardType = {
@@ -222,6 +223,7 @@ export type AssetResType = {
   memoryId: number;
   uploadedAt: string;
   uploadedBy: number;
+  accessRight: "";
 };
 
 export type UserDetailsResType = {
@@ -281,6 +283,7 @@ export type MemoryType = {
   width: number;
   title: string;
   caption: string;
+  accessRight: string;
 };
 
 export type JourneyDetailsResType = JourneyType & {
@@ -560,6 +563,13 @@ export const FileTypeMap: { [key: string]: string } = {
   pdf: MemoryTypes.PDF,
 };
 
+export const AccessTypeGroups = {
+  OWNER: ["COLLECTION_OWNER", "JOURNEY_OWNER"],
+  EDIT: ["COLLECTION_EDIT", "JOURNEY_EDIT"],
+  ADD_ONLY: ["COLLECTION_ADD_ONLY", "JOURNEY_ADD_ONLY"],
+  ADD_VIEW: ["COLLECTION_ADD_VIEW", "JOURNEY_ADD_VIEW"],
+};
+
 export const SourceMemory = {
   MEMORY: "MEMORY",
   MEMORY_DASHBOARD: "MEMORY-DASHBOARD",
@@ -575,4 +585,16 @@ export type ShareModalPropType = {
 export type UserSearchCompPropType = {
   selecteduser: UserSearchResType[];
   setSelectedUsers: Dispatch<SetStateAction<UserSearchResType[]>>;
+};
+
+export type ManageAccessResType = {
+  accessType: string;
+  entityId: number;
+  userId: number;
+  name: string;
+  accessRight: string;
+};
+
+export type PermissionUserCardPropType = ManageAccessResType & {
+  allAccessRights: string[];
 };

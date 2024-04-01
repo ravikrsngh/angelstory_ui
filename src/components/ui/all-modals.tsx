@@ -856,7 +856,7 @@ export const ShareModal = ({
             </Menu.Items>
           </Transition>
         </Menu>
-        <div className="flex flex-col gap-4 mt-4">
+        {/* <div className="flex flex-col gap-4 mt-4">
           <div className="flex gap-3 items-center">
             <input type="checkbox" id="checkbox1" />
             <label htmlFor="checkbox1">Approve additions</label>
@@ -865,8 +865,8 @@ export const ShareModal = ({
             <input type="checkbox" id="checkbox2" />
             <label htmlFor="checkbox2">Some other permission</label>
           </div>
-        </div>
-        <div className="flex justify-between items-center mt-32">
+        </div> */}
+        <div className="flex justify-between items-center mt-40">
           <button className="px-10 py-3 rounded-sm border border-primary-400 text-primary-400">
             Copy Public Link
           </button>
@@ -895,12 +895,28 @@ export const ManageAccessModal = ({
         : dataObject.id
       : -1
   );
+  const allAccessRightHook = useGetAllAccessRightForEntity(entityType);
+
   console.log(setActionModal, getAllUserAccessHook);
   return (
     <div className="share-modal overflow-scroll">
-      <div className="mt-4 h-[240px] overflow-y-auto flex flex-col gap-3">
-        <PermissionUserCard />
-        <PermissionUserCard />
+      <div className="mt-4 min-h-[340px] overflow-y-auto flex flex-col gap-3">
+        {(getAllUserAccessHook.isLoading ||
+          getAllUserAccessHook.isFetching) && (
+          <div>
+            {" "}
+            <p>Loading...</p>
+          </div>
+        )}
+        {getAllUserAccessHook.data
+          ? getAllUserAccessHook.data.map((obj) => (
+              <PermissionUserCard
+                key={obj.userId}
+                {...obj}
+                allAccessRights={allAccessRightHook.data || []}
+              />
+            ))
+          : null}
       </div>
     </div>
   );

@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { userAuthClient } from "..";
+import { ManageAccessResType } from "../../types";
 
 const getAllAccessRightForEntity = (entityType: string, entityId: number) => {
   return userAuthClient
     .get("access-rights/fetch?type=" + entityType + `&entityId=${entityId}`)
-    .json<string[]>();
+    .json<ManageAccessResType[]>();
 };
 
 export function useGetAllUserAccessForEntity(

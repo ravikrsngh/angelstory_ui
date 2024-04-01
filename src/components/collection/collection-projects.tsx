@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetCollectionJourneys } from "../../hooks/collection/use-fetch-collection-journeys";
-import { AssetTypes, JourneyType } from "../../types";
+import { AccessTypeGroups, AssetTypes, JourneyType } from "../../types";
 import { NewCard } from "../ui/cards";
 import { JourneyCardDropdownList } from "../ui/dropdown-action-buttons";
 
@@ -11,6 +11,10 @@ export const CollectionProjects = () => {
   const { data, isLoading, isFetching, isError } = useGetCollectionJourneys(
     params.collectionId ? params.collectionId : "-1"
   );
+  const isEntityOwner = AccessTypeGroups.OWNER.includes(
+    data?.accessRight || ""
+  );
+
   if (isLoading || isFetching) {
     return <span>Loading ...</span>;
   }
@@ -31,7 +35,12 @@ export const CollectionProjects = () => {
             name={journey.name}
             dropdownOptions={JourneyCardDropdownList}
             dataObject={journey}
-            onClickHandler={() => navigate(`/journey/${journey.id}`)}
+            onClickHandler={() => {
+              if (!isEntityOwner) {
+                return;
+              }
+              navigate(`/journey/${journey.id}`);
+            }}
           />
         ))}
       </div>
