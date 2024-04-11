@@ -223,7 +223,7 @@ export type AssetResType = {
   memoryId: number;
   uploadedAt: string;
   uploadedBy: number;
-  accessRight: "";
+  accessRight: string;
 };
 
 export type UserDetailsResType = {
@@ -564,10 +564,11 @@ export const FileTypeMap: { [key: string]: string } = {
 };
 
 export const AccessTypeGroups = {
-  OWNER: ["COLLECTION_OWNER", "JOURNEY_OWNER"],
-  EDIT: ["COLLECTION_EDIT", "JOURNEY_EDIT"],
-  ADD_ONLY: ["COLLECTION_ADD_ONLY", "JOURNEY_ADD_ONLY"],
-  ADD_VIEW: ["COLLECTION_ADD_VIEW", "JOURNEY_ADD_VIEW"],
+  OWNER: ["COLLECTION_OWNER", "JOURNEY_OWNER", "MEMORY_OWNER"],
+  EDIT: ["COLLECTION_EDIT", "JOURNEY_EDIT", "MEMORY_EDIT"],
+  VIEW_ONLY: ["COLLECTION_VIEW_ONLY", "JOURNEY_VIEW_ONLY", "MEMORY_VIEW_ONLY"],
+  ADD_ONLY: ["COLLECTION_ADD_ONLY", "JOURNEY_ADD_ONLY", "MEMORY_ADD_ONLY"],
+  ADD_VIEW: ["COLLECTION_ADD_VIEW", "JOURNEY_ADD_VIEW", "MEMORY_ADD_VIEW"],
 };
 
 export const SourceMemory = {

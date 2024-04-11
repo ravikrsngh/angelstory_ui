@@ -50,7 +50,10 @@ const BasicStyleCard = ({
 
   return (
     <div>
-      <div className="p-3 bg-primary-100 w-64 h-min" onClick={onClickHandler}>
+      <div
+        className="p-3 bg-primary-100 w-64 h-min rounded-lg"
+        onClick={onClickHandler}
+      >
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center overflow-hidden">
             <div className="text-primary-400">{getHeaderIcon()}</div>
@@ -90,8 +93,13 @@ export const NewCard = ({
   const [action, setAction] = useState<number | null>(null);
   const [actionModal, setActionModal] = useState<boolean>(false);
   const navigate = useNavigate();
-  const isEntityOwner = AccessTypeGroups.OWNER.includes(
-    dataObject && dataObject.accessRight ? dataObject.accessRight : ""
+  const isDropdownAccess = [
+    ...AccessTypeGroups.OWNER,
+    ...AccessTypeGroups.EDIT,
+  ].includes(
+    dataObject && dataObject.accessRight
+      ? dataObject.accessRight
+      : "COLLECTION_ADD"
   );
 
   const clickHandler = () => {
@@ -131,7 +139,7 @@ export const NewCard = ({
         onClickHandler={clickHandler}
         dataObject={dataObject}
       >
-        {dropdownOptions.length > 0 && isEntityOwner && (
+        {dropdownOptions.length > 0 && isDropdownAccess && (
           <Menu as="div" className="relative inline-block text-left ml-auto">
             <div onClick={(e) => e.stopPropagation()}>
               <Menu.Button className="inline-flex w-full justify-center rounded-md px-2 py-2 text-sm font-medium text-primary-700">

@@ -13,12 +13,22 @@ import {
 import { useGetJourneyAssets } from "../hooks/journey/use-fetch-journey-assets";
 import { useGetJourneysMemories } from "../hooks/journey/use-fetch-journeys-memory";
 import { useGetJourneyDetails } from "../hooks/journey/use-journey-details";
-import { AssetResType, AssetTypes, MemoryType } from "../types";
+import {
+  AccessTypeGroups,
+  AssetResType,
+  AssetTypes,
+  MemoryType,
+  MemoryTypes,
+} from "../types";
 import { cn } from "../utils";
 
 const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
   const { data, isLoading, isFetching, isError } = useGetJourneyAssets(
     String(journeyId)
+  );
+
+  const isNeedAprovalAccess = [...AccessTypeGroups.OWNER].includes(
+    data?.accessRight || ""
   );
 
   if (isLoading || isFetching) {
@@ -94,20 +104,22 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                   </button>
                 )}
               </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Needs Approval
-                  </button>
-                )}
-              </Tab>
+              {isNeedAprovalAccess && (
+                <Tab>
+                  {({ selected }) => (
+                    <button
+                      className={cn(
+                        "px-3 md:px-10 py-3 font-medium",
+                        selected
+                          ? "text-primary-400 border-b-2 border-primary-400"
+                          : ""
+                      )}
+                    >
+                      Needs Approval
+                    </button>
+                  )}
+                </Tab>
+              )}
               <Link
                 className="ml-auto text-xs md:text-sm lg:text-base"
                 to={`/view-all/journey/${journeyId}/assets`}
@@ -206,19 +218,208 @@ const JourneyMemories = () => {
       <h4 className="font-medium mb-10 text-xl flex justify-between items-center">
         Memories
       </h4>
-      <div className="flex gap-4 overflow-auto">
-        {data.projectList?.map((memory: MemoryType) => {
-          memory.journeyId = data.id;
-          return (
-            <NewCard
-              key={memory.id}
-              type={memory.projectType}
-              name={memory.name}
-              dropdownOptions={MemoryCardDropdownList}
-              dataObject={memory}
-            />
-          );
-        })}
+      <div>
+        <Tab.Group>
+          <Tab.List>
+            <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
+              <Tab>
+                {({ selected }) => (
+                  <button
+                    className={cn(
+                      "px-3 md:px-10 py-3 font-medium",
+                      selected
+                        ? "text-primary-400 border-b-2 border-primary-400"
+                        : ""
+                    )}
+                  >
+                    All
+                  </button>
+                )}
+              </Tab>
+              <Tab>
+                {({ selected }) => (
+                  <button
+                    className={cn(
+                      "px-3 md:px-10 py-3 font-medium",
+                      selected
+                        ? "text-primary-400 border-b-2 border-primary-400"
+                        : ""
+                    )}
+                  >
+                    Images
+                  </button>
+                )}
+              </Tab>
+              <Tab>
+                {({ selected }) => (
+                  <button
+                    className={cn(
+                      "px-3 md:px-10 py-3 font-medium",
+                      selected
+                        ? "text-primary-400 border-b-2 border-primary-400"
+                        : ""
+                    )}
+                  >
+                    Audio
+                  </button>
+                )}
+              </Tab>
+              <Tab>
+                {({ selected }) => (
+                  <button
+                    className={cn(
+                      "px-3 md:px-10 py-3 font-medium",
+                      selected
+                        ? "text-primary-400 border-b-2 border-primary-400"
+                        : ""
+                    )}
+                  >
+                    Video
+                  </button>
+                )}
+              </Tab>
+              <Tab>
+                {({ selected }) => (
+                  <button
+                    className={cn(
+                      "px-3 md:px-10 py-3 font-medium",
+                      selected
+                        ? "text-primary-400 border-b-2 border-primary-400"
+                        : ""
+                    )}
+                  >
+                    Cards
+                  </button>
+                )}
+              </Tab>
+              <Tab>
+                {({ selected }) => (
+                  <button
+                    className={cn(
+                      "px-3 md:px-10 py-3 font-medium",
+                      selected
+                        ? "text-primary-400 border-b-2 border-primary-400"
+                        : ""
+                    )}
+                  >
+                    Slideshow
+                  </button>
+                )}
+              </Tab>
+            </div>
+          </Tab.List>
+          <Tab.Panels>
+            <div>
+              <Tab.Panel className="flex gap-4 overflow-auto">
+                {data?.projectList?.map((memory: MemoryType) => (
+                  <NewCard
+                    key={memory.id}
+                    type={memory.projectType}
+                    name={memory.name}
+                    dropdownOptions={MemoryCardDropdownList}
+                    dataObject={memory}
+                  />
+                ))}
+              </Tab.Panel>
+              <Tab.Panel className="flex gap-4 overflow-auto">
+                {data?.projectList
+                  ?.filter(
+                    (memory: MemoryType) =>
+                      memory.projectType == MemoryTypes.IMAGE
+                  )
+                  .map((memory: MemoryType) => (
+                    <NewCard
+                      key={memory.id}
+                      type={memory.projectType}
+                      name={memory.name}
+                      dropdownOptions={MemoryCardDropdownList}
+                      dataObject={memory}
+                    />
+                  ))}
+              </Tab.Panel>
+              <Tab.Panel className="flex gap-4 overflow-auto">
+                {data?.projectList
+                  ?.filter(
+                    (memory: MemoryType) =>
+                      memory.projectType == MemoryTypes.AUDIO
+                  )
+                  .map((memory: MemoryType) => (
+                    <NewCard
+                      key={memory.id}
+                      type={memory.projectType}
+                      name={memory.name}
+                      dropdownOptions={MemoryCardDropdownList}
+                      dataObject={memory}
+                    />
+                  ))}
+              </Tab.Panel>
+              <Tab.Panel className="flex gap-4 overflow-auto">
+                {data?.projectList
+                  ?.filter(
+                    (memory: MemoryType) =>
+                      memory.projectType == MemoryTypes.VIDEO
+                  )
+                  .map((memory: MemoryType) => (
+                    <NewCard
+                      key={memory.id}
+                      type={memory.projectType}
+                      name={memory.name}
+                      dropdownOptions={MemoryCardDropdownList}
+                      dataObject={memory}
+                    />
+                  ))}
+              </Tab.Panel>
+              <Tab.Panel className="flex gap-4 overflow-auto">
+                {data?.projectList
+                  ?.filter(
+                    (memory: MemoryType) =>
+                      memory.projectType == MemoryTypes.VIDEO
+                  )
+                  .map((memory: MemoryType) => (
+                    <NewCard
+                      key={memory.id}
+                      type={memory.projectType}
+                      name={memory.name}
+                      dropdownOptions={MemoryCardDropdownList}
+                      dataObject={memory}
+                    />
+                  ))}
+              </Tab.Panel>
+              <Tab.Panel className="flex gap-4 overflow-auto">
+                {data?.projectList
+                  ?.filter(
+                    (memory: MemoryType) =>
+                      memory.projectType == MemoryTypes.CARD
+                  )
+                  .map((memory: MemoryType) => (
+                    <NewCard
+                      key={memory.id}
+                      type={memory.projectType}
+                      name={memory.name}
+                      dropdownOptions={MemoryCardDropdownList}
+                      dataObject={memory}
+                    />
+                  ))}
+              </Tab.Panel>
+              <Tab.Panel className="flex gap-4 overflow-auto">
+                {data?.projectList
+                  ?.filter(
+                    (memory: MemoryType) =>
+                      memory.projectType == MemoryTypes.SLIDESHOW
+                  )
+                  .map((memory: MemoryType) => (
+                    <NewCard
+                      key={memory.id}
+                      type={memory.projectType}
+                      name={memory.name}
+                      dropdownOptions={MemoryCardDropdownList}
+                      dataObject={memory}
+                    />
+                  ))}
+              </Tab.Panel>
+            </div>
+          </Tab.Panels>
+        </Tab.Group>
       </div>
     </div>
   );

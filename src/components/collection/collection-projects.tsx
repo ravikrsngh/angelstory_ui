@@ -11,9 +11,10 @@ export const CollectionProjects = () => {
   const { data, isLoading, isFetching, isError } = useGetCollectionJourneys(
     params.collectionId ? params.collectionId : "-1"
   );
-  const isEntityOwner = AccessTypeGroups.OWNER.includes(
-    data?.accessRight || ""
-  );
+  const isEntityOwner = [
+    ...AccessTypeGroups.OWNER,
+    ...AccessTypeGroups.EDIT,
+  ].includes(data?.accessRight || "");
 
   if (isLoading || isFetching) {
     return <span>Loading ...</span>;

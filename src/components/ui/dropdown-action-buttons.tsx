@@ -155,6 +155,11 @@ export const DropdownActions = {
     name: "Manage Access",
     icon: <></>,
   },
+  UPLOAD_COLLECTION: {
+    id: 25,
+    name: "Upload",
+    icon: <IconPlus />,
+  },
 };
 
 export const CollectionDropdownList = [
@@ -173,6 +178,8 @@ export const CollectionDetailsBannerDropdown = [
   DropdownActions.DELETE_COLLECTION,
   DropdownActions.MANAGE_ACCESS_COLLECTION,
 ];
+
+export const CollectionAddOnlyDropdown = [DropdownActions.UPLOAD_COLLECTION];
 
 export const AssetDropdownList = [
   DropdownActions.VIEW,
@@ -536,6 +543,29 @@ export const DropdownActionModals = ({
             dataObject={dataObject as CollectionType}
             setActionModal={setActionModal}
           />
+        </Modal>
+      )}
+      {action == DropdownActions.UPLOAD_COLLECTION.id && (
+        <Modal
+          headerLabel=""
+          openModal={actionModal}
+          setOpenModal={setActionModal}
+        >
+          {dataObject ? (
+            <AddMemoryUploadModal
+              collectionId={(dataObject as CollectionType).entityId}
+              journeyId={-1}
+              source={SourceMemory.UPLOAD}
+              setActionModal={setActionModal}
+            />
+          ) : (
+            <AddMemoryUploadModal
+              collectionId={-1}
+              journeyId={-1}
+              source={SourceMemory.UPLOAD}
+              setActionModal={setActionModal}
+            />
+          )}
         </Modal>
       )}
     </>

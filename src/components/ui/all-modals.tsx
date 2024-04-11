@@ -12,6 +12,7 @@ import { toast } from "react-hot-toast";
 import { useAddUserPermission } from "../../hooks/access-rights/use-add-user";
 import { useGetAllAccessRightForEntity } from "../../hooks/access-rights/use-get-all-access";
 import { useGetAllUserAccessForEntity } from "../../hooks/access-rights/use-get-all-access-for-entity";
+import { useGetPublicLink } from "../../hooks/access-rights/use-get-public-link";
 import {
   createBulkAssetType,
   useBulkCreateAssets,
@@ -749,6 +750,14 @@ export const ShareModal = ({
     null
   );
   const addUserPermissionHook = useAddUserPermission();
+  const getPublicLinkHook = useGetPublicLink(
+    entityType,
+    dataObject
+      ? "entityId" in dataObject
+        ? dataObject.entityId
+        : dataObject?.id
+      : -1
+  );
 
   const share = () => {
     if (!selectedPermission) {
@@ -784,6 +793,14 @@ export const ShareModal = ({
     } else {
       toast.error("Invalid Object");
     }
+  };
+
+  const copyPublicLink = async () => {
+    const url = (await getPublicLinkHook.refetch()).data;
+    const link = `${window.location.hostname}/public/${url}`;
+    console.log(link);
+    navigator.clipboard.writeText(link);
+    toast.success("Link copied to clipboard");
   };
 
   return (
@@ -867,7 +884,10 @@ export const ShareModal = ({
           </div>
         </div> */}
         <div className="flex justify-between items-center mt-40">
-          <button className="px-10 py-3 rounded-sm border border-primary-400 text-primary-400">
+          <button
+            className="px-10 py-3 rounded-sm border border-primary-400 text-primary-400"
+            onClick={copyPublicLink}
+          >
             Copy Public Link
           </button>
           <button

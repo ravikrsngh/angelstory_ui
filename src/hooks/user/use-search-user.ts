@@ -13,5 +13,6 @@ export function useSearchUser(text: string) {
     queryKey: ["user-search"],
     queryFn: () => getUserDetails(text),
     retry: false,
+    enabled: false,
   });
 }
