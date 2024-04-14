@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 //@ts-nocheck
+import {
+  IconFolderFilled,
+  IconMusic,
+  IconPhoto,
+  IconVideo,
+} from "@tabler/icons-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { AssetTypes } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -37,4 +44,17 @@ export function secondsToHHMMSS(seconds: number) {
   ].join(":");
 
   return formattedTime;
+}
+
+export function getHeaderIcon(type: string) {
+  if (type == AssetTypes.FOLDER) {
+    return <IconFolderFilled />;
+  } else if (type == AssetTypes.IMAGE) {
+    return <IconPhoto />;
+  } else if (type == AssetTypes.AUDIO) {
+    return <IconMusic />;
+  } else if (type == AssetTypes.VIDEO) {
+    return <IconVideo />;
+  }
+  return <></>;
 }

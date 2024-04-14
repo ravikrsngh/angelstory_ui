@@ -10,6 +10,10 @@ import {
   JourneyBannerDropdownList,
   MemoryCardDropdownList,
 } from "../components/ui/dropdown-action-buttons";
+import {
+  FilesViewer,
+  FilesViewerItemType,
+} from "../components/ui/files-viewer";
 import { useGetJourneyAssets } from "../hooks/journey/use-fetch-journey-assets";
 import { useGetJourneysMemories } from "../hooks/journey/use-fetch-journeys-memory";
 import { useGetJourneyDetails } from "../hooks/journey/use-journey-details";
@@ -17,6 +21,7 @@ import {
   AccessTypeGroups,
   AssetResType,
   AssetTypes,
+  EntityType,
   MemoryType,
   MemoryTypes,
 } from "../types";
@@ -26,6 +31,15 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
   const { data, isLoading, isFetching, isError } = useGetJourneyAssets(
     String(journeyId)
   );
+
+  const [viewFilesViewer, setViewFilesViewer] = useState(false);
+  const [activeId, setActiveId] = useState<number>(0);
+
+  const openFileViewer = (obj: FilesViewerItemType) => {
+    console.log(obj);
+    setViewFilesViewer(true);
+    setActiveId(obj.id);
+  };
 
   const isNeedAprovalAccess = [...AccessTypeGroups.OWNER].includes(
     data?.accessRight || ""
@@ -138,6 +152,7 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                     name={""}
                     dropdownOptions={AssetDropdownList}
                     dataObject={asset}
+                    onClickHandler={openFileViewer}
                   />
                 ))}
               </div>
@@ -196,6 +211,23 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
           </Tab.Panels>
         </Tab.Group>
       </div>
+      {viewFilesViewer ? (
+        <FilesViewer
+          items={data.assetList?.map((asset: AssetResType) => {
+            return {
+              type: asset.assetType,
+              entityType: EntityType.ASSET,
+              id: asset.id,
+              name: "",
+              src: asset.assetUrl,
+            };
+          })}
+          setView={setViewFilesViewer}
+          activeId={activeId}
+          collectionId={data?.collectionId}
+          journeyId={data?.id}
+        />
+      ) : null}
     </div>
   );
 };
@@ -205,6 +237,14 @@ const JourneyMemories = () => {
   const { data, isLoading, isFetching, isError } = useGetJourneysMemories(
     params.journeyId ? params.journeyId : "-1"
   );
+  const [viewFilesViewer, setViewFilesViewer] = useState(false);
+  const [activeId, setActiveId] = useState<number>(0);
+
+  const openFileViewer = (obj: FilesViewerItemType) => {
+    console.log(obj);
+    setViewFilesViewer(true);
+    setActiveId(obj.id);
+  };
 
   if (isLoading || isFetching) {
     return <span>Loading ...</span>;
@@ -310,7 +350,7 @@ const JourneyMemories = () => {
           </Tab.List>
           <Tab.Panels>
             <div>
-              <Tab.Panel className="flex gap-4 overflow-auto">
+              <Tab.Panel className="flex gap-4 flex-wrap">
                 {data?.projectList?.map((memory: MemoryType) => (
                   <NewCard
                     key={memory.id}
@@ -318,10 +358,11 @@ const JourneyMemories = () => {
                     name={memory.name}
                     dropdownOptions={MemoryCardDropdownList}
                     dataObject={memory}
+                    onClickHandler={openFileViewer}
                   />
                 ))}
               </Tab.Panel>
-              <Tab.Panel className="flex gap-4 overflow-auto">
+              <Tab.Panel className="flex gap-4 flex-wrap">
                 {data?.projectList
                   ?.filter(
                     (memory: MemoryType) =>
@@ -337,7 +378,7 @@ const JourneyMemories = () => {
                     />
                   ))}
               </Tab.Panel>
-              <Tab.Panel className="flex gap-4 overflow-auto">
+              <Tab.Panel className="flex gap-4 flex-wrap">
                 {data?.projectList
                   ?.filter(
                     (memory: MemoryType) =>
@@ -353,7 +394,7 @@ const JourneyMemories = () => {
                     />
                   ))}
               </Tab.Panel>
-              <Tab.Panel className="flex gap-4 overflow-auto">
+              <Tab.Panel className="flex gap-4 flex-wrap">
                 {data?.projectList
                   ?.filter(
                     (memory: MemoryType) =>
@@ -369,7 +410,7 @@ const JourneyMemories = () => {
                     />
                   ))}
               </Tab.Panel>
-              <Tab.Panel className="flex gap-4 overflow-auto">
+              <Tab.Panel className="flex gap-4 flex-wrap">
                 {data?.projectList
                   ?.filter(
                     (memory: MemoryType) =>
@@ -385,7 +426,7 @@ const JourneyMemories = () => {
                     />
                   ))}
               </Tab.Panel>
-              <Tab.Panel className="flex gap-4 overflow-auto">
+              <Tab.Panel className="flex gap-4 flex-wrap">
                 {data?.projectList
                   ?.filter(
                     (memory: MemoryType) =>
@@ -401,7 +442,7 @@ const JourneyMemories = () => {
                     />
                   ))}
               </Tab.Panel>
-              <Tab.Panel className="flex gap-4 overflow-auto">
+              <Tab.Panel className="flex gap-4 flex-wrap">
                 {data?.projectList
                   ?.filter(
                     (memory: MemoryType) =>
@@ -421,6 +462,25 @@ const JourneyMemories = () => {
           </Tab.Panels>
         </Tab.Group>
       </div>
+      {viewFilesViewer ? (
+        <FilesViewer
+          items={data?.projectList?.map((memory: MemoryType) => {
+            return {
+              type: memory.projectType,
+              entityType: EntityType.MEMORY,
+              id: memory.id,
+              name: memory.name,
+              src: memory.previewImage,
+              description: memory.caption,
+              title: memory.title,
+            };
+          })}
+          setView={setViewFilesViewer}
+          activeId={activeId}
+          collectionId={data?.collectionId}
+          journeyId={data?.id}
+        />
+      ) : null}
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { Dispatch, PropsWithChildren, SetStateAction } from "react";
+import { FilesViewerItemType } from "./components/ui/files-viewer";
 
 export type SlideMusic = {
   name: string;
@@ -364,7 +365,7 @@ export type CollectionJourneyType = CollectionType | JourneyType;
 export type BasicStyleCardPropType = PropsWithChildren<{
   type: string;
   name: string;
-  onClickHandler?: () => void;
+  onClickHandler?: (() => void) | ((obj: FilesViewerItemType) => void);
   dataObject?: DataObjectType;
 }>;
 

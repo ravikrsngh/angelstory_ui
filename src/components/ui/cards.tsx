@@ -1,31 +1,27 @@
 import { Menu, Transition } from "@headlessui/react";
 import {
   IconDotsVertical,
-  IconFolderFilled,
-  IconMusic,
-  IconPhoto,
   IconPlayerPlay,
   IconTrash,
-  IconVideo,
 } from "@tabler/icons-react";
 import { Fragment, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   AccessTypeGroups,
   AssetResType,
   AssetTypes,
   BasicStyleCardPropType,
+  EntityType,
   MemoryType,
-  MemoryTypes,
   NewCardPropsType,
   ViewAllCardPropType,
 } from "../../types";
-import { cn } from "../../utils";
+import { cn, getHeaderIcon } from "../../utils";
 import {
   DropdownActionModals,
   DropdownActions,
   DropdownButton,
 } from "./dropdown-action-buttons";
+import { FilesViewerItemType } from "./files-viewer";
 import { Modal } from "./modal";
 
 const BasicStyleCard = ({
@@ -35,28 +31,15 @@ const BasicStyleCard = ({
   dataObject,
   children,
 }: BasicStyleCardPropType) => {
-  const getHeaderIcon = () => {
-    if (type == AssetTypes.FOLDER) {
-      return <IconFolderFilled />;
-    } else if (type == AssetTypes.IMAGE) {
-      return <IconPhoto />;
-    } else if (type == AssetTypes.AUDIO) {
-      return <IconMusic />;
-    } else if (type == AssetTypes.VIDEO) {
-      return <IconVideo />;
-    }
-    return <></>;
-  };
-
   return (
     <div>
       <div
         className="p-3 bg-primary-100 w-64 h-min rounded-lg"
-        onClick={onClickHandler}
+        onClick={onClickHandler as () => void}
       >
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center overflow-hidden">
-            <div className="text-primary-400">{getHeaderIcon()}</div>
+            <div className="text-primary-400">{getHeaderIcon(type)}</div>
             <span className="overflow-hidden whitespace-nowrap text-ellipsis">
               {name}
             </span>
@@ -92,7 +75,6 @@ export const NewCard = ({
   const [previewModal, setPreviewModal] = useState<boolean>(false);
   const [action, setAction] = useState<number | null>(null);
   const [actionModal, setActionModal] = useState<boolean>(false);
-  const navigate = useNavigate();
   const isDropdownAccess = [
     ...AccessTypeGroups.OWNER,
     ...AccessTypeGroups.EDIT,
@@ -102,29 +84,63 @@ export const NewCard = ({
       : "COLLECTION_ADD"
   );
 
+  const prepare_data_for_viewer = (): FilesViewerItemType => {
+    const fileViewObj = {
+      type: "",
+      src: "",
+      name: "",
+      entityType: "",
+      id: -1,
+    };
+    if (dataObject) {
+      if ("assetType" in dataObject) {
+        fileViewObj.type = dataObject.assetType;
+        fileViewObj.entityType = EntityType.ASSET;
+        fileViewObj.id = dataObject.id;
+        fileViewObj.src = dataObject.assetUrl;
+      } else if ("projectType" in dataObject) {
+        fileViewObj.type = dataObject.projectType;
+        fileViewObj.entityType = EntityType.MEMORY;
+        fileViewObj.id = dataObject.id;
+        fileViewObj.src = dataObject.previewImage;
+        fileViewObj.name = dataObject.name;
+      }
+    }
+
+    return fileViewObj;
+  };
+
   const clickHandler = () => {
-    if (type == AssetTypes.IMAGE || type == AssetTypes.AUDIO) {
-      setPreviewModal(true);
-    } else if (type == AssetTypes.FOLDER && onClickHandler) {
-      onClickHandler();
-    } else if (type == MemoryTypes.CARD || type == MemoryTypes.SLIDESHOW) {
-      const obj = dataObject as MemoryType;
-      console.log(obj);
-      navigate(`/design/${obj.collectionId}/${obj.journeyId}/${obj.id}`);
+    // if (type == AssetTypes.IMAGE || type == AssetTypes.AUDIO) {
+    //   setPreviewModal(true);
+    // } else if (type == AssetTypes.FOLDER && onClickHandler) {
+    //   onClickHandler();
+    // } else if (type == MemoryTypes.CARD || type == MemoryTypes.SLIDESHOW) {
+    //   const obj = dataObject as MemoryType;
+    //   console.log(obj);
+    //   navigate(`/design/${obj.collectionId}/${obj.journeyId}/${obj.id}`);
+    // }
+    if (onClickHandler) {
+      if (onClickHandler.length == 0) {
+        (onClickHandler as () => void)();
+      } else if (onClickHandler.length == 1) {
+        onClickHandler(prepare_data_for_viewer());
+      }
     }
   };
 
   const onClickDropdownOptions = (action: number) => {
     if (action == DropdownActions.VIEW.id) {
-      if (type == AssetTypes.FOLDER && onClickHandler) {
-        onClickHandler();
-      } else if (type == AssetTypes.IMAGE || type == AssetTypes.AUDIO) {
-        setPreviewModal(true);
-      } else if (type == MemoryTypes.CARD || type == MemoryTypes.SLIDESHOW) {
-        const obj = dataObject as MemoryType;
-        console.log(obj);
-        navigate(`/design/${obj.collectionId}/${obj.journeyId}/${obj.id}`);
-      }
+      // if (type == AssetTypes.FOLDER && onClickHandler) {
+      //   onClickHandler();
+      // } else if (type == AssetTypes.IMAGE || type == AssetTypes.AUDIO) {
+      //   setPreviewModal(true);
+      // } else if (type == MemoryTypes.CARD || type == MemoryTypes.SLIDESHOW) {
+      //   const obj = dataObject as MemoryType;
+      //   console.log(obj);
+      //   navigate(`/design/${obj.collectionId}/${obj.journeyId}/${obj.id}`);
+      // }
+      clickHandler();
     } else {
       setAction(action);
       setActionModal(true);

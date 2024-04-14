@@ -11,6 +11,10 @@ import {
   DropdownActionModals,
   DropdownButton,
 } from "../components/ui/dropdown-action-buttons";
+import {
+  FilesViewer,
+  FilesViewerItemType,
+} from "../components/ui/files-viewer";
 import { useGetCollectionDetails } from "../hooks/collection/use-fetch-all-collection-details";
 import { useGetCollectionAssets } from "../hooks/collection/use-fetch-collection-assets";
 import {
@@ -18,6 +22,7 @@ import {
   AssetResType,
   AssetTypes,
   CollectionType,
+  EntityType,
 } from "../types";
 import { cn } from "../utils";
 
@@ -29,6 +34,14 @@ const CollectionAssets = ({
   const { data, isLoading, isFetching, isError } = useGetCollectionAssets(
     String(collectionId)
   );
+  const [viewFilesViewer, setViewFilesViewer] = useState(false);
+  const [activeId, setActiveId] = useState<number>(0);
+
+  const openFileViewer = (obj: FilesViewerItemType) => {
+    console.log(obj);
+    setViewFilesViewer(true);
+    setActiveId(obj.id);
+  };
   const isNeedAprovalAccess = [...AccessTypeGroups.OWNER].includes(
     data?.accessRight || ""
   );
@@ -140,6 +153,7 @@ const CollectionAssets = ({
                     name={""}
                     dropdownOptions={AssetDropdownList}
                     dataObject={asset}
+                    onClickHandler={openFileViewer}
                   />
                 ))}
               </div>
@@ -198,6 +212,23 @@ const CollectionAssets = ({
           </Tab.Panels>
         </Tab.Group>
       </div>
+      {viewFilesViewer ? (
+        <FilesViewer
+          items={data.assetList?.map((asset: AssetResType) => {
+            return {
+              type: asset.assetType,
+              entityType: EntityType.ASSET,
+              id: asset.id,
+              name: "",
+              src: asset.assetUrl,
+            };
+          })}
+          setView={setViewFilesViewer}
+          activeId={activeId}
+          collectionId={data?.id}
+          journeyId={null}
+        />
+      ) : null}
     </div>
   );
 };
