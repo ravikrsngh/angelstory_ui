@@ -124,6 +124,14 @@ export const FilesViewer = (props: FilesViewerProp) => {
                   </Link>
                 </div>
               )}
+              {activeFile.type == MemoryTypes.IMAGE && (
+                <div
+                  className="hover:cursor-pointer hover:text-slate-300 text-xs"
+                  onClick={() => setEditJournalMode(true)}
+                >
+                  Convert to Product
+                </div>
+              )}
               <div
                 className="hover:cursor-pointer hover:text-slate-300"
                 onClick={() => setActionModal(true)}
