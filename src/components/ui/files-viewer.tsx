@@ -1,13 +1,16 @@
 import {
   IconChevronLeft,
   IconChevronRight,
-  IconEdit,
+  IconTrash,
   IconX,
 } from "@tabler/icons-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useSaveProject } from "../../hooks/project/use-save-project";
 import { EntityType, MemoryTypes } from "../../types";
 import { getHeaderIcon } from "../../utils";
+import { ViewerDeleteModal } from "./all-modals";
+import { Modal } from "./modal";
 
 export type FilesViewerItemType = {
   type: string;
@@ -31,8 +34,28 @@ export const FilesViewer = (props: FilesViewerProp) => {
   const [activeFile, setActiveFile] = useState<FilesViewerItemType | null>(
     null
   );
+  const [actionModal, setActionModal] = useState<boolean>(false);
   const [editJournalMode, setEditJournalMode] = useState<boolean>(false);
+  const saveProjectHook = useSaveProject();
   console.log(props);
+
+  const addJournal = (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    saveProjectHook.mutate(
+      {
+        projectId: activeFile?.id,
+        title: formData.get("title") as string,
+        caption: formData.get("description") as string,
+      },
+      {
+        onSuccess: () => {
+          setEditJournalMode(false);
+        },
+      }
+    );
+  };
 
   const moveNext = () => {
     let nextIdx = null;
@@ -40,6 +63,7 @@ export const FilesViewer = (props: FilesViewerProp) => {
       const element = props.items[i];
       if (element.id == activeFile?.id) {
         nextIdx = i == props.items.length - 1 ? 0 : i + 1;
+        setEditJournalMode(false);
         setActiveFile(props.items[nextIdx]);
         return;
       }
@@ -52,6 +76,7 @@ export const FilesViewer = (props: FilesViewerProp) => {
       const element = props.items[i];
       if (element.id == activeFile?.id) {
         nextIdx = i == 0 ? props.items.length - 1 : i - 1;
+        setEditJournalMode(false);
         setActiveFile(props.items[nextIdx]);
         return;
       }
@@ -82,16 +107,16 @@ export const FilesViewer = (props: FilesViewerProp) => {
             <div className="ml-auto text-slate-400  flex items-center gap-4">
               {activeFile.entityType == EntityType.MEMORY && (
                 <div
-                  className="hover:cursor-pointer hover:text-slate-300"
+                  className="hover:cursor-pointer hover:text-slate-300 text-xs"
                   onClick={() => setEditJournalMode(true)}
                 >
-                  <IconEdit />
+                  Add/Edit Journal
                 </div>
               )}
               {[MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(
                 activeFile.type
               ) && (
-                <div className="hover:cursor-pointer hover:text-slate-300">
+                <div className="hover:cursor-pointer hover:text-slate-300 text-xs">
                   <Link
                     to={`/design/${props.collectionId}/${props.journeyId}/${activeFile.id}`}
                   >
@@ -99,6 +124,12 @@ export const FilesViewer = (props: FilesViewerProp) => {
                   </Link>
                 </div>
               )}
+              <div
+                className="hover:cursor-pointer hover:text-slate-300"
+                onClick={() => setActionModal(true)}
+              >
+                <IconTrash />
+              </div>
               <div
                 className="hover:cursor-pointer hover:text-slate-300"
                 onClick={() => props.setView(false)}
@@ -110,7 +141,9 @@ export const FilesViewer = (props: FilesViewerProp) => {
           <div className="w-full overflow-hidden py-4 px-20 flex justify-center">
             <div className="bg-slate-50 w-fit flex justify-center">
               <div className="view grow max-w-[1121px]">
-                {activeFile.type == MemoryTypes.IMAGE && (
+                {[MemoryTypes.IMAGE, MemoryTypes.CARD].includes(
+                  activeFile.type
+                ) && (
                   <div>
                     <img src={activeFile.src} className="w-full" />
                   </div>
@@ -121,7 +154,7 @@ export const FilesViewer = (props: FilesViewerProp) => {
                 editJournalMode) && (
                 <div className="journal w-80 p-6 bg-slate-50 h-full">
                   {editJournalMode ? (
-                    <form>
+                    <form onSubmit={addJournal}>
                       <textarea
                         placeholder="Title"
                         className="text-sm bg-transparent outline-none w-full"
@@ -132,15 +165,24 @@ export const FilesViewer = (props: FilesViewerProp) => {
                         placeholder="Description"
                         className="text-sm bg-transparent outline-none w-full"
                         name="description"
+                        rows={7}
                         defaultValue={activeFile.description}
                       />
-                      <button
-                        type="button"
-                        onClick={() => setEditJournalMode(false)}
-                      >
-                        Cancel
-                      </button>
-                      <button type="submit">Save</button>
+                      <div className="flex gap-4 justify-end mt-4">
+                        <button
+                          type="button"
+                          className="text-xs"
+                          onClick={() => setEditJournalMode(false)}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-primary-400 text-white text-xs py-2 px-5"
+                        >
+                          Save
+                        </button>
+                      </div>
                     </form>
                   ) : (
                     <>
@@ -172,8 +214,21 @@ export const FilesViewer = (props: FilesViewerProp) => {
       ) : (
         <div className="flex items-center justify-center w-full h-full text-white">
           <span>No files selected</span>
+          <button className="text-xs" onClick={() => props.setView(false)}>
+            Close
+          </button>
         </div>
       )}
+      <Modal
+        headerLabel="Delete Item"
+        openModal={actionModal}
+        setOpenModal={setActionModal}
+      >
+        <ViewerDeleteModal
+          entityType={activeFile?.entityType || ""}
+          entityId={activeFile?.id || -1}
+        />
+      </Modal>
     </div>
   );
 };

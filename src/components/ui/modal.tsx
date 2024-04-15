@@ -18,7 +18,7 @@ export const Modal: FC<ModalPropsType> = ({
   };
   return (
     <Transition appear show={openModal} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={() => closeModal()}>
+      <Dialog as="div" className="relative z-999" onClose={() => closeModal()}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -31,7 +31,7 @@ export const Modal: FC<ModalPropsType> = ({
           <div className="fixed inset-0 bg-black bg-opacity-25" />
         </Transition.Child>
 
-        <div className="fixed inset-0 overflow-y-auto">
+        <div className="fixed inset-0 overflow-y-auto bg-black bg-opacity-25 z-[999]">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
             <Transition.Child
               as={Fragment}

@@ -941,3 +941,39 @@ export const ManageAccessModal = ({
     </div>
   );
 };
+
+export const ViewerDeleteModal = ({
+  entityType,
+  entityId,
+}: {
+  entityType: string;
+  entityId: number;
+}) => {
+  const deleteAssetHook = useDeleteAssets();
+  const deleteMemoryHook = useDeleteProject();
+
+  const deleteHandler = async () => {
+    if (entityType == EntityType.ASSET) {
+      deleteAssetHook.mutate([entityId]);
+    } else if (entityType == EntityType.MEMORY) {
+      deleteMemoryHook.mutate(entityId);
+    }
+  };
+  return (
+    <>
+      <div className="delete-modal">
+        <span className="block mt-4">
+          Are you sure you want to delete this item ?
+        </span>
+        <div className="flex gap-4 justify-end mt-10">
+          <button
+            className="bg-red-900 text-white px-10 py-3 rounded-sm"
+            onClick={deleteHandler}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </>
+  );
+};

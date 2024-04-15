@@ -1,32 +1,34 @@
-import AccountDashboardHeading from "./account-dashboard-heading";
-import * as HoverCard from "@radix-ui/react-hover-card";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import * as HoverCard from "@radix-ui/react-hover-card";
 import toast from "react-hot-toast";
 import { useChangePassword } from "../../hooks/user/use-change-password";
+import AccountDashboardHeading from "./account-dashboard-heading";
 
 export default function ChangePassword() {
-  const changePasswordHoook = useChangePassword()
-  const changePasswordSubmitHandler = (e:React.FormEvent) => {
+  const changePasswordHoook = useChangePassword();
+  const changePasswordSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
-    const formData = new FormData(form)
-    const np = formData.get('new_password') as string;
-    const cfm_np = formData.get('cfm_new_password') as string;
-    const op = formData.get('old_password') as string;
-    if(np != cfm_np) {
-      toast.error("Password does not match.")
-      return
+    const formData = new FormData(form);
+    const np = formData.get("new_password") as string;
+    const cfm_np = formData.get("cfm_new_password") as string;
+    const op = formData.get("old_password") as string;
+    if (np != cfm_np) {
+      toast.error("Password does not match.");
+      return;
     }
     changePasswordHoook.mutate({
-      newPassword:np,
-      oldPassword:op
-    })
-
-  }
+      newPassword: np,
+      oldPassword: op,
+    });
+  };
   return (
     <div>
       <AccountDashboardHeading name="Change Password" />
-      <form  className="max-w-3xl flex flex-col gap-7" onSubmit={changePasswordSubmitHandler}>
+      <form
+        className="max-w-3xl flex flex-col gap-7"
+        onSubmit={changePasswordSubmitHandler}
+      >
         <div>
           <label
             htmlFor=""
@@ -84,7 +86,7 @@ export default function ChangePassword() {
         </div>
         <div className="flex w-full justify-end">
           <button className="bg-primary-400 text-white font-medium px-6 py-2 rounded-sm">
-            CHANGE
+            Save Changes
           </button>
         </div>
       </form>

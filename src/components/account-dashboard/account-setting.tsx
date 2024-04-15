@@ -1,13 +1,17 @@
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { useQueryClient } from "@tanstack/react-query";
+import { ChangeEvent } from "react";
 import toast from "react-hot-toast";
 import { useGetUserDetails } from "../../hooks/user/use-get-user-details";
 import { useSaveUserDetails } from "../../hooks/user/use-save-user-details";
+import { uploadFiles } from "../../service/aws";
 import { Input } from "../ui/input";
 import AccountDashboardHeading from "./account-dashboard-heading";
 
 export default function AccountSetting() {
   const { data, isLoading, isFetching, isError } = useGetUserDetails();
   const saveUserDetailsHook = useSaveUserDetails();
+  const queryClient = useQueryClient();
 
   const handleSaveSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +28,32 @@ export default function AccountSetting() {
         toast.success("Details updated successfully.");
       },
     });
+  };
+
+  const profilePicChanged = async (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e);
+    const fileInput = e.target;
+    if (fileInput.files && fileInput.files.length > 0) {
+      const selectedFile = fileInput.files[0];
+      console.log("Selected file:", selectedFile);
+      const urlLists = await uploadFiles([selectedFile]);
+      if (data) {
+        saveUserDetailsHook.mutate(
+          {
+            profileImage: urlLists[0].url,
+            lastName: data.lastName,
+            firstName: data.firstName,
+            mobileNumber: data.mobileNumber,
+          },
+          {
+            onSuccess: () => {
+              toast.success("Profile pic updated successfully.");
+              queryClient.invalidateQueries(["user-details"]);
+            },
+          }
+        );
+      }
+    }
   };
 
   if (isLoading || isFetching) {
@@ -52,17 +82,22 @@ export default function AccountSetting() {
       <form className="max-w-5xl" onSubmit={handleSaveSubmit}>
         <div className="">
           <div className="flex items-center gap-x-3 mb-10">
-            <div>
-              <UserCircleIcon
-                className="w-[72px] text-gray-300"
-                aria-hidden="true"
-              />
+            <div className="w-[72px] h-[72px] rounded-full flex justify-center items-center overflow-hidden">
+              {data?.profileImage ? (
+                <img src={data.profileImage} className="w-full" />
+              ) : (
+                <UserCircleIcon
+                  className="w-[72px] text-gray-300"
+                  aria-hidden="true"
+                />
+              )}
             </div>
             <input
               type="file"
               name="profile_picture"
               id="profile_picture"
               className="h-0 w-0"
+              onChange={profilePicChanged}
             />
             <label
               htmlFor="profile_picture"
