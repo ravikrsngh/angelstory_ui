@@ -152,20 +152,38 @@ export const ChangeBackgroundCollection = ({
   return (
     <>
       <div className="change-background flex gap-8 mt-8 flex-col">
-        <div className="all-colors flex gap-4">
-          {bgColorOptions.map((color: string) => {
-            return (
-              <div
-                className={cn(
-                  "w-10 h-10",
-                  bgColorSelected == color ? "border-2 border-slate-500" : ""
-                )}
-                onClick={() => setBgColorSelected(color)}
-                style={{ backgroundColor: color }}
-              ></div>
-            );
-          })}
+        <div className="flex gap-6">
+          <div className="all-colors flex gap-4 flex-wrap">
+            {bgColorOptions.map((color: string) => {
+              return (
+                <div
+                  className={cn(
+                    "w-10 h-10",
+                    bgColorSelected == color ? "border-2 border-slate-500" : ""
+                  )}
+                  onClick={() => setBgColorSelected(color)}
+                  style={{ backgroundColor: color }}
+                ></div>
+              );
+            })}
+          </div>
+          <div className="choose-image-section w-64">
+            <div className="w-full h-24 bg-primary-200 flex justify-center items-center rounded-md">
+              <input
+                type="file"
+                id="bg-image-input"
+                className="w-0 h-0 overflow-hidden"
+              />
+              <label
+                htmlFor="bg-image-input"
+                className="flex justify-center items-center w-full h-full"
+              >
+                Choose Image
+              </label>
+            </div>
+          </div>
         </div>
+
         <div className=" flex justify-end">
           <button
             type="button"
@@ -401,9 +419,7 @@ export const AddMemoryUploadModal = ({
         saveAsMemory) &&
       (toCollectionId == -1 || toJourneyId == -1)
     ) {
-      toast.error(
-        "To save a memory we need to select both a collection and journey."
-      );
+      toast.error("To save a memory you need to select a journey.");
       return;
     }
     if (

@@ -225,6 +225,7 @@ export type AssetResType = {
   uploadedAt: string;
   uploadedBy: number;
   accessRight: string;
+  name: string;
 };
 
 export type UserDetailsResType = {

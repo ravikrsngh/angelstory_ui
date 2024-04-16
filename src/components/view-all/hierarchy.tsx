@@ -24,13 +24,13 @@ export const ViewAllHierarchy = () => {
         url: `/view-all/collection/${lvl.id}`,
         childs: [
           {
-            name: "Assets",
+            name: "All Assets",
             id: 0,
             url: `/view-all/collection/${lvl.id}/assets`,
             childs: [],
           },
           {
-            name: "Journies",
+            name: "All Journies",
             id: 0,
             url: `/view-all/collection/${lvl.id}/journies`,
             childs: [],
@@ -42,13 +42,13 @@ export const ViewAllHierarchy = () => {
               url: `/view-all/journey/${subLvl.id}`,
               childs: [
                 {
-                  name: "Assets",
+                  name: "All Assets",
                   id: 0,
                   url: `/view-all/journey/${subLvl.id}/assets`,
                   childs: [],
                 },
                 {
-                  name: "Memories",
+                  name: "All Memories",
                   id: 0,
                   url: `/view-all/journey/${subLvl.id}/memory`,
                   childs: [],

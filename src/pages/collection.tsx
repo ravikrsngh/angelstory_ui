@@ -150,7 +150,7 @@ const CollectionAssets = ({
                   <NewCard
                     key={asset.id}
                     type={asset.assetType}
-                    name={""}
+                    name={asset.name}
                     dropdownOptions={AssetDropdownList}
                     dataObject={asset}
                     onClickHandler={openFileViewer}
@@ -168,7 +168,7 @@ const CollectionAssets = ({
                     <NewCard
                       key={asset.id}
                       type={asset.assetType}
-                      name={""}
+                      name={asset.name}
                       dropdownOptions={AssetDropdownList}
                       dataObject={asset}
                     />
@@ -185,7 +185,7 @@ const CollectionAssets = ({
                     <NewCard
                       key={asset.id}
                       type={asset.assetType}
-                      name={""}
+                      name={asset.name}
                       dropdownOptions={AssetDropdownList}
                       dataObject={asset}
                     />
@@ -202,7 +202,7 @@ const CollectionAssets = ({
                     <NewCard
                       key={asset.id}
                       type={asset.assetType}
-                      name={""}
+                      name={asset.name}
                       dropdownOptions={AssetDropdownList}
                       dataObject={asset}
                     />
@@ -219,7 +219,7 @@ const CollectionAssets = ({
               type: asset.assetType,
               entityType: EntityType.ASSET,
               id: asset.id,
-              name: "",
+              name: asset.name,
               src: asset.assetUrl,
             };
           })}

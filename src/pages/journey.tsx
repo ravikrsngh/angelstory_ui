@@ -149,7 +149,7 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                   <NewCard
                     key={asset.id}
                     type={asset.assetType}
-                    name={""}
+                    name={asset.name}
                     dropdownOptions={AssetDropdownList}
                     dataObject={asset}
                     onClickHandler={openFileViewer}
@@ -167,7 +167,7 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                     <NewCard
                       key={asset.id}
                       type={asset.assetType}
-                      name={""}
+                      name={asset.name}
                       dropdownOptions={AssetDropdownList}
                       dataObject={asset}
                     />
@@ -184,7 +184,7 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                     <NewCard
                       key={asset.id}
                       type={asset.assetType}
-                      name={""}
+                      name={asset.name}
                       dropdownOptions={AssetDropdownList}
                       dataObject={asset}
                     />
@@ -201,7 +201,7 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                     <NewCard
                       key={asset.id}
                       type={asset.assetType}
-                      name={""}
+                      name={asset.name}
                       dropdownOptions={AssetDropdownList}
                       dataObject={asset}
                     />
@@ -218,7 +218,7 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
               type: asset.assetType,
               entityType: EntityType.ASSET,
               id: asset.id,
-              name: "",
+              name: asset.name,
               src: asset.assetUrl,
             };
           })}
