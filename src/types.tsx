@@ -263,6 +263,7 @@ export type ProjectInCollectionType = {
 export type JourneyType = {
   accessRight: string;
   bgColor: string;
+  bgImage: string;
   collectionId: number;
   createdAt: string;
   createdBy: number;
@@ -303,6 +304,7 @@ export type JourneyWithMemoriesType = JourneyType & {
 
 export type CollectionDetailsResType = {
   bgColor: string;
+  bgImage: string;
   createdAt: string;
   createdBy: number;
   id: number;

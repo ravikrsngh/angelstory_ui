@@ -2,6 +2,7 @@ import { Menu, Transition } from "@headlessui/react";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { IconArrowLeft } from "@tabler/icons-react";
 import React, {
+  ChangeEvent,
   Dispatch,
   Fragment,
   SetStateAction,
@@ -51,6 +52,7 @@ import {
   UserSearchResType,
 } from "../../types";
 import { cn } from "../../utils";
+import ColorPallete from "../edit-panel/components/color-pallete";
 import { PermissionUserCard } from "../templates-reference/all-modals";
 import { Input } from "./input";
 import SelectCardSize from "./select-card-size";
@@ -103,18 +105,30 @@ export const CollectionRenameModal = ({
 
 export const ChangeBackgroundCollection = ({
   entityType,
-  dataObject,
+  entityId,
   setActionModal,
 }: {
   entityType: string;
-  dataObject: DataObjectType;
+  entityId: number;
   setActionModal: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [bgColorSelected, setBgColorSelected] = useState<string | undefined>(
-    (dataObject as CollectionJourneyType)?.bgColor?.length == 6
-      ? (dataObject as CollectionJourneyType).bgColor
-      : "#FEF8F1"
-  );
+  const changeBackgroundStages = {
+    COLORS: 1,
+    SEE_PREVIEW_IMAGE: 2,
+    CHOOSE_FROM_ANGELJOURNEY: 3,
+  };
+  const changeBackgroundSources = {
+    COLORS: 1,
+    FILE: 2,
+    ANGELJOURNEY: 3,
+  };
+  const [stage, setStage] = useState<number>(changeBackgroundStages.COLORS);
+  const [source, setSource] = useState(changeBackgroundSources.COLORS);
+  const [inputFile, setInputFile] = useState<File | null>(null);
+  const [bgColorSelected, setBgColorSelected] = useState<string | null>(null);
+  const [bgImageSelected, setBgImageSelected] = useState<string | null>(null);
+  const [displayColorPallete, setDisplayColorPallete] =
+    useState<boolean>(false);
   const updateCollectionHook = useUpdateCollection();
   const updateJourneyHook = useUpdateJourney();
   const bgColorOptions = [
@@ -132,63 +146,148 @@ export const ChangeBackgroundCollection = ({
 
   console.log(entityType);
 
-  const changeBackgroundColor = () => {
-    if (dataObject) {
-      if (entityType == EntityType.COLLECTION) {
-        updateCollectionHook.mutate({
-          collectionId: (dataObject as CollectionType).entityId,
-          bgColor: bgColorSelected,
-        });
-      } else if (entityType == EntityType.JOURNEY) {
-        updateJourneyHook.mutate({
-          journeyId: (dataObject as JourneyType).id,
-          bgColor: bgColorSelected,
-        });
-      }
+  const imageInputChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    const fileInput = e.target;
+    if (fileInput.files && fileInput.files.length > 0) {
+      const selectedFile = fileInput.files[0];
+      // if (selectedFile) {
+      //   const reader = new FileReader();
+
+      //   reader.onload = function (event) {
+      //     const dataURL = event.target?.result;
+      //     setBgImageSelected(dataURL);
+      //   };
+
+      //   reader.readAsDataURL(file);
+      // }
+      setBgImageSelected(URL.createObjectURL(selectedFile));
+      setInputFile(selectedFile);
+      setSource(changeBackgroundSources.FILE);
+      setStage(changeBackgroundStages.SEE_PREVIEW_IMAGE);
+    }
+  };
+
+  const changeBackgroundColor = async () => {
+    if (!bgColorSelected && !bgImageSelected) {
+      toast.error("Please select a background color or a background image.");
+      return;
+    }
+    const payload: { bgColor?: string; bgImage?: string } = {};
+    if (source == changeBackgroundSources.COLORS) {
+      payload.bgColor = bgColorSelected || "";
+    } else if (source == changeBackgroundSources.FILE) {
+      const urlLists = await uploadFiles([inputFile]);
+      payload.bgImage = urlLists[0].url;
+    } else if (source == changeBackgroundSources.ANGELJOURNEY) {
+      payload.bgImage = bgImageSelected || "";
+    }
+    if (entityType == EntityType.COLLECTION) {
+      updateCollectionHook.mutate({
+        collectionId: entityId,
+        ...payload,
+      });
+    } else if (entityType == EntityType.JOURNEY) {
+      updateJourneyHook.mutate({
+        journeyId: entityId,
+        ...payload,
+      });
     }
     setActionModal(false);
+  };
+
+  const reset = () => {
+    setStage(changeBackgroundStages.COLORS);
+    setSource(changeBackgroundSources.COLORS);
+    setInputFile(null);
+    setBgImageSelected(null);
   };
 
   return (
     <>
       <div className="change-background flex gap-8 mt-8 flex-col">
-        <div className="flex gap-6">
-          <div className="all-colors flex gap-4 flex-wrap">
-            {bgColorOptions.map((color: string) => {
-              return (
-                <div
-                  className={cn(
-                    "w-10 h-10",
-                    bgColorSelected == color ? "border-2 border-slate-500" : ""
-                  )}
-                  onClick={() => setBgColorSelected(color)}
-                  style={{ backgroundColor: color }}
-                ></div>
-              );
-            })}
-          </div>
-          <div className="choose-image-section w-64">
-            <div className="w-full h-24 bg-primary-200 flex justify-center items-center rounded-md">
-              <input
-                type="file"
-                id="bg-image-input"
-                className="w-0 h-0 overflow-hidden"
-              />
-              <label
-                htmlFor="bg-image-input"
-                className="flex justify-center items-center w-full h-full"
-              >
-                Choose Image
-              </label>
+        {stage == changeBackgroundStages.COLORS && (
+          <div className="flex gap-6">
+            <div className="all-colors">
+              <div className="flex gap-4 flex-wrap">
+                {bgColorOptions.map((color: string) => {
+                  return (
+                    <div
+                      className={cn(
+                        "w-10 h-10 border border-slate-200",
+                        bgColorSelected == color
+                          ? "border-slate-500 border-2"
+                          : ""
+                      )}
+                      onClick={() => setBgColorSelected(color)}
+                      style={{ backgroundColor: color }}
+                    ></div>
+                  );
+                })}
+              </div>
+              <div className="text-center mt-5">OR</div>
+              {displayColorPallete ? (
+                <div>
+                  <ColorPallete
+                    color={bgColorSelected || "#CEB8AF"}
+                    onChange={setBgColorSelected}
+                    displayColorPallete={setDisplayColorPallete}
+                  />
+                </div>
+              ) : (
+                <span
+                  className="block text-center my-5 cursor-pointer"
+                  onClick={() => setDisplayColorPallete(true)}
+                >
+                  Choose from color wheel
+                </span>
+              )}
+            </div>
+            <div className="px-4 flex justify-center items-center">
+              <span>OR </span>
+            </div>
+            <div className="choose-image-section w-64">
+              <div className="w-full h-24 bg-primary-200 flex justify-center items-center rounded-md">
+                <input
+                  type="file"
+                  id="bg-image-input"
+                  className="w-0 h-0 overflow-hidden"
+                  onChange={imageInputChanged}
+                />
+                <label
+                  htmlFor="bg-image-input"
+                  className="flex justify-center items-center w-full h-full"
+                >
+                  Choose Image
+                </label>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+        {stage == changeBackgroundStages.SEE_PREVIEW_IMAGE && (
+          <div className="">
+            <div
+              className="w-full h-52 rounded-md bg-gradient-to-b from-transparent to-black bg-cover bg-center"
+              style={{
+                backgroundImage: `url('${bgImageSelected}')`,
+                backgroundBlendMode: "overlay",
+              }}
+            ></div>
+          </div>
+        )}
 
         <div className=" flex justify-end">
+          {stage != changeBackgroundStages.COLORS ? (
+            <button className="px-4 py-2" onClick={reset}>
+              Cancel
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={changeBackgroundColor}
-            className="inline-flex justify-center rounded-md border border-transparent bg-primary-400 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            className={cn(
+              "text-center inline-flex justify-center rounded-md border border-transparent bg-primary-400 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
+              stage == changeBackgroundStages.COLORS ? "w-full" : ""
+            )}
           >
             Change
           </button>

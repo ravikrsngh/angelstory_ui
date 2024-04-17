@@ -7,6 +7,7 @@ type saveCollectionPayloadType = {
   bgColor?: string;
   collectionId: number;
   collectionName?: string;
+  bgImage?: string;
 };
 const saveCollection = (input: saveCollectionPayloadType) => {
   console.log(input);
