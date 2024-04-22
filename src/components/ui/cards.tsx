@@ -10,7 +10,9 @@ import {
   AssetResType,
   AssetTypes,
   BasicStyleCardPropType,
+  CollectionType,
   EntityType,
+  JourneyType,
   MemoryType,
   NewCardPropsType,
   ViewAllCardPropType,
@@ -48,15 +50,17 @@ const BasicStyleCard = ({
         </div>
         <div
           className={cn(
-            "w-full overflow-hidden mt-2 flex justify-center items-center h-[240px]"
+            "w-full overflow-hidden mt-2 flex justify-center items-center h-[240px] bg-cover bg-center"
           )}
+          style={{
+            backgroundImage: `url(${
+              (dataObject as AssetResType).assetUrl ||
+              (dataObject as MemoryType).previewImage ||
+              (dataObject as CollectionType).bgImage ||
+              (dataObject as JourneyType).bgImage
+            })`,
+          }}
         >
-          {type == AssetTypes.IMAGE && (
-            <img
-              src={(dataObject as AssetResType).assetUrl}
-              className="w-full"
-            />
-          )}
           {type == AssetTypes.VIDEO && <IconPlayerPlay />}
           {type == AssetTypes.AUDIO && <IconPlayerPlay />}
         </div>

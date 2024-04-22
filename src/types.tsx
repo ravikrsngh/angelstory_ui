@@ -88,6 +88,7 @@ export type CollectionType = {
   name: string;
   bgColor: string;
   accessRight: string;
+  bgImage: string;
 };
 
 export type CollectionCardType = {
@@ -395,6 +396,7 @@ export type DropdownActionModalsPropType = {
   actionModal: boolean;
   setActionModal: Dispatch<SetStateAction<boolean>>;
   bulkIds?: number[];
+  afterAction?: () => void;
 };
 
 export type DropdownButtonPropType = {
@@ -511,6 +513,7 @@ export type MoveCopyModalPropType = {
   entityType: string;
   dataObject?: DataObjectType;
   setActionModal: Dispatch<SetStateAction<boolean>>;
+  afterAction?: () => void;
   bulkIds?: number[];
 };
 
@@ -600,6 +603,11 @@ export type ManageAccessResType = {
   accessRight: string;
 };
 
+export type PermissionType = {
+  name: string;
+  value: string;
+};
+
 export type PermissionUserCardPropType = ManageAccessResType & {
-  allAccessRights: string[];
+  allAccessRights: PermissionType[];
 };

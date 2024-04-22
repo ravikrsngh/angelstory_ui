@@ -2,8 +2,9 @@ import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { IconMenu2 } from "@tabler/icons-react";
 import Cookies from "js-cookie";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useGetUserDetails } from "../hooks/user/use-get-user-details";
 import logoimg from "./../assets/logo-angel-journey.svg";
 import { Dropdown } from "./ui/dropdown";
 
@@ -14,66 +15,68 @@ const navigation = [
   // { name: "Company", href: "#" },
 ];
 
-const sideMenuOptions = [
-  {
-    name: "Collections and Journeys",
-    url: "",
-  },
-  {
-    name: "Uploads",
-    url: "",
-  },
-  {
-    name: "Editor",
-    url: "",
-  },
-  {
-    name: "Events",
-    url: "",
-  },
-  {
-    name: "Create videos/slides",
-    url: "",
-  },
-  {
-    name: "Journal",
-    url: "",
-  },
-  {
-    name: "Print products",
-    url: "",
-  },
-];
+// const sideMenuOptions = [
+//   {
+//     name: "Collections and Journeys",
+//     url: "",
+//   },
+//   {
+//     name: "Uploads",
+//     url: "",
+//   },
+//   {
+//     name: "Editor",
+//     url: "",
+//   },
+//   {
+//     name: "Events",
+//     url: "",
+//   },
+//   {
+//     name: "Create videos/slides",
+//     url: "",
+//   },
+//   {
+//     name: "Journal",
+//     url: "",
+//   },
+//   {
+//     name: "Print products",
+//     url: "",
+//   },
+// ];
 
-const SideMenuBar = ({
-  setSideMenuDisplay,
-}: {
-  setSideMenuDisplay: Dispatch<SetStateAction<boolean>>;
-}) => {
-  return (
-    <div
-      className="fixed top-0 left-0 w-full h-screen bg-black/80 flex justify-end"
-      onClick={() => setSideMenuDisplay(false)}
-    >
-      <div className="w-80 py-5 bg-white" onClick={(e) => e.stopPropagation()}>
-        <Link to="/" className="block mb-8 px-5">
-          <img className="h-6 md:h-10 w-auto" src={logoimg} alt="" />
-        </Link>
-        <div>
-          {sideMenuOptions.map((opt) => (
-            <div className="py-2 px-5 hover:bg-slate-100">
-              <Link to={opt.url}>{opt.name}</Link>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
+// const SideMenuBar = ({
+//   setSideMenuDisplay,
+// }: {
+//   setSideMenuDisplay: Dispatch<SetStateAction<boolean>>;
+// }) => {
+//   return (
+//     <div
+//       className="fixed top-0 left-0 w-full h-screen bg-black/80 flex justify-end"
+//       onClick={() => setSideMenuDisplay(false)}
+//     >
+//       <div className="w-80 py-5 bg-white" onClick={(e) => e.stopPropagation()}>
+//         <Link to="/" className="block mb-8 px-5">
+//           <img className="h-6 md:h-10 w-auto" src={logoimg} alt="" />
+//         </Link>
+//         <div>
+//           {sideMenuOptions.map((opt) => (
+//             <div className="py-2 px-5 hover:bg-slate-100">
+//               <Link to={opt.url}>{opt.name}</Link>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sideMenuDisplay, setSideMenuDisplay] = useState(false);
+  console.log(sideMenuDisplay);
+  const userDetailsHook = useGetUserDetails();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -102,7 +105,20 @@ export default function Header() {
           <>
             <Dropdown
               trigger={
-                <button className="w-10 h-10 rounded-full bg-slate-200"></button>
+                <>
+                  <button className="w-10 h-10 rounded-full bg-slate-200 flex justify-center items-center overflow-hidden">
+                    {userDetailsHook.isLoading ? (
+                      ""
+                    ) : userDetailsHook.data?.profileImage ? (
+                      <img
+                        src={userDetailsHook.data?.profileImage}
+                        className="w-full"
+                      />
+                    ) : (
+                      userDetailsHook.data?.firstName[0]
+                    )}
+                  </button>
+                </>
               }
               options={[
                 <Link
@@ -166,9 +182,9 @@ export default function Header() {
                 <Bars3Icon className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
-            {sideMenuDisplay && (
+            {/* {sideMenuDisplay && (
               <SideMenuBar setSideMenuDisplay={setSideMenuDisplay} />
-            )}
+            )} */}
           </>
         )}
       </nav>

@@ -261,6 +261,7 @@ export default function Collection() {
         name: data.name,
         bgColor: data.bgColor,
         accessRight: data.accessRight,
+        bgImage: data.bgImage,
       };
       return obj;
     }
@@ -277,8 +278,11 @@ export default function Collection() {
   return (
     <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-10">
       <div
-        className="relative rounded-md overflow-hidden p-4 pt-10 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] text-primary-950"
-        style={{ backgroundColor: data?.bgColor ? data.bgColor : "#CEB8AF" }}
+        className="relative rounded-md overflow-hidden p-4 pt-10 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] text-primary-950 bg-center bg-cover"
+        style={{
+          backgroundColor: data?.bgColor ? data.bgColor : "#CEB8AF",
+          backgroundImage: data?.bgImage ? `url(${data.bgImage})` : "",
+        }}
       >
         <span className="text-xs md:text-sm">Collection</span>
         <h4 className="text-3xl md:text-4xl lg:text-5xl font-medium">

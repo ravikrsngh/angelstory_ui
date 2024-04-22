@@ -83,6 +83,7 @@ export const ViewAllCollectionAssets = () => {
         actionModal={actionModal}
         setActionModal={setActionModal}
         bulkIds={selectedObjs}
+        afterAction={() => setSelectedObjs([])}
       />
     </div>
   );

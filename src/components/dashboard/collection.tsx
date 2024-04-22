@@ -35,6 +35,7 @@ export const DashboardCollection = () => {
     createCollectionHook.mutate({
       collectionName: formData.get("collection") as string,
     });
+    setIsOpen(false);
   };
 
   if (isLoading || isFetching) {

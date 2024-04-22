@@ -6,7 +6,7 @@ export type moveAssetType = {
   mode: string;
   newCollectionId: number;
   newJourneyId?: number;
-  assetId: number[];
+  assetIds: number[];
 };
 const saveCollection = (input: moveAssetType) => {
   console.log(input);

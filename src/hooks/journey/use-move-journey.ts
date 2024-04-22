@@ -24,7 +24,7 @@ export function useMoveJourney() {
     onSuccess: () => {
       toast.success("Updated journey details.");
       queryClient.invalidateQueries({
-        queryKey: ["collection-details-journeys", "journey-details"],
+        queryKey: ["collection-details"],
       });
     },
     onError: (error) =>

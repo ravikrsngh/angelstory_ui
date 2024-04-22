@@ -77,7 +77,7 @@ export default function EditorHeader({
     <header className="bg-primary-50 fixed top-0 left-0 w-full z-10 shadow-md">
       <nav className="hidden mx-auto lg:flex items-center justify-between gap-x-6 px-4 md:px-10 lg:px-16 py-4">
         <div className="hidden lg:flex lg:flex-1">
-          <Link to="/" className="-m-1.5 p-1.5">
+          <Link to="/dashboard" className="-m-1.5 p-1.5">
             <img className="h-12 w-auto" src={logoimg} alt="" />
           </Link>
         </div>

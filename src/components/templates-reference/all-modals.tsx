@@ -9,7 +9,11 @@ import {
 } from "@tabler/icons-react";
 import { Fragment, useState } from "react";
 import { useUpdateUserPermission } from "../../hooks/access-rights/use-update-user-access";
-import { PermissionUserCardPropType, TempPropType } from "../../types";
+import {
+  PermissionType,
+  PermissionUserCardPropType,
+  TempPropType,
+} from "../../types";
 import { cn } from "../../utils";
 import dummyImg from "./../../assets/download.jpeg";
 
@@ -189,14 +193,13 @@ const permissions = [
 ];
 
 export const PermissionUserCard = (props: PermissionUserCardPropType) => {
-  const [selectedPermission, setSelectedPermission] = useState<string | null>(
-    props.accessRight
-  );
+  const [selectedPermission, setSelectedPermission] =
+    useState<PermissionType | null>(props.accessRight);
   const updateUserAccessHook = useUpdateUserPermission();
   const updateUserAccess = () => {
     updateUserAccessHook.mutate(
       {
-        accessRight: selectedPermission,
+        accessRight: selectedPermission?.value,
         userId: props.userId,
         entityId: props.entityId,
         accessType: props.accessType,
@@ -254,7 +257,7 @@ export const PermissionUserCard = (props: PermissionUserCardPropType) => {
                 <Menu.Items className="absolute left-0 mt-2 w-full origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
                   <div className="px-1 py-1 ">
                     {props.allAccessRights.map((opt) => (
-                      <Menu.Item key={opt.id}>
+                      <Menu.Item key={opt.value}>
                         <div
                           className="flex gap-4 p-2 hover:bg-primary-100 hover:cursor-pointer"
                           onClick={(e) => {
@@ -262,7 +265,7 @@ export const PermissionUserCard = (props: PermissionUserCardPropType) => {
                             setSelectedPermission(opt);
                           }}
                         >
-                          <span>{opt}</span>
+                          <span>{opt.name}</span>
                         </div>
                       </Menu.Item>
                     ))}

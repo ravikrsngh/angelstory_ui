@@ -21,7 +21,7 @@ export function useUpdateJourney() {
     onSuccess: () => {
       toast.success("Updated journey details.");
       queryClient.invalidateQueries({
-        queryKey: ["collection-details-journeys", "journey-details"],
+        queryKey: ["journey-details"],
       });
     },
     onError: (error) =>

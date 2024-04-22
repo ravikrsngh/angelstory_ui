@@ -19,6 +19,7 @@ import {
   useBulkCreateAssets,
 } from "../../hooks/assets/use-bulk-upload";
 import { useDeleteAssets } from "../../hooks/assets/use-delete-assets";
+import { useGetImagesForEntity } from "../../hooks/assets/use-get-images-for-entity";
 import {
   moveAssetType,
   useMoveAssets,
@@ -29,6 +30,7 @@ import { useCreateJourney } from "../../hooks/journey/use-create-journey";
 import { useDeleteJourney } from "../../hooks/journey/use-delete-journey";
 import { useMoveJourney } from "../../hooks/journey/use-move-journey";
 import { useUpdateJourney } from "../../hooks/journey/use-update-journey";
+import { useBulkDeleteProjects } from "../../hooks/project/use-bulk-delete-projects";
 import { useCreateProject } from "../../hooks/project/use-create-project";
 import { useDeleteProject } from "../../hooks/project/use-delete-project";
 import { useMoveProjects } from "../../hooks/project/use-move-projects";
@@ -45,6 +47,7 @@ import {
   MemoryType,
   MemoryTypes,
   MoveCopyModalPropType,
+  PermissionType,
   ProjectDimensionType,
   ShareModalPropType,
   SourceMemory,
@@ -131,6 +134,7 @@ export const ChangeBackgroundCollection = ({
     useState<boolean>(false);
   const updateCollectionHook = useUpdateCollection();
   const updateJourneyHook = useUpdateJourney();
+  const getImagesForEntityHook = useGetImagesForEntity(entityId, entityType);
   const bgColorOptions = [
     "#CEB8AF",
     "#FEF8F1",
@@ -172,7 +176,10 @@ export const ChangeBackgroundCollection = ({
       toast.error("Please select a background color or a background image.");
       return;
     }
-    const payload: { bgColor?: string; bgImage?: string } = {};
+    const payload: { bgColor?: string; bgImage?: string } = {
+      bgColor: "",
+      bgImage: "",
+    };
     if (source == changeBackgroundSources.COLORS) {
       payload.bgColor = bgColorSelected || "";
     } else if (source == changeBackgroundSources.FILE) {
@@ -260,7 +267,30 @@ export const ChangeBackgroundCollection = ({
                   Choose Image
                 </label>
               </div>
+              <button
+                className="text-center block my-4 text-xs w-full"
+                onClick={() =>
+                  setStage(changeBackgroundStages.CHOOSE_FROM_ANGELJOURNEY)
+                }
+              >
+                Choose from AngelJourney
+              </button>
             </div>
+          </div>
+        )}
+        {stage == changeBackgroundStages.CHOOSE_FROM_ANGELJOURNEY && (
+          <div className="flex flex-wrap gap-4">
+            {getImagesForEntityHook.data?.map((url: string) => (
+              <div
+                className="w-16 h-20 bg-slate-300 bg-cover bg-center"
+                style={{ backgroundImage: `url(${url})` }}
+                onClick={() => {
+                  setBgImageSelected(url);
+                  setSource(changeBackgroundSources.ANGELJOURNEY);
+                  setStage(changeBackgroundStages.SEE_PREVIEW_IMAGE);
+                }}
+              ></div>
+            ))}
           </div>
         )}
         {stage == changeBackgroundStages.SEE_PREVIEW_IMAGE && (
@@ -312,8 +342,12 @@ export const DeleteModal = ({
   const deleteJourneyHook = useDeleteJourney();
   const deleteAssetHook = useDeleteAssets();
   const deleteMemoryHook = useDeleteProject();
+  const bulkDeleteMemoriesHook = useBulkDeleteProjects();
+
+  console.log(bulkIds);
 
   const deleteHandler = async () => {
+    console.log(bulkIds);
     if (dataObject) {
       if (entityType == EntityType.COLLECTION) {
         deleteCollectionHook.mutate((dataObject as CollectionType).entityId);
@@ -329,6 +363,8 @@ export const DeleteModal = ({
         deleteAssetHook.mutate(bulkIds);
       } else if (entityType == EntityType.JOURNEY) {
         deleteJourneyHook.mutate(bulkIds);
+      } else if (entityType == EntityType.MEMORY) {
+        bulkDeleteMemoriesHook.mutate(bulkIds);
       }
     }
     setActionModal(false);
@@ -826,13 +862,14 @@ export const MoveCopyModal = ({
       const payload: moveAssetType = {
         mode: mode,
         newCollectionId: toCollectionId,
-        assetId: bulkIds ? bulkIds : [(dataObject as AssetResType).id],
+        assetIds: bulkIds ? bulkIds : [(dataObject as AssetResType).id],
       };
       if (toJourneyId != -1) {
         payload.newJourneyId = toJourneyId;
       }
       moveAssetHook.mutate(payload);
     }
+
     setActionModal(false);
   };
   return (
@@ -861,9 +898,8 @@ export const ShareModal = ({
 }: ShareModalPropType) => {
   const [selecteduser, setSelectedUsers] = useState<UserSearchResType[]>([]);
   const { data } = useGetAllAccessRightForEntity(entityType);
-  const [selectedPermission, setSelectedPermission] = useState<string | null>(
-    null
-  );
+  const [selectedPermission, setSelectedPermission] =
+    useState<PermissionType | null>(null);
   const addUserPermissionHook = useAddUserPermission();
   const getPublicLinkHook = useGetPublicLink(
     entityType,
@@ -893,7 +929,7 @@ export const ShareModal = ({
       }
       addUserPermissionHook.mutate(
         {
-          accessRight: selectedPermission,
+          accessRight: selectedPermission.value,
           entityId: entityId,
           accessType: entityType,
           userIds: selecteduser.map((user) => user.userId),
@@ -956,7 +992,7 @@ export const ShareModal = ({
           <div onClick={(e) => e.stopPropagation()}>
             <Menu.Button className="inline-flex w-full justify-center rounded-md ">
               <div className="border border-slate-200 py-2 px-3 w-full text-left">
-                <span>{selectedPermission || "Select Permission"}</span>
+                <span>{selectedPermission?.name || "Select Permission"}</span>
               </div>
             </Menu.Button>
           </div>
@@ -972,7 +1008,7 @@ export const ShareModal = ({
             <Menu.Items className="absolute left-0 mt-2 w-full origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
               <div className="px-1 py-1 ">
                 {data?.map((opt) => (
-                  <Menu.Item key={opt}>
+                  <Menu.Item key={opt.value}>
                     <div
                       className="flex gap-4 p-2 hover:bg-primary-100 hover:cursor-pointer"
                       onClick={(e) => {
@@ -980,7 +1016,7 @@ export const ShareModal = ({
                         setSelectedPermission(opt);
                       }}
                     >
-                      <span>{opt}</span>
+                      <span>{opt.name}</span>
                     </div>
                   </Menu.Item>
                 ))}

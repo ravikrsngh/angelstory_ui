@@ -42,6 +42,7 @@ export const ViewAllJourneyMemories = () => {
     } else {
       objCopy.push(id);
     }
+    console.log(objCopy);
     setSelectedObjs(objCopy);
   };
 

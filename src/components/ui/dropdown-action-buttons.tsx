@@ -224,7 +224,9 @@ export const DropdownActionModals = ({
   actionModal,
   setActionModal,
   bulkIds,
+  afterAction,
 }: DropdownActionModalsPropType) => {
+  console.log(bulkIds);
   return (
     <>
       {action == 2 && (
@@ -267,6 +269,7 @@ export const DropdownActionModals = ({
             dataObject={dataObject as JourneyType}
             setActionModal={setActionModal}
             bulkIds={bulkIds}
+            afterAction={afterAction}
           />
         </Modal>
       )}
@@ -328,7 +331,7 @@ export const DropdownActionModals = ({
         >
           <ChangeBackgroundCollection
             entityType={EntityType.COLLECTION}
-            dataObject={dataObject as CollectionType}
+            entityId={(dataObject as CollectionType).entityId}
             setActionModal={setActionModal}
           />
         </Modal>
@@ -392,7 +395,7 @@ export const DropdownActionModals = ({
         >
           <ChangeBackgroundCollection
             entityType={EntityType.JOURNEY}
-            dataObject={dataObject as JourneyType}
+            entityId={(dataObject as JourneyType).id}
             setActionModal={setActionModal}
           />
         </Modal>
@@ -442,6 +445,7 @@ export const DropdownActionModals = ({
             entityType={EntityType.MEMORY}
             dataObject={dataObject as MemoryType}
             setActionModal={setActionModal}
+            bulkIds={bulkIds}
           />
         </Modal>
       )}
