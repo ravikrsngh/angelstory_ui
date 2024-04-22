@@ -11,6 +11,7 @@ import { DesignLoader } from "../pages/design";
 import { ForgotPassword } from "../pages/forgot-password";
 import Journey from "../pages/journey";
 import LoginPage from "../pages/login";
+import PublicPage from "../pages/public";
 import SignUpPage from "../pages/signup";
 import Templates from "../pages/templates";
 import ViewAll from "../pages/view-all";
@@ -37,6 +38,7 @@ const RouteData = () => {
             path="/collection/:collectionId/assets"
             element={<CollectionAssets />}
           />
+          <Route path="/public-view/:publicId" element={<PublicPage />} />
         </Route>
         <Route path="/" element={<PrivateRoutes />}>
           <Route path="/view-all" element={<ViewAll />}>

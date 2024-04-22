@@ -611,3 +611,10 @@ export type PermissionType = {
 export type PermissionUserCardPropType = ManageAccessResType & {
   allAccessRights: PermissionType[];
 };
+
+export type PublicEntityResType = {
+  id: number;
+  accessType: string;
+  entityId: number;
+  link: string;
+};
