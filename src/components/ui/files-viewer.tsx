@@ -28,6 +28,7 @@ type FilesViewerProp = {
   activeId: number;
   collectionId: number | null;
   journeyId: number | null;
+  publicView?: boolean;
 };
 
 export const FilesViewer = (props: FilesViewerProp) => {
@@ -104,47 +105,58 @@ export const FilesViewer = (props: FilesViewerProp) => {
               </div>
               <span className="text-slate-200">{activeFile.name}</span>
             </div>
-            <div className="ml-auto text-slate-400  flex items-center gap-4">
-              {activeFile.entityType == EntityType.MEMORY && (
+            {props.publicView ? (
+              <div className="ml-auto text-slate-400  flex items-center gap-4">
                 <div
-                  className="hover:cursor-pointer hover:text-slate-300 text-xs"
-                  onClick={() => setEditJournalMode(true)}
+                  className="hover:cursor-pointer hover:text-slate-300"
+                  onClick={() => props.setView(false)}
                 >
-                  Add/Edit Journal
+                  <IconX />
                 </div>
-              )}
-              {[MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(
-                activeFile.type
-              ) && (
-                <div className="hover:cursor-pointer hover:text-slate-300 text-xs">
-                  <Link
-                    to={`/design/${props.collectionId}/${props.journeyId}/${activeFile.id}`}
+              </div>
+            ) : (
+              <div className="ml-auto text-slate-400  flex items-center gap-4">
+                {activeFile.entityType == EntityType.MEMORY && (
+                  <div
+                    className="hover:cursor-pointer hover:text-slate-300 text-xs"
+                    onClick={() => setEditJournalMode(true)}
                   >
-                    Open in editor
-                  </Link>
-                </div>
-              )}
-              {activeFile.type == MemoryTypes.IMAGE && (
+                    Add/Edit Journal
+                  </div>
+                )}
+                {[MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(
+                  activeFile.type
+                ) && (
+                  <div className="hover:cursor-pointer hover:text-slate-300 text-xs">
+                    <Link
+                      to={`/design/${props.collectionId}/${props.journeyId}/${activeFile.id}`}
+                    >
+                      Open in editor
+                    </Link>
+                  </div>
+                )}
+                {activeFile.type == MemoryTypes.IMAGE && (
+                  <div
+                    className="hover:cursor-pointer hover:text-slate-300 text-xs"
+                    onClick={() => setEditJournalMode(true)}
+                  >
+                    Convert to Product
+                  </div>
+                )}
                 <div
-                  className="hover:cursor-pointer hover:text-slate-300 text-xs"
-                  onClick={() => setEditJournalMode(true)}
+                  className="hover:cursor-pointer hover:text-slate-300"
+                  onClick={() => setActionModal(true)}
                 >
-                  Convert to Product
+                  <IconTrash />
                 </div>
-              )}
-              <div
-                className="hover:cursor-pointer hover:text-slate-300"
-                onClick={() => setActionModal(true)}
-              >
-                <IconTrash />
+                <div
+                  className="hover:cursor-pointer hover:text-slate-300"
+                  onClick={() => props.setView(false)}
+                >
+                  <IconX />
+                </div>
               </div>
-              <div
-                className="hover:cursor-pointer hover:text-slate-300"
-                onClick={() => props.setView(false)}
-              >
-                <IconX />
-              </div>
-            </div>
+            )}
           </div>
           <div className="w-full overflow-hidden py-4 px-20 flex justify-center">
             <div className="bg-slate-50 w-fit flex justify-center">

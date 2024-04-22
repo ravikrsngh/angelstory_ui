@@ -948,7 +948,7 @@ export const ShareModal = ({
 
   const copyPublicLink = async () => {
     const url = (await getPublicLinkHook.refetch()).data;
-    const link = `${window.location.hostname}/public/${url}`;
+    const link = `${window.location.hostname}/public-view/${url}`;
     console.log(link);
     navigator.clipboard.writeText(link);
     toast.success("Link copied to clipboard");
