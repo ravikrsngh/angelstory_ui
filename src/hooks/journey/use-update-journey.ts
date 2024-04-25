@@ -23,6 +23,9 @@ export function useUpdateJourney() {
       queryClient.invalidateQueries({
         queryKey: ["journey-details"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["collection-details-journeys"],
+      });
     },
     onError: (error) =>
       error instanceof HTTPError && console.log(error.message),

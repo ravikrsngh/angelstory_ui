@@ -227,6 +227,7 @@ export type AssetResType = {
   uploadedBy: number;
   accessRight: string;
   name: string;
+  isApproved: boolean;
 };
 
 export type UserDetailsResType = {
@@ -595,17 +596,17 @@ export type UserSearchCompPropType = {
   setSelectedUsers: Dispatch<SetStateAction<UserSearchResType[]>>;
 };
 
+export type PermissionType = {
+  name: string;
+  value: string;
+};
+
 export type ManageAccessResType = {
   accessType: string;
   entityId: number;
   userId: number;
   name: string;
-  accessRight: string;
-};
-
-export type PermissionType = {
-  name: string;
-  value: string;
+  accessRight: PermissionType;
 };
 
 export type PermissionUserCardPropType = ManageAccessResType & {

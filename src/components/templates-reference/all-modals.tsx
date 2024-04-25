@@ -8,6 +8,7 @@ import {
   IconFolderFilled,
 } from "@tabler/icons-react";
 import { Fragment, useState } from "react";
+import toast from "react-hot-toast";
 import { useUpdateUserPermission } from "../../hooks/access-rights/use-update-user-access";
 import {
   PermissionType,
@@ -195,6 +196,7 @@ const permissions = [
 export const PermissionUserCard = (props: PermissionUserCardPropType) => {
   const [selectedPermission, setSelectedPermission] =
     useState<PermissionType | null>(props.accessRight);
+  const [defaultOpen, setDefaultOpen] = useState<boolean>(false);
   const updateUserAccessHook = useUpdateUserPermission();
   const updateUserAccess = () => {
     updateUserAccessHook.mutate(
@@ -207,6 +209,7 @@ export const PermissionUserCard = (props: PermissionUserCardPropType) => {
       {
         onSuccess: () => {
           setSelectedPermission(selectedPermission);
+          setDefaultOpen(false);
           toast.success("Update the permission successfully.");
         },
       }
@@ -214,8 +217,8 @@ export const PermissionUserCard = (props: PermissionUserCardPropType) => {
   };
 
   return (
-    <Disclosure as={Fragment}>
-      {({ open }) => (
+    <Disclosure as={Fragment} defaultOpen={defaultOpen}>
+      {({ open, close }) => (
         <>
           <div className="flex gap-2">
             <Disclosure.Button className={cn("outline-none w-full")}>
@@ -223,7 +226,7 @@ export const PermissionUserCard = (props: PermissionUserCardPropType) => {
                 <div className="h-7 w-7 bg-primary-400 rounded-full"></div>
                 <span>
                   {props.name} <br />{" "}
-                  <span className="text-sm">{props.accessRight}</span>
+                  <span className="text-sm">{props.accessRight.name}</span>
                 </span>
                 {open ? (
                   <IconChevronUp className="ml-auto" />
@@ -241,7 +244,7 @@ export const PermissionUserCard = (props: PermissionUserCardPropType) => {
               <div onClick={(e) => e.stopPropagation()}>
                 <Menu.Button className="inline-flex w-full justify-center rounded-md ">
                   <div className="border border-slate-200 py-2 px-3 w-full text-left">
-                    <span>{selectedPermission}</span>
+                    <span>{selectedPermission?.name}</span>
                   </div>
                 </Menu.Button>
               </div>
@@ -287,7 +290,10 @@ export const PermissionUserCard = (props: PermissionUserCardPropType) => {
               <button
                 className="bg-primary-400 text-sm text-white px-8 py-2 rounded-sm disabled:opacity-75"
                 disabled={selectedPermission == props.accessRight}
-                onClick={updateUserAccess}
+                onClick={() => {
+                  updateUserAccess();
+                  close();
+                }}
               >
                 Update
               </button>

@@ -3,6 +3,7 @@ import { IconDots } from "@tabler/icons-react";
 import { Fragment, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { CollectionProjects } from "../components/collection/collection-projects";
+import { ApprovalBox } from "../components/ui/approval-box";
 import { NewCard } from "../components/ui/cards";
 import {
   AssetDropdownList,
@@ -147,14 +148,21 @@ const CollectionAssets = ({
             <Tab.Panel>
               <div className="flex gap-4 overflow-auto">
                 {data.assetList?.map((asset: AssetResType) => (
-                  <NewCard
-                    key={asset.id}
-                    type={asset.assetType}
-                    name={asset.name}
-                    dropdownOptions={AssetDropdownList}
-                    dataObject={asset}
-                    onClickHandler={openFileViewer}
-                  />
+                  <div key={asset.id}>
+                    <NewCard
+                      type={asset.assetType}
+                      name={asset.name}
+                      dropdownOptions={AssetDropdownList}
+                      dataObject={asset}
+                      onClickHandler={openFileViewer}
+                    />
+                    {!asset.isApproved && isNeedAprovalAccess ? (
+                      <ApprovalBox
+                        entityId={asset.id}
+                        entityType={EntityType.ASSET}
+                      />
+                    ) : null}
+                  </div>
                 ))}
               </div>
             </Tab.Panel>
@@ -365,7 +373,10 @@ export default function Collection() {
       </div>
       <CollectionAssets collectionId={data?.id} />
       {AccessTypeGroups.ADD_ONLY.includes(data?.accessRight || "") ? null : (
-        <CollectionProjects />
+        <CollectionProjects
+          setAction={setAction}
+          setActionModal={setActionModal}
+        />
       )}
       <DropdownActionModals
         dataObject={getDataObject()}

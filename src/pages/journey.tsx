@@ -1,11 +1,12 @@
 import { Menu, Tab, Transition } from "@headlessui/react";
 import { IconDots } from "@tabler/icons-react";
-import { Fragment, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { NewCard } from "../components/ui/cards";
 import {
   AssetDropdownList,
   DropdownActionModals,
+  DropdownActions,
   DropdownButton,
   JourneyBannerDropdownList,
   MemoryCardDropdownList,
@@ -232,7 +233,13 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
   );
 };
 
-const JourneyMemories = () => {
+const JourneyMemories = ({
+  setAction,
+  setActionModal,
+}: {
+  setAction: Dispatch<SetStateAction<number>>;
+  setActionModal: Dispatch<SetStateAction<boolean>>;
+}) => {
   const params = useParams();
   const { data, isLoading, isFetching, isError } = useGetJourneysMemories(
     params.journeyId ? params.journeyId : "-1"
@@ -257,6 +264,15 @@ const JourneyMemories = () => {
     <div className="mt-10">
       <h4 className="font-medium mb-10 text-xl flex justify-between items-center">
         Memories
+        <button
+          onClick={() => {
+            setActionModal(true);
+            setAction(DropdownActions.ADD_MEMORY.id);
+          }}
+          className="text-sm"
+        >
+          + Add Journey
+        </button>
       </h4>
       <div>
         <Tab.Group>
@@ -560,7 +576,7 @@ export default function Journey() {
         </div>
       </div>
       <JourneyAssets journeyId={params.journeyId ? params.journeyId : "-1"} />
-      <JourneyMemories />
+      <JourneyMemories setAction={setAction} setActionModal={setActionModal} />
       <DropdownActionModals
         dataObject={data}
         action={action}
