@@ -1,5 +1,6 @@
 import { DashboardCollection } from "../components/dashboard/collection";
 import { CreateProjectBanner } from "../components/dashboard/create-project-banner";
+import { SharedEntity } from "../components/dashboard/shared-entity";
 
 export default function Dashboard() {
   return (
@@ -24,9 +25,9 @@ export default function Dashboard() {
         <div className="">
           <DashboardCollection />
         </div>
-        {/* <div className="mt-3 md:mt-10">
-          <DashboardTemplates />
-        </div> */}
+        <div className="mt-3 md:mt-10">
+          <SharedEntity />
+        </div>
       </div>
     </>
   );

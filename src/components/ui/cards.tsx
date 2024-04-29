@@ -54,10 +54,13 @@ const BasicStyleCard = ({
           )}
           style={{
             backgroundImage: `url(${
-              (dataObject as AssetResType).assetUrl ||
-              (dataObject as MemoryType).previewImage ||
-              (dataObject as CollectionType).bgImage ||
-              (dataObject as JourneyType).bgImage
+              dataObject
+                ? (dataObject as AssetResType).assetUrl ||
+                  (dataObject as MemoryType).previewImage ||
+                  (dataObject as CollectionType).bgImage ||
+                  (dataObject as JourneyType).bgImage ||
+                  ""
+                : ""
             })`,
           }}
         >
