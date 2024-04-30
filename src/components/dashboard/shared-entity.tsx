@@ -23,7 +23,7 @@ export const SharedEntity = () => {
             <NewCard
               key={cc.entityId}
               type={cc.accessType}
-              name={""}
+              name={cc.name}
               dropdownOptions={[]}
               onClickHandler={() => {}}
             />

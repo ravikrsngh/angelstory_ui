@@ -8,6 +8,8 @@ export type SharedEntityResType = {
   entityId: number;
   id: number;
   userId: number;
+  name: string;
+  bgImage: string;
 };
 
 const getAllAccessRightForEntity = () => {

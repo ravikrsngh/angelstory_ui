@@ -1,14 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { HTTPError } from "ky";
 import toast from "react-hot-toast";
 import { userAuthClient } from "..";
 
-export const useDeleteAssets = () => {
+type createAssetType = {
+  approvalDecision: string;
+  assetId: number;
+};
+
+const createAsset = (input: createAssetType) => {
+  return userAuthClient.post("approval-request", { json: input }).json();
+};
+
+export function useApproveAssets() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (ids: number[]) =>
-      userAuthClient.post(`assets/delete`, { json: { ids: ids } }).json(),
+    mutationFn: (input: createAssetType) => createAsset(input),
     onSuccess: () => {
-      toast.success("Asset Deleted Successfully.");
       queryClient.invalidateQueries({
         queryKey: ["collection-details-assets"],
       });
@@ -16,6 +24,7 @@ export const useDeleteAssets = () => {
         queryKey: ["journey-details-assets"],
       });
     },
-    onError: () => toast.error("Error while deleting the assets"),
+    onError: (error) =>
+      error instanceof HTTPError && toast.error(error.message),
   });
-};
+}

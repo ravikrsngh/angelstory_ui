@@ -226,7 +226,6 @@ export const DropdownActionModals = ({
   bulkIds,
   afterAction,
 }: DropdownActionModalsPropType) => {
-  console.log(bulkIds);
   return (
     <>
       {action == 2 && (

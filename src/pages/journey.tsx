@@ -1,7 +1,8 @@
 import { Menu, Tab, Transition } from "@headlessui/react";
-import { IconDots } from "@tabler/icons-react";
+import { IconArrowNarrowUp, IconDots } from "@tabler/icons-react";
 import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ApprovalBox } from "../components/ui/approval-box";
 import { NewCard } from "../components/ui/cards";
 import {
   AssetDropdownList,
@@ -147,14 +148,21 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
             <Tab.Panel>
               <div className="flex gap-4 overflow-auto">
                 {data.assetList?.map((asset: AssetResType) => (
-                  <NewCard
-                    key={asset.id}
-                    type={asset.assetType}
-                    name={asset.name}
-                    dropdownOptions={AssetDropdownList}
-                    dataObject={asset}
-                    onClickHandler={openFileViewer}
-                  />
+                  <div key={asset.id}>
+                    <NewCard
+                      type={asset.assetType}
+                      name={asset.name}
+                      dropdownOptions={AssetDropdownList}
+                      dataObject={asset}
+                      onClickHandler={openFileViewer}
+                    />
+                    {!asset.isApproved && isNeedAprovalAccess ? (
+                      <ApprovalBox
+                        entityId={asset.id}
+                        entityType={EntityType.ASSET}
+                      />
+                    ) : null}
+                  </div>
                 ))}
               </div>
             </Tab.Panel>
@@ -165,13 +173,14 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                     (asset: AssetResType) => asset.assetType == AssetTypes.IMAGE
                   )
                   .map((asset: AssetResType) => (
-                    <NewCard
-                      key={asset.id}
-                      type={asset.assetType}
-                      name={asset.name}
-                      dropdownOptions={AssetDropdownList}
-                      dataObject={asset}
-                    />
+                    <div key={asset.id}>
+                      <NewCard
+                        type={asset.assetType}
+                        name={asset.name}
+                        dropdownOptions={AssetDropdownList}
+                        dataObject={asset}
+                      />
+                    </div>
                   ))}
               </div>
             </Tab.Panel>
@@ -274,6 +283,20 @@ const JourneyMemories = ({
           + Add Journey
         </button>
       </h4>
+      <div className="journey-filters my-10 w-full flex">
+        <div>
+          <input type="date" />
+        </div>
+        <div className="ml-auto flex justify-center items-center">
+          <button>
+            <IconArrowNarrowUp />
+          </button>
+          <select name="sortBy" id="sortBy">
+            <option value="">Name</option>
+            <option value="">Last Modified</option>
+          </select>
+        </div>
+      </div>
       <div>
         <Tab.Group>
           <Tab.List>

@@ -2,9 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { userAuthClient } from "..";
 import { JourneyWithMemoriesType } from "../../types";
 
-const getCollectionJourneys = (journeyId: string) => {
+type queryParams = {
+  date?: number;
+  month?: number;
+  year?: number;
+  name?: string;
+  sortBy?: string;
+};
+
+const getCollectionJourneys = (journeyId: string, params: queryParams = {}) => {
   return userAuthClient
-    .get(`journeys/${journeyId}/projects`)
+    .post(`journeys/${journeyId}/projects`, { json: params })
     .json<JourneyWithMemoriesType>();
 };
 

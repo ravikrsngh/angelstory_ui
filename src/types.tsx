@@ -227,7 +227,7 @@ export type AssetResType = {
   uploadedBy: number;
   accessRight: string;
   name: string;
-  isApproved: boolean;
+  isApproved: boolean | null;
 };
 
 export type UserDetailsResType = {
