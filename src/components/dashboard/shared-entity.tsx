@@ -26,6 +26,10 @@ export const SharedEntity = () => {
               name={cc.name}
               dropdownOptions={[]}
               onClickHandler={() => {}}
+              entityId={cc.entityId}
+              entityType={cc.accessType}
+              bgImage={cc.bgImage}
+              accessRight={cc.accessRight}
             />
           ))}
         </div>

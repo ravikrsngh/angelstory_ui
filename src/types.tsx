@@ -369,14 +369,18 @@ export type CollectionJourneyType = CollectionType | JourneyType;
 
 export type BasicStyleCardPropType = PropsWithChildren<{
   type: string;
-  name: string;
   onClickHandler?: (() => void) | ((obj: FilesViewerItemType) => void);
-  dataObject?: DataObjectType;
+  entityId: number;
+  entityType: string;
+  name: string;
+  bgImage: string;
+  accessRight: string;
 }>;
 
 export type NewCardPropsType = BasicStyleCardPropType & {
   needs_approval?: boolean;
   dropdownOptions: DropdownOptionsType[];
+  [key: string]: unknown;
 };
 
 export type ViewAllCardPropType = BasicStyleCardPropType & {
@@ -392,12 +396,17 @@ export type TempPropType = {
 };
 
 export type DropdownActionModalsPropType = {
-  dataObject?: DataObjectType;
   action: number | null;
   actionModal: boolean;
   setActionModal: Dispatch<SetStateAction<boolean>>;
   bulkIds?: number[];
   afterAction?: () => void;
+  entityId: number;
+  entityType: string;
+  name: string;
+  bgImage: string;
+  accessRight: string;
+  [key: string]: unknown;
 };
 
 export type DropdownButtonPropType = {
@@ -512,7 +521,7 @@ export type ProjectResType = CreateProjectPayloadType & {
 export type MoveCopyModalPropType = {
   mode: string;
   entityType: string;
-  dataObject?: DataObjectType;
+  entityId: number;
   setActionModal: Dispatch<SetStateAction<boolean>>;
   afterAction?: () => void;
   bulkIds?: number[];

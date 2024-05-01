@@ -22,7 +22,6 @@ import {
   AccessTypeGroups,
   AssetResType,
   AssetTypes,
-  CollectionType,
   EntityType,
 } from "../types";
 import { cn } from "../utils";
@@ -155,6 +154,10 @@ const CollectionAssets = ({
                       dropdownOptions={AssetDropdownList}
                       dataObject={asset}
                       onClickHandler={openFileViewer}
+                      entityId={asset.id}
+                      entityType={EntityType.ASSET}
+                      bgImage={asset.assetUrl}
+                      accessRight={asset.accessRight}
                     />
                     {!asset.isApproved && isNeedAprovalAccess ? (
                       <ApprovalBox
@@ -174,11 +177,15 @@ const CollectionAssets = ({
                   )
                   .map((asset: AssetResType) => (
                     <NewCard
-                      key={asset.id}
                       type={asset.assetType}
                       name={asset.name}
                       dropdownOptions={AssetDropdownList}
                       dataObject={asset}
+                      onClickHandler={openFileViewer}
+                      entityId={asset.id}
+                      entityType={EntityType.ASSET}
+                      bgImage={asset.assetUrl}
+                      accessRight={asset.accessRight}
                     />
                   ))}
               </div>
@@ -191,11 +198,15 @@ const CollectionAssets = ({
                   )
                   .map((asset: AssetResType) => (
                     <NewCard
-                      key={asset.id}
                       type={asset.assetType}
                       name={asset.name}
                       dropdownOptions={AssetDropdownList}
                       dataObject={asset}
+                      onClickHandler={openFileViewer}
+                      entityId={asset.id}
+                      entityType={EntityType.ASSET}
+                      bgImage={asset.assetUrl}
+                      accessRight={asset.accessRight}
                     />
                   ))}
               </div>
@@ -208,11 +219,15 @@ const CollectionAssets = ({
                   )
                   .map((asset: AssetResType) => (
                     <NewCard
-                      key={asset.id}
                       type={asset.assetType}
                       name={asset.name}
                       dropdownOptions={AssetDropdownList}
                       dataObject={asset}
+                      onClickHandler={openFileViewer}
+                      entityId={asset.id}
+                      entityType={EntityType.ASSET}
+                      bgImage={asset.assetUrl}
+                      accessRight={asset.accessRight}
                     />
                   ))}
               </div>
@@ -257,21 +272,6 @@ export default function Collection() {
     if (action != 1) {
       setAction(action);
       setActionModal(true);
-    }
-  };
-
-  const getDataObject = () => {
-    if (data) {
-      const obj: CollectionType = {
-        entityId: data.id,
-        createdAt: data.createdAt,
-        createdBy: data.createdBy,
-        name: data.name,
-        bgColor: data.bgColor,
-        accessRight: data.accessRight,
-        bgImage: data.bgImage,
-      };
-      return obj;
     }
   };
 
@@ -379,10 +379,14 @@ export default function Collection() {
         />
       )}
       <DropdownActionModals
-        dataObject={getDataObject()}
         action={action}
         setActionModal={setActionModal}
         actionModal={actionModal}
+        entityId={data.id}
+        entityType={EntityType.COLLECTION}
+        name={data.name}
+        bgImage={data.bgImage}
+        accessRight={data.accessRight}
       />
     </div>
   );

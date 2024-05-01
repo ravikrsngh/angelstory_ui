@@ -37,19 +37,12 @@ import { useMoveProjects } from "../../hooks/project/use-move-projects";
 import { useSaveProject } from "../../hooks/project/use-save-project";
 import { uploadFiles } from "../../service/aws";
 import {
-  AssetResType,
-  CollectionJourneyType,
-  CollectionType,
-  DataObjectType,
   EntityType,
   FileTypeMap,
-  JourneyType,
-  MemoryType,
   MemoryTypes,
   MoveCopyModalPropType,
   PermissionType,
   ProjectDimensionType,
-  ShareModalPropType,
   SourceMemory,
   StageLists,
   UserSearchResType,
@@ -64,35 +57,36 @@ import { UserSearchComp } from "./share-modal-comp";
 import UploadArea from "./upload-area";
 import ViewUploadModalContent from "./view-uploads-modal";
 
-export const CollectionRenameModal = ({
-  dataObject,
-  setActionModal,
-}: {
-  dataObject: DataObjectType;
+type BaseModalPropType = {
+  entityType: string;
+  entityId: number;
+  name: string;
+  bgImage: string;
+  accessRight: string;
+  bulkIds?: number[];
   setActionModal: Dispatch<SetStateAction<boolean>>;
-}) => {
+};
+
+export const CollectionRenameModal = ({
+  entityId,
+  name,
+  setActionModal,
+}: BaseModalPropType) => {
   const updateCollectionHook = useUpdateCollection();
   const handleSubmitRenameCollection = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    if (dataObject) {
-      updateCollectionHook.mutate({
-        collectionId: (dataObject as CollectionType).entityId,
-        bgColor: (dataObject as CollectionType).bgColor,
-        collectionName: formData.get("collection") as string,
-      });
-    }
+    updateCollectionHook.mutate({
+      collectionId: entityId,
+      collectionName: formData.get("collection") as string,
+    });
     setActionModal(false);
   };
   return (
     <>
       <form action="" className="my-10" onSubmit={handleSubmitRenameCollection}>
-        <Input
-          label="Collection Name"
-          name="collection"
-          defaultValue={(dataObject as CollectionType)?.name}
-        />
+        <Input label="Collection Name" name="collection" defaultValue={name} />
         <div className="mt-4 flex justify-end">
           <button
             type="submit"
@@ -328,16 +322,12 @@ export const ChangeBackgroundCollection = ({
 };
 
 export const DeleteModal = ({
+  entityId,
   entityType,
+  name,
   bulkIds,
-  dataObject,
   setActionModal,
-}: {
-  entityType: string;
-  dataObject: DataObjectType;
-  bulkIds?: number[];
-  setActionModal: Dispatch<SetStateAction<boolean>>;
-}) => {
+}: BaseModalPropType) => {
   const deleteCollectionHook = useDeleteCollection();
   const deleteJourneyHook = useDeleteJourney();
   const deleteAssetHook = useDeleteAssets();
@@ -348,23 +338,23 @@ export const DeleteModal = ({
 
   const deleteHandler = async () => {
     console.log(bulkIds);
-    if (dataObject) {
-      if (entityType == EntityType.COLLECTION) {
-        deleteCollectionHook.mutate((dataObject as CollectionType).entityId);
-      } else if (entityType == EntityType.ASSET) {
-        deleteAssetHook.mutate([(dataObject as AssetResType).id]);
-      } else if (entityType == EntityType.JOURNEY) {
-        deleteJourneyHook.mutate([(dataObject as JourneyType).id]);
-      } else if (entityType == EntityType.MEMORY) {
-        deleteMemoryHook.mutate((dataObject as MemoryType).id);
-      }
-    } else if (bulkIds && bulkIds.length > 0) {
+    if (bulkIds && bulkIds.length > 0) {
       if (entityType == EntityType.ASSET) {
         deleteAssetHook.mutate(bulkIds);
       } else if (entityType == EntityType.JOURNEY) {
         deleteJourneyHook.mutate(bulkIds);
       } else if (entityType == EntityType.MEMORY) {
         bulkDeleteMemoriesHook.mutate(bulkIds);
+      }
+    } else {
+      if (entityType == EntityType.COLLECTION) {
+        deleteCollectionHook.mutate(entityId);
+      } else if (entityType == EntityType.ASSET) {
+        deleteAssetHook.mutate([entityId]);
+      } else if (entityType == EntityType.JOURNEY) {
+        deleteJourneyHook.mutate([entityId]);
+      } else if (entityType == EntityType.MEMORY) {
+        deleteMemoryHook.mutate(entityId);
       }
     }
     setActionModal(false);
@@ -373,8 +363,7 @@ export const DeleteModal = ({
     <>
       <div className="delete-modal">
         <span className="block mt-4">
-          Are you sure you want to delete{" "}
-          {(dataObject as CollectionJourneyType)?.name} ?
+          Are you sure you want to delete {name} ?
         </span>
         <div className="flex gap-4 justify-end mt-10">
           <button
@@ -390,23 +379,18 @@ export const DeleteModal = ({
 };
 
 export const AddJourneyModal = ({
-  dataObject,
+  entityId,
   setActionModal,
-}: {
-  dataObject: DataObjectType;
-  setActionModal: Dispatch<SetStateAction<boolean>>;
-}) => {
+}: BaseModalPropType) => {
   const createJourneyHook = useCreateJourney();
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    if (dataObject) {
-      createJourneyHook.mutate({
-        collectionId: (dataObject as CollectionType).entityId,
-        journeyName: formData.get("journey") as string,
-      });
-    }
+    createJourneyHook.mutate({
+      collectionId: entityId,
+      journeyName: formData.get("journey") as string,
+    });
     setActionModal(false);
   };
   return (
@@ -427,34 +411,25 @@ export const AddJourneyModal = ({
 };
 
 export const JourneyRenameModal = ({
-  dataObject,
+  entityId,
+  name,
   setActionModal,
-}: {
-  dataObject: JourneyType;
-  setActionModal: Dispatch<SetStateAction<boolean>>;
-}) => {
+}: BaseModalPropType) => {
   const updateJourneyHook = useUpdateJourney();
   const handleSubmitRenameJourney = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    if (dataObject) {
-      updateJourneyHook.mutate({
-        journeyId: dataObject.id,
-        bgColor: dataObject.bgColor,
-        journeyName: formData.get("journey") as string,
-      });
-    }
+    updateJourneyHook.mutate({
+      journeyId: entityId,
+      journeyName: formData.get("journey") as string,
+    });
     setActionModal(false);
   };
   return (
     <>
       <form action="" className="my-10" onSubmit={handleSubmitRenameJourney}>
-        <Input
-          label="Journey Name"
-          name="journey"
-          defaultValue={dataObject.name}
-        />
+        <Input label="Journey Name" name="journey" defaultValue={name} />
         <div className="mt-4 flex justify-end">
           <button
             type="submit"
@@ -712,32 +687,32 @@ export const AddMemoryUploadModal = ({
 };
 
 export const AddJournalModal = ({
-  dataObject,
+  entityId,
+  bgImage,
+  title,
+  caption,
   setActionModal,
-}: {
-  dataObject: MemoryType;
-  setActionModal: Dispatch<SetStateAction<boolean>>;
+}: BaseModalPropType & {
+  title: string;
+  caption: string;
 }) => {
   const saveProjectHook = useSaveProject();
   const handleSubmitAddJournal = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    if (dataObject) {
-      saveProjectHook.mutate({
-        ...dataObject,
-        projectId: dataObject.id,
-        title: formData.get("title") as string,
-        caption: formData.get("caption") as string,
-      });
-    }
+    saveProjectHook.mutate({
+      projectId: entityId,
+      title: formData.get("title") as string,
+      caption: formData.get("caption") as string,
+    });
     setActionModal(false);
   };
   return (
     <>
       <div className="add-journal-modal flex gap-8 mt-8">
         <div className="w-80 bg-slate-50 flex justify-center items-center">
-          <img src={dataObject.previewImage} />
+          <img src={bgImage} />
         </div>
         <form className="grow" onSubmit={handleSubmitAddJournal}>
           <div className="">
@@ -748,7 +723,7 @@ export const AddJournalModal = ({
               type="text"
               className="w-full p-2 px-4 border border-slate-200"
               name="title"
-              defaultValue={dataObject.title}
+              defaultValue={title}
             />
           </div>
           <br />
@@ -760,7 +735,7 @@ export const AddJournalModal = ({
               className="w-full p-2 px-4 border border-slate-200"
               rows={6}
               name="caption"
-              defaultValue={dataObject.caption}
+              defaultValue={caption}
             ></textarea>
           </div>
           <br />
@@ -779,34 +754,25 @@ export const AddJournalModal = ({
 };
 
 export const MemoryRenameModal = ({
-  dataObject,
+  entityId,
+  name,
   setActionModal,
-}: {
-  dataObject: MemoryType;
-  setActionModal: Dispatch<SetStateAction<boolean>>;
-}) => {
+}: BaseModalPropType) => {
   const saveProjectHook = useSaveProject();
   const handleSubmitRenameJourney = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    if (dataObject) {
-      saveProjectHook.mutate({
-        ...dataObject,
-        projectId: dataObject.id,
-        name: formData.get("journey") as string,
-      });
-    }
+    saveProjectHook.mutate({
+      projectId: entityId,
+      name: formData.get("journey") as string,
+    });
     setActionModal(false);
   };
   return (
     <>
       <form action="" className="my-10" onSubmit={handleSubmitRenameJourney}>
-        <Input
-          label="Memory Name"
-          name="journey"
-          defaultValue={dataObject.name}
-        />
+        <Input label="Memory Name" name="journey" defaultValue={name} />
         <div className="mt-4 flex justify-end">
           <button
             type="submit"
@@ -823,7 +789,7 @@ export const MemoryRenameModal = ({
 export const MoveCopyModal = ({
   mode,
   entityType,
-  dataObject,
+  entityId,
   bulkIds,
   setActionModal,
 }: MoveCopyModalPropType) => {
@@ -841,7 +807,7 @@ export const MoveCopyModal = ({
       moveJourneyHook.mutate({
         mode: mode,
         collectionId: toCollectionId,
-        journeyId: bulkIds ? bulkIds : [(dataObject as JourneyType).id],
+        journeyId: bulkIds ? bulkIds : [entityId],
       });
     } else if (entityType == EntityType.MEMORY) {
       if (toCollectionId == -1 || toJourneyId == -1) {
@@ -852,7 +818,7 @@ export const MoveCopyModal = ({
         mode: mode,
         collectionId: toCollectionId,
         journeyId: toJourneyId,
-        projectId: bulkIds ? bulkIds : [(dataObject as MemoryType).id],
+        projectId: bulkIds ? bulkIds : [entityId],
       });
     } else if (entityType == EntityType.ASSET) {
       if (toCollectionId == -1 && toJourneyId == -1) {
@@ -862,7 +828,7 @@ export const MoveCopyModal = ({
       const payload: moveAssetType = {
         mode: mode,
         newCollectionId: toCollectionId,
-        assetIds: bulkIds ? bulkIds : [(dataObject as AssetResType).id],
+        assetIds: bulkIds ? bulkIds : [entityId],
       };
       if (toJourneyId != -1) {
         payload.newJourneyId = toJourneyId;
@@ -893,22 +859,15 @@ export const MoveCopyModal = ({
 
 export const ShareModal = ({
   entityType,
-  dataObject,
+  entityId,
   setActionModal,
-}: ShareModalPropType) => {
+}: BaseModalPropType) => {
   const [selecteduser, setSelectedUsers] = useState<UserSearchResType[]>([]);
   const { data } = useGetAllAccessRightForEntity(entityType);
   const [selectedPermission, setSelectedPermission] =
     useState<PermissionType | null>(null);
   const addUserPermissionHook = useAddUserPermission();
-  const getPublicLinkHook = useGetPublicLink(
-    entityType,
-    dataObject
-      ? "entityId" in dataObject
-        ? dataObject.entityId
-        : dataObject?.id
-      : -1
-  );
+  const getPublicLinkHook = useGetPublicLink(entityType, entityId);
 
   const share = () => {
     if (!selectedPermission) {
@@ -920,30 +879,20 @@ export const ShareModal = ({
       return;
     }
 
-    let entityId = null;
-    if (dataObject) {
-      if ("entityId" in dataObject) {
-        entityId = dataObject.entityId;
-      } else {
-        entityId = dataObject.id;
-      }
-      addUserPermissionHook.mutate(
-        {
-          accessRight: selectedPermission.value,
-          entityId: entityId,
-          accessType: entityType,
-          userIds: selecteduser.map((user) => user.userId),
+    addUserPermissionHook.mutate(
+      {
+        accessRight: selectedPermission.value,
+        entityId: entityId,
+        accessType: entityType,
+        userIds: selecteduser.map((user) => user.userId),
+      },
+      {
+        onSuccess: () => {
+          toast.success("Permissions added successfully.");
+          setActionModal(false);
         },
-        {
-          onSuccess: () => {
-            toast.success("Permissions added successfully.");
-            setActionModal(false);
-          },
-        }
-      );
-    } else {
-      toast.error("Invalid Object");
-    }
+      }
+    );
   };
 
   const copyPublicLink = async () => {
@@ -1055,16 +1004,12 @@ export const ShareModal = ({
 
 export const ManageAccessModal = ({
   entityType,
-  dataObject,
+  entityId,
   setActionModal,
-}: ShareModalPropType) => {
+}: BaseModalPropType) => {
   const getAllUserAccessHook = useGetAllUserAccessForEntity(
     entityType,
-    dataObject
-      ? "entityId" in dataObject
-        ? dataObject.entityId
-        : dataObject.id
-      : -1
+    entityId
   );
   const allAccessRightHook = useGetAllAccessRightForEntity(entityType);
 

@@ -153,7 +153,10 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                       type={asset.assetType}
                       name={asset.name}
                       dropdownOptions={AssetDropdownList}
-                      dataObject={asset}
+                      entityId={asset.id}
+                      entityType={EntityType.ASSET}
+                      bgImage={asset.assetUrl}
+                      accessRight={asset.accessRight}
                       onClickHandler={openFileViewer}
                     />
                     {!asset.isApproved && isNeedAprovalAccess ? (
@@ -178,7 +181,10 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                         type={asset.assetType}
                         name={asset.name}
                         dropdownOptions={AssetDropdownList}
-                        dataObject={asset}
+                        entityId={asset.id}
+                        entityType={EntityType.ASSET}
+                        bgImage={asset.assetUrl}
+                        accessRight={asset.accessRight}
                       />
                     </div>
                   ))}
@@ -192,11 +198,13 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                   )
                   .map((asset: AssetResType) => (
                     <NewCard
-                      key={asset.id}
                       type={asset.assetType}
                       name={asset.name}
                       dropdownOptions={AssetDropdownList}
-                      dataObject={asset}
+                      entityId={asset.id}
+                      entityType={EntityType.ASSET}
+                      bgImage={asset.assetUrl}
+                      accessRight={asset.accessRight}
                     />
                   ))}
               </div>
@@ -209,11 +217,13 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                   )
                   .map((asset: AssetResType) => (
                     <NewCard
-                      key={asset.id}
                       type={asset.assetType}
                       name={asset.name}
                       dropdownOptions={AssetDropdownList}
-                      dataObject={asset}
+                      entityId={asset.id}
+                      entityType={EntityType.ASSET}
+                      bgImage={asset.assetUrl}
+                      accessRight={asset.accessRight}
                     />
                   ))}
               </div>
@@ -398,6 +408,14 @@ const JourneyMemories = ({
                     dropdownOptions={MemoryCardDropdownList}
                     dataObject={memory}
                     onClickHandler={openFileViewer}
+                    entityId={memory.id}
+                    entityType={EntityType.MEMORY}
+                    bgImage={memory.previewImage}
+                    accessRight={memory.accessRight}
+                    title={memory.title}
+                    caption={memory.caption}
+                    collectionId={memory.collectionId}
+                    journeyId={memory.journeyId}
                   />
                 ))}
               </Tab.Panel>
@@ -414,6 +432,15 @@ const JourneyMemories = ({
                       name={memory.name}
                       dropdownOptions={MemoryCardDropdownList}
                       dataObject={memory}
+                      onClickHandler={openFileViewer}
+                      entityId={memory.id}
+                      entityType={EntityType.MEMORY}
+                      bgImage={memory.previewImage}
+                      accessRight={memory.accessRight}
+                      title={memory.title}
+                      caption={memory.caption}
+                      collectionId={memory.collectionId}
+                      journeyId={memory.journeyId}
                     />
                   ))}
               </Tab.Panel>
@@ -430,6 +457,15 @@ const JourneyMemories = ({
                       name={memory.name}
                       dropdownOptions={MemoryCardDropdownList}
                       dataObject={memory}
+                      onClickHandler={openFileViewer}
+                      entityId={memory.id}
+                      entityType={EntityType.MEMORY}
+                      bgImage={memory.previewImage}
+                      accessRight={memory.accessRight}
+                      title={memory.title}
+                      caption={memory.caption}
+                      collectionId={memory.collectionId}
+                      journeyId={memory.journeyId}
                     />
                   ))}
               </Tab.Panel>
@@ -446,6 +482,15 @@ const JourneyMemories = ({
                       name={memory.name}
                       dropdownOptions={MemoryCardDropdownList}
                       dataObject={memory}
+                      onClickHandler={openFileViewer}
+                      entityId={memory.id}
+                      entityType={EntityType.MEMORY}
+                      bgImage={memory.previewImage}
+                      accessRight={memory.accessRight}
+                      title={memory.title}
+                      caption={memory.caption}
+                      collectionId={memory.collectionId}
+                      journeyId={memory.journeyId}
                     />
                   ))}
               </Tab.Panel>
@@ -462,6 +507,15 @@ const JourneyMemories = ({
                       name={memory.name}
                       dropdownOptions={MemoryCardDropdownList}
                       dataObject={memory}
+                      onClickHandler={openFileViewer}
+                      entityId={memory.id}
+                      entityType={EntityType.MEMORY}
+                      bgImage={memory.previewImage}
+                      accessRight={memory.accessRight}
+                      title={memory.title}
+                      caption={memory.caption}
+                      collectionId={memory.collectionId}
+                      journeyId={memory.journeyId}
                     />
                   ))}
               </Tab.Panel>
@@ -478,6 +532,15 @@ const JourneyMemories = ({
                       name={memory.name}
                       dropdownOptions={MemoryCardDropdownList}
                       dataObject={memory}
+                      onClickHandler={openFileViewer}
+                      entityId={memory.id}
+                      entityType={EntityType.MEMORY}
+                      bgImage={memory.previewImage}
+                      accessRight={memory.accessRight}
+                      title={memory.title}
+                      caption={memory.caption}
+                      collectionId={memory.collectionId}
+                      journeyId={memory.journeyId}
                     />
                   ))}
               </Tab.Panel>
@@ -494,6 +557,15 @@ const JourneyMemories = ({
                       name={memory.name}
                       dropdownOptions={MemoryCardDropdownList}
                       dataObject={memory}
+                      onClickHandler={openFileViewer}
+                      entityId={memory.id}
+                      entityType={EntityType.MEMORY}
+                      bgImage={memory.previewImage}
+                      accessRight={memory.accessRight}
+                      title={memory.title}
+                      caption={memory.caption}
+                      collectionId={memory.collectionId}
+                      journeyId={memory.journeyId}
                     />
                   ))}
               </Tab.Panel>
@@ -601,10 +673,16 @@ export default function Journey() {
       <JourneyAssets journeyId={params.journeyId ? params.journeyId : "-1"} />
       <JourneyMemories setAction={setAction} setActionModal={setActionModal} />
       <DropdownActionModals
-        dataObject={data}
         action={action}
         setActionModal={setActionModal}
         actionModal={actionModal}
+        entityId={data.id}
+        entityType={EntityType.JOURNEY}
+        name={data.name}
+        bgImage={data.bgImage}
+        accessRight={data.accessRight}
+        collectionId={data.collectionId}
+        journeyId={data.id}
       />
     </div>
   );

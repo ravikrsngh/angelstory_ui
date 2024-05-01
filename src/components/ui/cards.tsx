@@ -7,13 +7,8 @@ import {
 import { Fragment, useState } from "react";
 import {
   AccessTypeGroups,
-  AssetResType,
   AssetTypes,
   BasicStyleCardPropType,
-  CollectionType,
-  EntityType,
-  JourneyType,
-  MemoryType,
   NewCardPropsType,
   ViewAllCardPropType,
 } from "../../types";
@@ -30,7 +25,7 @@ const BasicStyleCard = ({
   type,
   name,
   onClickHandler,
-  dataObject,
+  bgImage,
   children,
 }: BasicStyleCardPropType) => {
   return (
@@ -53,15 +48,7 @@ const BasicStyleCard = ({
             "w-full overflow-hidden mt-2 flex justify-center items-center h-[240px] bg-cover bg-center"
           )}
           style={{
-            backgroundImage: `url(${
-              dataObject
-                ? (dataObject as AssetResType).assetUrl ||
-                  (dataObject as MemoryType).previewImage ||
-                  (dataObject as CollectionType).bgImage ||
-                  (dataObject as JourneyType).bgImage ||
-                  ""
-                : ""
-            })`,
+            backgroundImage: `url(${bgImage})`,
           }}
         >
           {type == AssetTypes.VIDEO && <IconPlayerPlay />}
@@ -77,7 +64,11 @@ export const NewCard = ({
   name,
   dropdownOptions,
   onClickHandler,
-  dataObject,
+  entityId,
+  entityType,
+  bgImage,
+  accessRight,
+  ...rest
 }: NewCardPropsType) => {
   const [previewModal, setPreviewModal] = useState<boolean>(false);
   const [action, setAction] = useState<number | null>(null);
@@ -85,34 +76,16 @@ export const NewCard = ({
   const isDropdownAccess = [
     ...AccessTypeGroups.OWNER,
     ...AccessTypeGroups.EDIT,
-  ].includes(
-    dataObject && dataObject.accessRight
-      ? dataObject.accessRight
-      : "COLLECTION_ADD"
-  );
+  ].includes(accessRight);
 
   const prepare_data_for_viewer = (): FilesViewerItemType => {
     const fileViewObj = {
-      type: "",
-      src: "",
-      name: "",
-      entityType: "",
-      id: -1,
+      type: type,
+      src: bgImage,
+      name: name,
+      entityType: entityType,
+      id: entityId,
     };
-    if (dataObject) {
-      if ("assetType" in dataObject) {
-        fileViewObj.type = dataObject.assetType;
-        fileViewObj.entityType = EntityType.ASSET;
-        fileViewObj.id = dataObject.id;
-        fileViewObj.src = dataObject.assetUrl;
-      } else if ("projectType" in dataObject) {
-        fileViewObj.type = dataObject.projectType;
-        fileViewObj.entityType = EntityType.MEMORY;
-        fileViewObj.id = dataObject.id;
-        fileViewObj.src = dataObject.previewImage;
-        fileViewObj.name = dataObject.name;
-      }
-    }
 
     return fileViewObj;
   };
@@ -160,7 +133,10 @@ export const NewCard = ({
         type={type}
         name={name}
         onClickHandler={clickHandler}
-        dataObject={dataObject}
+        entityId={entityId}
+        entityType={entityType}
+        bgImage={bgImage}
+        accessRight={accessRight}
       >
         {dropdownOptions.length > 0 && isDropdownAccess && (
           <Menu as="div" className="relative inline-block text-left ml-auto">
@@ -202,10 +178,15 @@ export const NewCard = ({
         )}
       </BasicStyleCard>
       <DropdownActionModals
-        dataObject={dataObject ? dataObject : null}
         action={action ? action : null}
         actionModal={actionModal}
         setActionModal={setActionModal}
+        entityId={entityId}
+        entityType={entityType}
+        name={name}
+        bgImage={bgImage}
+        accessRight={accessRight}
+        {...rest}
       />
       <Modal
         openModal={previewModal}
@@ -218,24 +199,9 @@ export const NewCard = ({
           </button>
         </div>
         <div className="max-h-[800px] flex justify-center items-center overflow-hidden">
-          {type == AssetTypes.IMAGE && (
-            <img
-              src={
-                (dataObject as AssetResType).assetUrl ||
-                (dataObject as MemoryType).previewImage
-              }
-              className="w-full"
-            />
-          )}
+          {type == AssetTypes.IMAGE && <img src={bgImage} className="w-full" />}
           {type == AssetTypes.AUDIO && (
-            <audio
-              src={
-                (dataObject as AssetResType).assetUrl ||
-                (dataObject as MemoryType).previewImage
-              }
-              controls
-              className="w-full"
-            ></audio>
+            <audio src={bgImage} controls className="w-full"></audio>
           )}
         </div>
       </Modal>
@@ -249,14 +215,20 @@ export const ViewAllCard = ({
   onClickHandler,
   defaultChecked,
   onChangeHandler,
-  dataObject,
+  entityId,
+  entityType,
+  bgImage,
+  accessRight,
 }: ViewAllCardPropType) => {
   return (
     <BasicStyleCard
       type={type}
       name={name}
       onClickHandler={onClickHandler}
-      dataObject={dataObject}
+      entityId={entityId}
+      entityType={entityType}
+      bgImage={bgImage}
+      accessRight={accessRight}
     >
       <div>
         <input

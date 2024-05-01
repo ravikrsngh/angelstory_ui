@@ -2,7 +2,12 @@
 import { Dispatch, SetStateAction } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetCollectionJourneys } from "../../hooks/collection/use-fetch-collection-journeys";
-import { AccessTypeGroups, AssetTypes, JourneyType } from "../../types";
+import {
+  AccessTypeGroups,
+  AssetTypes,
+  EntityType,
+  JourneyType,
+} from "../../types";
 import { NewCard } from "../ui/cards";
 import {
   DropdownActions,
@@ -61,6 +66,12 @@ export const CollectionProjects = ({
               }
               navigate(`/journey/${journey.id}`);
             }}
+            entityId={journey.id}
+            entityType={EntityType.JOURNEY}
+            bgImage={journey.bgImage}
+            accessRight={journey.accessRight}
+            collectionId={journey.collectionId}
+            journeyId={journey.id}
           />
         ))}
       </div>

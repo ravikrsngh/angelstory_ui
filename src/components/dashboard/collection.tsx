@@ -5,7 +5,7 @@ import { Fragment, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCreateCollection } from "../../hooks/collection/use-create-collection";
 import { useGetAllCollectionForUser } from "../../hooks/collection/use-get-collection";
-import { AssetTypes, CollectionType } from "../../types";
+import { AssetTypes, CollectionType, EntityType } from "../../types";
 import { NewCard } from "../ui/cards";
 import { CollectionDropdownList } from "../ui/dropdown-action-buttons";
 import { Input } from "../ui/input";
@@ -90,7 +90,10 @@ export const DashboardCollection = () => {
                 name={cc.name}
                 dropdownOptions={CollectionDropdownList}
                 onClickHandler={() => navigate(`/collection/${cc.entityId}`)}
-                dataObject={cc}
+                entityId={cc.entityId}
+                entityType={EntityType.COLLECTION}
+                bgImage={cc.bgImage}
+                accessRight={cc.accessRight}
               />
             ))}
           </div>
