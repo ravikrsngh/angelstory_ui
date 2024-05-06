@@ -628,3 +628,14 @@ export type PublicEntityResType = {
   entityId: number;
   link: string;
 };
+
+export type ActivityResType = {
+  accessDate: string;
+  accessRight: string;
+  accessType: string;
+  bgImage: string;
+  entityId: number;
+  id: number;
+  name: string;
+  userId: number;
+};

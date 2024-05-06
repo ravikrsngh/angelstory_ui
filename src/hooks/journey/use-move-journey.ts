@@ -26,6 +26,9 @@ export function useMoveJourney() {
       queryClient.invalidateQueries({
         queryKey: ["collection-details"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["collection-details-journeys"],
+      });
     },
     onError: (error) =>
       error instanceof HTTPError && console.log(error.message),

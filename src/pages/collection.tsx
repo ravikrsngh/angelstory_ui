@@ -3,6 +3,7 @@ import { IconDots } from "@tabler/icons-react";
 import { Fragment, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { CollectionProjects } from "../components/collection/collection-projects";
+import { CollectionRecentActivity } from "../components/collection/recent-activity";
 import { ApprovalBox } from "../components/ui/approval-box";
 import { NewCard } from "../components/ui/cards";
 import {
@@ -177,6 +178,7 @@ const CollectionAssets = ({
                   )
                   .map((asset: AssetResType) => (
                     <NewCard
+                      key={asset.id}
                       type={asset.assetType}
                       name={asset.name}
                       dropdownOptions={AssetDropdownList}
@@ -198,6 +200,7 @@ const CollectionAssets = ({
                   )
                   .map((asset: AssetResType) => (
                     <NewCard
+                      key={asset.id}
                       type={asset.assetType}
                       name={asset.name}
                       dropdownOptions={AssetDropdownList}
@@ -219,6 +222,7 @@ const CollectionAssets = ({
                   )
                   .map((asset: AssetResType) => (
                     <NewCard
+                      key={asset.id}
                       type={asset.assetType}
                       name={asset.name}
                       dropdownOptions={AssetDropdownList}
@@ -371,6 +375,7 @@ export default function Collection() {
           </div>
         ) : null}
       </div>
+      <CollectionRecentActivity />
       <CollectionAssets collectionId={data?.id} />
       {AccessTypeGroups.ADD_ONLY.includes(data?.accessRight || "") ? null : (
         <CollectionProjects

@@ -25,6 +25,10 @@ export function useMoveAssets() {
       queryClient.invalidateQueries({
         queryKey: ["collection-assets"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["collection-details-assets"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["journey-details-assets"] });
     },
     onError: (error) =>
       error instanceof HTTPError && console.log(error.message),

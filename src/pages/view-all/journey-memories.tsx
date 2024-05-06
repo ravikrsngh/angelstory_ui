@@ -8,7 +8,7 @@ import {
 import { ViewAllHeader } from "../../components/view-all/header";
 import { ViewAllToolBar } from "../../components/view-all/toolbar";
 import { useGetJourneysMemories } from "../../hooks/journey/use-fetch-journeys-memory";
-import { MemoryType } from "../../types";
+import { EntityType, MemoryType } from "../../types";
 
 export const ViewAllJourneyMemories = () => {
   const params = useParams();
@@ -73,9 +73,12 @@ export const ViewAllJourneyMemories = () => {
             key={asset.id}
             type={asset.projectType}
             name={asset.name}
-            dataObject={asset}
             defaultChecked={selectedObjs.includes(asset.id)}
             onChangeHandler={() => updateSelectedObj(asset.id)}
+            entityId={asset.id}
+            entityType={EntityType.MEMORY}
+            bgImage={asset.previewImage}
+            accessRight={asset.accessRight}
           />
         ))}
       </div>
@@ -83,7 +86,13 @@ export const ViewAllJourneyMemories = () => {
         action={action ? action : null}
         actionModal={actionModal}
         setActionModal={setActionModal}
+        afterAction={() => setSelectedObjs([])}
         bulkIds={selectedObjs}
+        entityId={0}
+        entityType={""}
+        name={""}
+        bgImage={""}
+        accessRight={""}
       />
     </div>
   );

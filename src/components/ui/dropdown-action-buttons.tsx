@@ -256,6 +256,7 @@ export const DropdownActionModals = ({
             entityType={EntityType.JOURNEY}
             entityId={entityId}
             setActionModal={setActionModal}
+            afterAction={afterAction}
             bulkIds={bulkIds}
           />
         </Modal>
@@ -385,6 +386,7 @@ export const DropdownActionModals = ({
             accessRight={accessRight}
             setActionModal={setActionModal}
             bulkIds={bulkIds}
+            afterAction={afterAction}
           />
         </Modal>
       )}
@@ -417,6 +419,7 @@ export const DropdownActionModals = ({
             bgImage={bgImage}
             accessRight={accessRight}
             setActionModal={setActionModal}
+            afterAction={afterAction}
           />
         </Modal>
       )}
@@ -479,6 +482,7 @@ export const DropdownActionModals = ({
             accessRight={accessRight}
             setActionModal={setActionModal}
             bulkIds={bulkIds}
+            afterAction={afterAction}
           />
         </Modal>
       )}
@@ -494,6 +498,7 @@ export const DropdownActionModals = ({
             entityId={entityId}
             setActionModal={setActionModal}
             bulkIds={bulkIds}
+            afterAction={afterAction}
           />
         </Modal>
       )}
@@ -509,6 +514,7 @@ export const DropdownActionModals = ({
             entityId={entityId}
             setActionModal={setActionModal}
             bulkIds={bulkIds}
+            afterAction={afterAction}
           />
         </Modal>
       )}
@@ -524,6 +530,7 @@ export const DropdownActionModals = ({
             entityId={entityId}
             setActionModal={setActionModal}
             bulkIds={bulkIds}
+            afterAction={afterAction}
           />
         </Modal>
       )}
@@ -539,6 +546,7 @@ export const DropdownActionModals = ({
             entityId={entityId}
             setActionModal={setActionModal}
             bulkIds={bulkIds}
+            afterAction={afterAction}
           />
         </Modal>
       )}

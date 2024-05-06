@@ -65,6 +65,11 @@ export const CreateProjectBanner = () => {
         action={action}
         setActionModal={setActionModal}
         actionModal={actionModal}
+        entityId={0}
+        entityType={""}
+        name={""}
+        bgImage={""}
+        accessRight={""}
       />
     </>
   );

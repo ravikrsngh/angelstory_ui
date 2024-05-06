@@ -97,7 +97,7 @@ export default function Header() {
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
-          <Link to="/" className="-m-1.5 p-1.5">
+          <Link to="/dashboard" className="-m-1.5 p-1.5">
             <img className="h-10 md:h-12 w-auto" src={logoimg} alt="" />
           </Link>
         </div>

@@ -8,7 +8,7 @@ import {
 import { ViewAllHeader } from "../../components/view-all/header";
 import { ViewAllToolBar } from "../../components/view-all/toolbar";
 import { useGetCollectionJourneys } from "../../hooks/collection/use-fetch-collection-journeys";
-import { AssetTypes, JourneyType } from "../../types";
+import { AssetTypes, EntityType, JourneyType } from "../../types";
 
 export const ViewAllCollectionJournies = () => {
   const params = useParams();
@@ -72,9 +72,12 @@ export const ViewAllCollectionJournies = () => {
             key={asset.id}
             type={AssetTypes.FOLDER}
             name={asset.name}
-            dataObject={asset}
             defaultChecked={selectedObjs.includes(asset.id)}
             onChangeHandler={() => updateSelectedObj(asset.id)}
+            entityId={asset.id}
+            entityType={EntityType.JOURNEY}
+            bgImage={asset.bgImage}
+            accessRight={asset.accessRight}
           />
         ))}
       </div>
@@ -82,7 +85,13 @@ export const ViewAllCollectionJournies = () => {
         action={action ? action : null}
         actionModal={actionModal}
         setActionModal={setActionModal}
+        afterAction={() => setSelectedObjs([])}
         bulkIds={selectedObjs}
+        entityId={0}
+        entityType={""}
+        name={""}
+        bgImage={""}
+        accessRight={""}
       />
     </div>
   );

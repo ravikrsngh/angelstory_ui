@@ -31,7 +31,7 @@ const BasicStyleCard = ({
   return (
     <div>
       <div
-        className="p-3 bg-primary-100 w-64 h-min rounded-lg"
+        className="p-3 bg-primary-100 w-[249px] h-min rounded-lg"
         onClick={onClickHandler as () => void}
       >
         <div className="flex justify-between items-center">
@@ -45,7 +45,7 @@ const BasicStyleCard = ({
         </div>
         <div
           className={cn(
-            "w-full overflow-hidden mt-2 flex justify-center items-center h-[240px] bg-cover bg-center"
+            "w-full overflow-hidden mt-2 flex justify-center items-center h-[190px] bg-cover bg-center"
           )}
           style={{
             backgroundImage: `url(${bgImage})`,
@@ -235,7 +235,7 @@ export const ViewAllCard = ({
           type="checkbox"
           name=""
           id=""
-          defaultChecked={defaultChecked}
+          checked={defaultChecked}
           onChange={onChangeHandler}
         />
       </div>

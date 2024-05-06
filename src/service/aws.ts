@@ -34,14 +34,14 @@ export const uploadFiles = async (files) => {
       `${import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME}`,
       `users/${Cookies.get("user")}/project/images/${file.name.replace(
         " ",
-        "%2B"
+        "_"
       )}`
     );
     const assetUrl = `https://${
       import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME
     }.s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/users/${Cookies.get(
       "user"
-    )}/project/images/${file.name.replace(" ", "%2B")}`;
+    )}/project/images/${file.name.replace(" ", "_")}`;
     console.log(assetUrl);
     console.log(file);
     urlList.push({

@@ -65,6 +65,7 @@ type BaseModalPropType = {
   accessRight: string;
   bulkIds?: number[];
   setActionModal: Dispatch<SetStateAction<boolean>>;
+  afterAction?: () => void;
 };
 
 export const CollectionRenameModal = ({
@@ -77,11 +78,17 @@ export const CollectionRenameModal = ({
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    updateCollectionHook.mutate({
-      collectionId: entityId,
-      collectionName: formData.get("collection") as string,
-    });
-    setActionModal(false);
+    updateCollectionHook.mutate(
+      {
+        collectionId: entityId,
+        collectionName: formData.get("collection") as string,
+      },
+      {
+        onSuccess: () => {
+          setActionModal(false);
+        },
+      }
+    );
   };
   return (
     <>
@@ -326,6 +333,7 @@ export const DeleteModal = ({
   entityType,
   name,
   bulkIds,
+  afterAction,
   setActionModal,
 }: BaseModalPropType) => {
   const deleteCollectionHook = useDeleteCollection();
@@ -334,30 +342,36 @@ export const DeleteModal = ({
   const deleteMemoryHook = useDeleteProject();
   const bulkDeleteMemoriesHook = useBulkDeleteProjects();
 
-  console.log(bulkIds);
+  console.log(afterAction);
+
+  const afterSuccess = () => {
+    setActionModal(false);
+    if (afterAction) {
+      afterAction();
+    }
+  };
 
   const deleteHandler = async () => {
     console.log(bulkIds);
     if (bulkIds && bulkIds.length > 0) {
       if (entityType == EntityType.ASSET) {
-        deleteAssetHook.mutate(bulkIds);
+        deleteAssetHook.mutate(bulkIds, { onSuccess: afterSuccess });
       } else if (entityType == EntityType.JOURNEY) {
-        deleteJourneyHook.mutate(bulkIds);
+        deleteJourneyHook.mutate(bulkIds, { onSuccess: afterSuccess });
       } else if (entityType == EntityType.MEMORY) {
-        bulkDeleteMemoriesHook.mutate(bulkIds);
+        bulkDeleteMemoriesHook.mutate(bulkIds, { onSuccess: afterSuccess });
       }
     } else {
       if (entityType == EntityType.COLLECTION) {
-        deleteCollectionHook.mutate(entityId);
+        deleteCollectionHook.mutate(entityId, { onSuccess: afterSuccess });
       } else if (entityType == EntityType.ASSET) {
-        deleteAssetHook.mutate([entityId]);
+        deleteAssetHook.mutate([entityId], { onSuccess: afterSuccess });
       } else if (entityType == EntityType.JOURNEY) {
-        deleteJourneyHook.mutate([entityId]);
+        deleteJourneyHook.mutate([entityId], { onSuccess: afterSuccess });
       } else if (entityType == EntityType.MEMORY) {
-        deleteMemoryHook.mutate(entityId);
+        deleteMemoryHook.mutate(entityId, { onSuccess: afterSuccess });
       }
     }
-    setActionModal(false);
   };
   return (
     <>
@@ -791,6 +805,7 @@ export const MoveCopyModal = ({
   entityType,
   entityId,
   bulkIds,
+  afterAction,
   setActionModal,
 }: MoveCopyModalPropType) => {
   const [toCollectionId, setToCollectionId] = useState<number>(-1);
@@ -798,28 +813,43 @@ export const MoveCopyModal = ({
   const moveJourneyHook = useMoveJourney();
   const moveProjectHook = useMoveProjects();
   const moveAssetHook = useMoveAssets();
+
+  const afterSuccess = () => {
+    setActionModal(false);
+    toast.success(`Successfully performefd the action.`);
+    if (afterAction) {
+      afterAction();
+    }
+  };
+
   const moveOrCopy = () => {
     if (entityType == EntityType.JOURNEY) {
       if (toCollectionId == -1) {
         toast.error("Please select a valid location");
         return;
       }
-      moveJourneyHook.mutate({
-        mode: mode,
-        collectionId: toCollectionId,
-        journeyId: bulkIds ? bulkIds : [entityId],
-      });
+      moveJourneyHook.mutate(
+        {
+          mode: mode,
+          collectionId: toCollectionId,
+          journeyId: bulkIds ? bulkIds : [entityId],
+        },
+        { onSuccess: afterSuccess }
+      );
     } else if (entityType == EntityType.MEMORY) {
       if (toCollectionId == -1 || toJourneyId == -1) {
         toast.error("Please select a valid location.");
         return;
       }
-      moveProjectHook.mutate({
-        mode: mode,
-        collectionId: toCollectionId,
-        journeyId: toJourneyId,
-        projectId: bulkIds ? bulkIds : [entityId],
-      });
+      moveProjectHook.mutate(
+        {
+          mode: mode,
+          collectionId: toCollectionId,
+          journeyId: toJourneyId,
+          projectId: bulkIds ? bulkIds : [entityId],
+        },
+        { onSuccess: afterSuccess }
+      );
     } else if (entityType == EntityType.ASSET) {
       if (toCollectionId == -1 && toJourneyId == -1) {
         toast.error("Please select a valid location.");
@@ -833,10 +863,8 @@ export const MoveCopyModal = ({
       if (toJourneyId != -1) {
         payload.newJourneyId = toJourneyId;
       }
-      moveAssetHook.mutate(payload);
+      moveAssetHook.mutate(payload, { onSuccess: afterSuccess });
     }
-
-    setActionModal(false);
   };
   return (
     <>

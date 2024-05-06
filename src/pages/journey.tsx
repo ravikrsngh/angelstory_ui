@@ -1,7 +1,8 @@
 import { Menu, Tab, Transition } from "@headlessui/react";
-import { IconArrowNarrowUp, IconDots } from "@tabler/icons-react";
-import { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { IconDots } from "@tabler/icons-react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { SortByFilter } from "../components/filters/sort-by";
 import { ApprovalBox } from "../components/ui/approval-box";
 import { NewCard } from "../components/ui/cards";
 import {
@@ -16,11 +17,13 @@ import {
   FilesViewer,
   FilesViewerItemType,
 } from "../components/ui/files-viewer";
+import { useGetActivityJourney } from "../hooks/activity/use-get-activity-for-journey";
 import { useGetJourneyAssets } from "../hooks/journey/use-fetch-journey-assets";
 import { useGetJourneysMemories } from "../hooks/journey/use-fetch-journeys-memory";
 import { useGetJourneyDetails } from "../hooks/journey/use-journey-details";
 import {
   AccessTypeGroups,
+  ActivityResType,
   AssetResType,
   AssetTypes,
   EntityType,
@@ -260,8 +263,16 @@ const JourneyMemories = ({
   setActionModal: Dispatch<SetStateAction<boolean>>;
 }) => {
   const params = useParams();
-  const { data, isLoading, isFetching, isError } = useGetJourneysMemories(
-    params.journeyId ? params.journeyId : "-1"
+  const [sortBy, setSortBy] = useState<string>("-last_created");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const { data, isLoading, isFetching, refetch } = useGetJourneysMemories(
+    params.journeyId ? params.journeyId : "-1",
+    {
+      sortBy: sortBy,
+      startDate: startDate,
+      endDate: endDate,
+    }
   );
   const [viewFilesViewer, setViewFilesViewer] = useState(false);
   const [activeId, setActiveId] = useState<number>(0);
@@ -272,12 +283,20 @@ const JourneyMemories = ({
     setActiveId(obj.id);
   };
 
-  if (isLoading || isFetching) {
-    return <span>Loading ...</span>;
-  }
-  if (isError) {
-    return <span>Some error occurred while fetching data ...</span>;
-  }
+  const sortByChanged = (value: string) => {
+    setSortBy(value);
+  };
+
+  const resetFilter = () => {
+    setSortBy("-last_created");
+    setStartDate("");
+    setEndDate("");
+  };
+
+  useEffect(() => {
+    refetch();
+  }, [sortBy, startDate, endDate]);
+
   console.log(data);
   return (
     <div className="mt-10">
@@ -293,139 +312,149 @@ const JourneyMemories = ({
           + Add Journey
         </button>
       </h4>
-      <div className="journey-filters my-10 w-full flex">
-        <div>
-          <input type="date" />
-        </div>
-        <div className="ml-auto flex justify-center items-center">
-          <button>
-            <IconArrowNarrowUp />
+      <div className="journey-filters bg-primary-50 p-4 rounded-md">
+        <h4 className="mb-0 text-primary-700 flex justify-between items-center">
+          Filters{" "}
+          <button className="hover:underline" onClick={resetFilter}>
+            Clear
           </button>
-          <select name="sortBy" id="sortBy">
-            <option value="">Name</option>
-            <option value="">Last Modified</option>
-          </select>
+        </h4>
+        <div className="my-4 w-full flex items-center">
+          <div className="flex gap-8">
+            <div className="flex gap-2 flex-col">
+              <label htmlFor="startDate" className="text-sm">
+                From Date
+              </label>
+              <input
+                type="date"
+                id="startDate"
+                className="outline-none bg-transparent"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2 flex-col">
+              <label htmlFor="endDate" className="text-sm">
+                End Date
+              </label>
+              <input
+                type="date"
+                id="endDate"
+                className="outline-none bg-transparent"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="ml-auto">
+            <SortByFilter
+              defaultValue={sortBy}
+              onChange={sortByChanged}
+              options={[
+                { name: "Name", value: "name" },
+                { name: "Last Created", value: "last_created" },
+              ]}
+            />
+          </div>
         </div>
       </div>
-      <div>
-        <Tab.Group>
-          <Tab.List>
-            <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    All
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Images
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Audio
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Video
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Cards
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Slideshow
-                  </button>
-                )}
-              </Tab>
-            </div>
-          </Tab.List>
-          <Tab.Panels>
-            <div>
-              <Tab.Panel className="flex gap-4 flex-wrap">
-                {data?.projectList?.map((memory: MemoryType) => (
-                  <NewCard
-                    key={memory.id}
-                    type={memory.projectType}
-                    name={memory.name}
-                    dropdownOptions={MemoryCardDropdownList}
-                    dataObject={memory}
-                    onClickHandler={openFileViewer}
-                    entityId={memory.id}
-                    entityType={EntityType.MEMORY}
-                    bgImage={memory.previewImage}
-                    accessRight={memory.accessRight}
-                    title={memory.title}
-                    caption={memory.caption}
-                    collectionId={memory.collectionId}
-                    journeyId={memory.journeyId}
-                  />
-                ))}
-              </Tab.Panel>
-              <Tab.Panel className="flex gap-4 flex-wrap">
-                {data?.projectList
-                  ?.filter(
-                    (memory: MemoryType) =>
-                      memory.projectType == MemoryTypes.IMAGE
-                  )
-                  .map((memory: MemoryType) => (
+      <div className="mt-10">
+        {isLoading || isFetching ? (
+          <span>Loading..</span>
+        ) : (
+          <Tab.Group>
+            <Tab.List>
+              <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
+                <Tab>
+                  {({ selected }) => (
+                    <button
+                      className={cn(
+                        "px-3 md:px-10 py-3 font-medium",
+                        selected
+                          ? "text-primary-400 border-b-2 border-primary-400"
+                          : ""
+                      )}
+                    >
+                      All
+                    </button>
+                  )}
+                </Tab>
+                <Tab>
+                  {({ selected }) => (
+                    <button
+                      className={cn(
+                        "px-3 md:px-10 py-3 font-medium",
+                        selected
+                          ? "text-primary-400 border-b-2 border-primary-400"
+                          : ""
+                      )}
+                    >
+                      Images
+                    </button>
+                  )}
+                </Tab>
+                <Tab>
+                  {({ selected }) => (
+                    <button
+                      className={cn(
+                        "px-3 md:px-10 py-3 font-medium",
+                        selected
+                          ? "text-primary-400 border-b-2 border-primary-400"
+                          : ""
+                      )}
+                    >
+                      Audio
+                    </button>
+                  )}
+                </Tab>
+                <Tab>
+                  {({ selected }) => (
+                    <button
+                      className={cn(
+                        "px-3 md:px-10 py-3 font-medium",
+                        selected
+                          ? "text-primary-400 border-b-2 border-primary-400"
+                          : ""
+                      )}
+                    >
+                      Video
+                    </button>
+                  )}
+                </Tab>
+                <Tab>
+                  {({ selected }) => (
+                    <button
+                      className={cn(
+                        "px-3 md:px-10 py-3 font-medium",
+                        selected
+                          ? "text-primary-400 border-b-2 border-primary-400"
+                          : ""
+                      )}
+                    >
+                      Cards
+                    </button>
+                  )}
+                </Tab>
+                <Tab>
+                  {({ selected }) => (
+                    <button
+                      className={cn(
+                        "px-3 md:px-10 py-3 font-medium",
+                        selected
+                          ? "text-primary-400 border-b-2 border-primary-400"
+                          : ""
+                      )}
+                    >
+                      Slideshow
+                    </button>
+                  )}
+                </Tab>
+              </div>
+            </Tab.List>
+            <Tab.Panels>
+              <div>
+                <Tab.Panel className="flex gap-4 flex-wrap">
+                  {data?.projectList?.map((memory: MemoryType) => (
                     <NewCard
                       key={memory.id}
                       type={memory.projectType}
@@ -443,155 +472,220 @@ const JourneyMemories = ({
                       journeyId={memory.journeyId}
                     />
                   ))}
-              </Tab.Panel>
-              <Tab.Panel className="flex gap-4 flex-wrap">
-                {data?.projectList
-                  ?.filter(
-                    (memory: MemoryType) =>
-                      memory.projectType == MemoryTypes.AUDIO
-                  )
-                  .map((memory: MemoryType) => (
-                    <NewCard
-                      key={memory.id}
-                      type={memory.projectType}
-                      name={memory.name}
-                      dropdownOptions={MemoryCardDropdownList}
-                      dataObject={memory}
-                      onClickHandler={openFileViewer}
-                      entityId={memory.id}
-                      entityType={EntityType.MEMORY}
-                      bgImage={memory.previewImage}
-                      accessRight={memory.accessRight}
-                      title={memory.title}
-                      caption={memory.caption}
-                      collectionId={memory.collectionId}
-                      journeyId={memory.journeyId}
-                    />
-                  ))}
-              </Tab.Panel>
-              <Tab.Panel className="flex gap-4 flex-wrap">
-                {data?.projectList
-                  ?.filter(
-                    (memory: MemoryType) =>
-                      memory.projectType == MemoryTypes.VIDEO
-                  )
-                  .map((memory: MemoryType) => (
-                    <NewCard
-                      key={memory.id}
-                      type={memory.projectType}
-                      name={memory.name}
-                      dropdownOptions={MemoryCardDropdownList}
-                      dataObject={memory}
-                      onClickHandler={openFileViewer}
-                      entityId={memory.id}
-                      entityType={EntityType.MEMORY}
-                      bgImage={memory.previewImage}
-                      accessRight={memory.accessRight}
-                      title={memory.title}
-                      caption={memory.caption}
-                      collectionId={memory.collectionId}
-                      journeyId={memory.journeyId}
-                    />
-                  ))}
-              </Tab.Panel>
-              <Tab.Panel className="flex gap-4 flex-wrap">
-                {data?.projectList
-                  ?.filter(
-                    (memory: MemoryType) =>
-                      memory.projectType == MemoryTypes.VIDEO
-                  )
-                  .map((memory: MemoryType) => (
-                    <NewCard
-                      key={memory.id}
-                      type={memory.projectType}
-                      name={memory.name}
-                      dropdownOptions={MemoryCardDropdownList}
-                      dataObject={memory}
-                      onClickHandler={openFileViewer}
-                      entityId={memory.id}
-                      entityType={EntityType.MEMORY}
-                      bgImage={memory.previewImage}
-                      accessRight={memory.accessRight}
-                      title={memory.title}
-                      caption={memory.caption}
-                      collectionId={memory.collectionId}
-                      journeyId={memory.journeyId}
-                    />
-                  ))}
-              </Tab.Panel>
-              <Tab.Panel className="flex gap-4 flex-wrap">
-                {data?.projectList
-                  ?.filter(
-                    (memory: MemoryType) =>
-                      memory.projectType == MemoryTypes.CARD
-                  )
-                  .map((memory: MemoryType) => (
-                    <NewCard
-                      key={memory.id}
-                      type={memory.projectType}
-                      name={memory.name}
-                      dropdownOptions={MemoryCardDropdownList}
-                      dataObject={memory}
-                      onClickHandler={openFileViewer}
-                      entityId={memory.id}
-                      entityType={EntityType.MEMORY}
-                      bgImage={memory.previewImage}
-                      accessRight={memory.accessRight}
-                      title={memory.title}
-                      caption={memory.caption}
-                      collectionId={memory.collectionId}
-                      journeyId={memory.journeyId}
-                    />
-                  ))}
-              </Tab.Panel>
-              <Tab.Panel className="flex gap-4 flex-wrap">
-                {data?.projectList
-                  ?.filter(
-                    (memory: MemoryType) =>
-                      memory.projectType == MemoryTypes.SLIDESHOW
-                  )
-                  .map((memory: MemoryType) => (
-                    <NewCard
-                      key={memory.id}
-                      type={memory.projectType}
-                      name={memory.name}
-                      dropdownOptions={MemoryCardDropdownList}
-                      dataObject={memory}
-                      onClickHandler={openFileViewer}
-                      entityId={memory.id}
-                      entityType={EntityType.MEMORY}
-                      bgImage={memory.previewImage}
-                      accessRight={memory.accessRight}
-                      title={memory.title}
-                      caption={memory.caption}
-                      collectionId={memory.collectionId}
-                      journeyId={memory.journeyId}
-                    />
-                  ))}
-              </Tab.Panel>
-            </div>
-          </Tab.Panels>
-        </Tab.Group>
+                </Tab.Panel>
+                <Tab.Panel className="flex gap-4 flex-wrap">
+                  {data?.projectList
+                    ?.filter(
+                      (memory: MemoryType) =>
+                        memory.projectType == MemoryTypes.IMAGE
+                    )
+                    .map((memory: MemoryType) => (
+                      <NewCard
+                        key={memory.id}
+                        type={memory.projectType}
+                        name={memory.name}
+                        dropdownOptions={MemoryCardDropdownList}
+                        dataObject={memory}
+                        onClickHandler={openFileViewer}
+                        entityId={memory.id}
+                        entityType={EntityType.MEMORY}
+                        bgImage={memory.previewImage}
+                        accessRight={memory.accessRight}
+                        title={memory.title}
+                        caption={memory.caption}
+                        collectionId={memory.collectionId}
+                        journeyId={memory.journeyId}
+                      />
+                    ))}
+                </Tab.Panel>
+                <Tab.Panel className="flex gap-4 flex-wrap">
+                  {data?.projectList
+                    ?.filter(
+                      (memory: MemoryType) =>
+                        memory.projectType == MemoryTypes.AUDIO
+                    )
+                    .map((memory: MemoryType) => (
+                      <NewCard
+                        key={memory.id}
+                        type={memory.projectType}
+                        name={memory.name}
+                        dropdownOptions={MemoryCardDropdownList}
+                        dataObject={memory}
+                        onClickHandler={openFileViewer}
+                        entityId={memory.id}
+                        entityType={EntityType.MEMORY}
+                        bgImage={memory.previewImage}
+                        accessRight={memory.accessRight}
+                        title={memory.title}
+                        caption={memory.caption}
+                        collectionId={memory.collectionId}
+                        journeyId={memory.journeyId}
+                      />
+                    ))}
+                </Tab.Panel>
+                <Tab.Panel className="flex gap-4 flex-wrap">
+                  {data?.projectList
+                    ?.filter(
+                      (memory: MemoryType) =>
+                        memory.projectType == MemoryTypes.VIDEO
+                    )
+                    .map((memory: MemoryType) => (
+                      <NewCard
+                        key={memory.id}
+                        type={memory.projectType}
+                        name={memory.name}
+                        dropdownOptions={MemoryCardDropdownList}
+                        dataObject={memory}
+                        onClickHandler={openFileViewer}
+                        entityId={memory.id}
+                        entityType={EntityType.MEMORY}
+                        bgImage={memory.previewImage}
+                        accessRight={memory.accessRight}
+                        title={memory.title}
+                        caption={memory.caption}
+                        collectionId={memory.collectionId}
+                        journeyId={memory.journeyId}
+                      />
+                    ))}
+                </Tab.Panel>
+                <Tab.Panel className="flex gap-4 flex-wrap">
+                  {data?.projectList
+                    ?.filter(
+                      (memory: MemoryType) =>
+                        memory.projectType == MemoryTypes.VIDEO
+                    )
+                    .map((memory: MemoryType) => (
+                      <NewCard
+                        key={memory.id}
+                        type={memory.projectType}
+                        name={memory.name}
+                        dropdownOptions={MemoryCardDropdownList}
+                        dataObject={memory}
+                        onClickHandler={openFileViewer}
+                        entityId={memory.id}
+                        entityType={EntityType.MEMORY}
+                        bgImage={memory.previewImage}
+                        accessRight={memory.accessRight}
+                        title={memory.title}
+                        caption={memory.caption}
+                        collectionId={memory.collectionId}
+                        journeyId={memory.journeyId}
+                      />
+                    ))}
+                </Tab.Panel>
+                <Tab.Panel className="flex gap-4 flex-wrap">
+                  {data?.projectList
+                    ?.filter(
+                      (memory: MemoryType) =>
+                        memory.projectType == MemoryTypes.CARD
+                    )
+                    .map((memory: MemoryType) => (
+                      <NewCard
+                        key={memory.id}
+                        type={memory.projectType}
+                        name={memory.name}
+                        dropdownOptions={MemoryCardDropdownList}
+                        dataObject={memory}
+                        onClickHandler={openFileViewer}
+                        entityId={memory.id}
+                        entityType={EntityType.MEMORY}
+                        bgImage={memory.previewImage}
+                        accessRight={memory.accessRight}
+                        title={memory.title}
+                        caption={memory.caption}
+                        collectionId={memory.collectionId}
+                        journeyId={memory.journeyId}
+                      />
+                    ))}
+                </Tab.Panel>
+                <Tab.Panel className="flex gap-4 flex-wrap">
+                  {data?.projectList
+                    ?.filter(
+                      (memory: MemoryType) =>
+                        memory.projectType == MemoryTypes.SLIDESHOW
+                    )
+                    .map((memory: MemoryType) => (
+                      <NewCard
+                        key={memory.id}
+                        type={memory.projectType}
+                        name={memory.name}
+                        dropdownOptions={MemoryCardDropdownList}
+                        dataObject={memory}
+                        onClickHandler={openFileViewer}
+                        entityId={memory.id}
+                        entityType={EntityType.MEMORY}
+                        bgImage={memory.previewImage}
+                        accessRight={memory.accessRight}
+                        title={memory.title}
+                        caption={memory.caption}
+                        collectionId={memory.collectionId}
+                        journeyId={memory.journeyId}
+                      />
+                    ))}
+                </Tab.Panel>
+              </div>
+            </Tab.Panels>
+          </Tab.Group>
+        )}
       </div>
       {viewFilesViewer ? (
         <FilesViewer
-          items={data?.projectList?.map((memory: MemoryType) => {
-            return {
-              type: memory.projectType,
-              entityType: EntityType.MEMORY,
-              id: memory.id,
-              name: memory.name,
-              src: memory.previewImage,
-              description: memory.caption,
-              title: memory.title,
-            };
-          })}
+          items={
+            data?.projectList?.map((memory: MemoryType) => {
+              return {
+                type: memory.projectType,
+                entityType: EntityType.MEMORY,
+                id: memory.id,
+                name: memory.name,
+                src: memory.previewImage,
+                description: memory.caption,
+                title: memory.title,
+              };
+            }) || []
+          }
           setView={setViewFilesViewer}
           activeId={activeId}
-          collectionId={data?.collectionId}
-          journeyId={data?.id}
+          collectionId={data?.collectionId || null}
+          journeyId={data?.id || null}
         />
       ) : null}
+    </div>
+  );
+};
+
+const JourneyRecentActivity = () => {
+  const params = useParams();
+  const { data, isLoading, isFetching, isError } = useGetActivityJourney(
+    params.journeyId ? params.journeyId : "-1"
+  );
+  if (isLoading || isFetching) {
+    return <span>Loading...</span>;
+  }
+  if (isError) {
+    return <span>Something went wrong !!</span>;
+  }
+  return (
+    <div>
+      <h4 className="text-base font-medium mb-4 md:mb-10 md:text-xl flex justify-between items-center">
+        Recent Activity
+      </h4>
+      <div className="overflow-scroll">
+        <div className="flex gap-4">
+          {data.map((cc: ActivityResType) => (
+            <NewCard
+              key={cc.entityId}
+              type={cc.accessType}
+              name={cc.name}
+              dropdownOptions={[]}
+              onClickHandler={() => {}}
+              entityId={cc.entityId}
+              entityType={cc.accessType}
+              bgImage={cc.bgImage}
+              accessRight={cc.accessRight}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
@@ -670,6 +764,7 @@ export default function Journey() {
           </Menu>
         </div>
       </div>
+      <JourneyRecentActivity />
       <JourneyAssets journeyId={params.journeyId ? params.journeyId : "-1"} />
       <JourneyMemories setAction={setAction} setActionModal={setActionModal} />
       <DropdownActionModals

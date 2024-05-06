@@ -8,7 +8,7 @@ import {
 import { ViewAllHeader } from "../../components/view-all/header";
 import { ViewAllToolBar } from "../../components/view-all/toolbar";
 import { useGetCollectionAssets } from "../../hooks/collection/use-fetch-collection-assets";
-import { AssetResType } from "../../types";
+import { AssetResType, EntityType } from "../../types";
 
 export const ViewAllCollectionAssets = () => {
   const params = useParams();
@@ -71,10 +71,15 @@ export const ViewAllCollectionAssets = () => {
           <ViewAllCard
             key={asset.id}
             type={asset.assetType}
-            name={""}
-            dataObject={asset}
-            defaultChecked={selectedObjs.includes(asset.id)}
+            name={asset.name}
+            defaultChecked={
+              Boolean(selectedObjs.length) && selectedObjs.includes(asset.id)
+            }
             onChangeHandler={() => updateSelectedObj(asset.id)}
+            entityId={asset.id}
+            entityType={EntityType.ASSET}
+            bgImage={asset.assetUrl}
+            accessRight={asset.accessRight}
           />
         ))}
       </div>
@@ -82,8 +87,13 @@ export const ViewAllCollectionAssets = () => {
         action={action ? action : null}
         actionModal={actionModal}
         setActionModal={setActionModal}
-        bulkIds={selectedObjs}
         afterAction={() => setSelectedObjs([])}
+        bulkIds={selectedObjs}
+        entityId={0}
+        entityType={""}
+        name={""}
+        bgImage={""}
+        accessRight={""}
       />
     </div>
   );

@@ -8,7 +8,7 @@ import {
 import { ViewAllHeader } from "../../components/view-all/header";
 import { ViewAllToolBar } from "../../components/view-all/toolbar";
 import { useGetJourneyAssets } from "../../hooks/journey/use-fetch-journey-assets";
-import { AssetResType } from "../../types";
+import { AssetResType, EntityType } from "../../types";
 
 export const ViewAllJourneyAssets = () => {
   const params = useParams();
@@ -71,10 +71,13 @@ export const ViewAllJourneyAssets = () => {
           <ViewAllCard
             key={asset.id}
             type={asset.assetType}
-            name={""}
-            dataObject={asset}
+            name={asset.name}
             defaultChecked={selectedObjs.includes(asset.id)}
             onChangeHandler={() => updateSelectedObj(asset.id)}
+            entityId={0}
+            entityType={EntityType.ASSET}
+            bgImage={asset.assetUrl}
+            accessRight={asset.accessRight}
           />
         ))}
       </div>
@@ -82,7 +85,13 @@ export const ViewAllJourneyAssets = () => {
         action={action ? action : null}
         actionModal={actionModal}
         setActionModal={setActionModal}
+        afterAction={() => setSelectedObjs([])}
         bulkIds={selectedObjs}
+        entityId={0}
+        entityType={""}
+        name={""}
+        bgImage={""}
+        accessRight={""}
       />
     </div>
   );

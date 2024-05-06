@@ -1,5 +1,6 @@
 import { DashboardCollection } from "../components/dashboard/collection";
 import { CreateProjectBanner } from "../components/dashboard/create-project-banner";
+import { DashboardRecentActivity } from "../components/dashboard/recent-activity";
 import { SharedEntity } from "../components/dashboard/shared-entity";
 
 export default function Dashboard() {
@@ -22,7 +23,10 @@ export default function Dashboard() {
           </form>
         </div> */}
         <CreateProjectBanner />
-        <div className="">
+        <div>
+          <DashboardRecentActivity />
+        </div>
+        <div className="mt-3 md:mt-10">
           <DashboardCollection />
         </div>
         <div className="mt-3 md:mt-10">
