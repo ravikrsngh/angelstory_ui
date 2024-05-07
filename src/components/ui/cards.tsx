@@ -37,7 +37,7 @@ const BasicStyleCard = ({
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center overflow-hidden">
             <div className="text-primary-400">{getHeaderIcon(type)}</div>
-            <span className="overflow-hidden whitespace-nowrap text-ellipsis">
+            <span className="text-sm overflow-hidden whitespace-nowrap text-ellipsis">
               {name}
             </span>
           </div>

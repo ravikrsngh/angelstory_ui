@@ -25,7 +25,7 @@ import {
   AssetTypes,
   EntityType,
 } from "../types";
-import { cn } from "../utils";
+import { DynamicArrayFilterType, cn, dynamicFilter } from "../utils";
 
 const CollectionAssets = ({
   collectionId,
@@ -47,6 +47,32 @@ const CollectionAssets = ({
     data?.accessRight || ""
   );
 
+  const generateCards = (filters: DynamicArrayFilterType[]) => {
+    console.log(filters);
+    if (data) {
+      const arr = dynamicFilter(data.assetList, filters);
+      return arr.map((asset: AssetResType) => (
+        <div key={asset.id}>
+          <NewCard
+            type={asset.assetType}
+            name={asset.name}
+            dropdownOptions={AssetDropdownList}
+            dataObject={asset}
+            onClickHandler={openFileViewer}
+            entityId={asset.id}
+            entityType={EntityType.ASSET}
+            bgImage={asset.assetUrl}
+            accessRight={asset.accessRight}
+          />
+          {!asset.isApproved && isNeedAprovalAccess ? (
+            <ApprovalBox entityId={asset.id} entityType={EntityType.ASSET} />
+          ) : null}
+        </div>
+      ));
+    }
+    return [];
+  };
+
   if (isLoading || isFetching) {
     return <span>Loading ...</span>;
   }
@@ -56,8 +82,8 @@ const CollectionAssets = ({
   }
 
   return (
-    <div className="lg:mt-10">
-      <h4 className="font-medium mb-5 md:mb-10 text-xl flex justify-between items-center">
+    <div className="">
+      <h4 className="font-medium mb-6 md:text-lg flex justify-between items-center">
         Assets
       </h4>
       <div>
@@ -147,49 +173,14 @@ const CollectionAssets = ({
           <Tab.Panels>
             <Tab.Panel>
               <div className="flex gap-4 overflow-auto">
-                {data.assetList?.map((asset: AssetResType) => (
-                  <div key={asset.id}>
-                    <NewCard
-                      type={asset.assetType}
-                      name={asset.name}
-                      dropdownOptions={AssetDropdownList}
-                      dataObject={asset}
-                      onClickHandler={openFileViewer}
-                      entityId={asset.id}
-                      entityType={EntityType.ASSET}
-                      bgImage={asset.assetUrl}
-                      accessRight={asset.accessRight}
-                    />
-                    {!asset.isApproved && isNeedAprovalAccess ? (
-                      <ApprovalBox
-                        entityId={asset.id}
-                        entityType={EntityType.ASSET}
-                      />
-                    ) : null}
-                  </div>
-                ))}
+                {generateCards([])}
               </div>
             </Tab.Panel>
             <Tab.Panel>
               <div className="flex gap-4 overflow-auto">
-                {data.assetList
-                  ?.filter(
-                    (asset: AssetResType) => asset.assetType == AssetTypes.IMAGE
-                  )
-                  .map((asset: AssetResType) => (
-                    <NewCard
-                      key={asset.id}
-                      type={asset.assetType}
-                      name={asset.name}
-                      dropdownOptions={AssetDropdownList}
-                      dataObject={asset}
-                      onClickHandler={openFileViewer}
-                      entityId={asset.id}
-                      entityType={EntityType.ASSET}
-                      bgImage={asset.assetUrl}
-                      accessRight={asset.accessRight}
-                    />
-                  ))}
+                {generateCards([
+                  { key: "assetType", operator: "==", value: AssetTypes.IMAGE },
+                ])}
               </div>
             </Tab.Panel>
             <Tab.Panel>
@@ -288,7 +279,7 @@ export default function Collection() {
   }
 
   return (
-    <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-10">
+    <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-8">
       <div
         className="relative rounded-md overflow-hidden p-4 pt-10 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] text-primary-950 bg-center bg-cover"
         style={{

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import dummyCatImg from "../assets/dummyCat.jpeg";
 import { DashboardCollection } from "../components/dashboard/collection";
 import { CreateProjectBanner } from "../components/dashboard/create-project-banner";
 import { DashboardRecentActivity } from "../components/dashboard/recent-activity";
@@ -6,7 +8,7 @@ import { SharedEntity } from "../components/dashboard/shared-entity";
 export default function Dashboard() {
   return (
     <>
-      <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-8 md:gap-10">
+      <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-6 md:gap-10">
         {/* <div>
           <form
             action=""
@@ -23,13 +25,57 @@ export default function Dashboard() {
           </form>
         </div> */}
         <CreateProjectBanner />
+        <div className="overflow-scroll">
+          <div className="flex gap-4">
+            <div className="basis-48 rounded-lg">
+              <Link to={"/"} className="w-full">
+                <img src={dummyCatImg} className="w-full" />
+              </Link>
+            </div>
+            <div className="basis-48 rounded-lg">
+              <Link to={"/"} className="w-full ">
+                <img src={dummyCatImg} className="w-full" />
+              </Link>
+            </div>
+            <div className="basis-48 rounded-lg">
+              <Link to={"/"} className="w-full">
+                <img src={dummyCatImg} className="w-full" />
+              </Link>
+            </div>
+            <div className="basis-48 rounded-lg">
+              <Link to={"/"} className="w-full">
+                <img src={dummyCatImg} className="w-full" />
+              </Link>
+            </div>
+            <div className="basis-48 rounded-lg">
+              <Link to={"/"} className="w-full">
+                <img src={dummyCatImg} className="w-full" />
+              </Link>
+            </div>
+            <div className="basis-48 rounded-lg">
+              <Link to={"/"} className="w-full">
+                <img src={dummyCatImg} className="w-full" />
+              </Link>
+            </div>
+            <div className="basis-48 rounded-lg">
+              <Link to={"/"} className="w-full">
+                <img src={dummyCatImg} className="w-full" />
+              </Link>
+            </div>
+            <div className="basis-48 rounded-lg">
+              <Link to={"/"} className="w-full">
+                <img src={dummyCatImg} className="w-full" />
+              </Link>
+            </div>
+          </div>
+        </div>
         <div>
           <DashboardRecentActivity />
         </div>
-        <div className="mt-3 md:mt-10">
+        <div className="">
           <DashboardCollection />
         </div>
-        <div className="mt-3 md:mt-10">
+        <div className="">
           <SharedEntity />
         </div>
       </div>

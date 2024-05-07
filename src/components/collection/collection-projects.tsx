@@ -39,8 +39,8 @@ export const CollectionProjects = ({
   }
   console.log(data);
   return (
-    <div className="mt-10">
-      <h4 className="font-medium mb-10 text-xl flex justify-between items-center">
+    <div className="">
+      <h4 className="font-medium mb-6 text-base md:text-lg flex justify-between items-center">
         Journies
         <button
           onClick={() => {

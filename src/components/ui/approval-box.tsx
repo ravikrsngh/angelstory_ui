@@ -12,8 +12,6 @@ export const ApprovalBox = ({ entityId, entityType }: ApprovalBoxPropType) => {
   const deleteAssetHook = useDeleteAssets();
   const approveAssetHook = useApproveAssets();
 
-  console.log("here");
-
   const crossClicked = () => {
     if (entityType == EntityType.ASSET) {
       deleteAssetHook.mutate([entityId]);

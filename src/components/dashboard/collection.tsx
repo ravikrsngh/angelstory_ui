@@ -63,7 +63,7 @@ export const DashboardCollection = () => {
   return (
     <>
       <div>
-        <h4 className="text-base font-medium mb-4 md:mb-10 md:text-xl flex justify-between items-center">
+        <h4 className="text-base font-medium mb-6 md:text-lg flex justify-between items-center">
           My Collection
           <div
             onClick={openModal}

@@ -14,7 +14,7 @@ export const SharedEntity = () => {
   }
   return (
     <div>
-      <h4 className="text-base font-medium mb-4 md:mb-10 md:text-xl flex justify-between items-center">
+      <h4 className="text-base font-medium mb-6 md:text-lg flex justify-between items-center">
         Shared
       </h4>
       <div>

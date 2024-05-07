@@ -58,3 +58,33 @@ export function getHeaderIcon(type: string) {
   }
   return <></>;
 }
+
+export type DynamicArrayFilterType = {
+  key: string;
+  operator: string;
+  value: string | number | boolean;
+};
+export function dynamicFilter(array, conditions) {
+  return array.filter((item) => {
+    // Check if all conditions are met for the current item
+    return conditions.every((condition) => {
+      const { key, operator, value } = condition;
+      switch (operator) {
+        case "===":
+          return item[key] === value;
+        case "!==":
+          return item[key] !== value;
+        case ">":
+          return item[key] > value;
+        case "<":
+          return item[key] < value;
+        case ">=":
+          return item[key] >= value;
+        case "<=":
+          return item[key] <= value;
+        default:
+          return false;
+      }
+    });
+  });
+}

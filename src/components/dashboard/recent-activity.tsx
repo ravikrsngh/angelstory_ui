@@ -18,7 +18,7 @@ export const DashboardRecentActivity = () => {
   }
   return (
     <div>
-      <h4 className="text-base font-medium mb-4 md:mb-10 md:text-xl flex justify-between items-center">
+      <h4 className="text-base font-medium mb-6 md:text-lg flex justify-between items-center">
         Recent Activity
       </h4>
       <div className="overflow-scroll">
