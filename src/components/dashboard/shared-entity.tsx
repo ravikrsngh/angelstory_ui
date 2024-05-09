@@ -1,11 +1,31 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   SharedEntityResType,
   useGetSharedEntity,
 } from "../../hooks/access-rights/use-get-shared-entity";
+import { EntityType } from "../../types";
 import { NewCard } from "../ui/cards";
+import { FilesViewer } from "../ui/files-viewer";
 
 export const SharedEntity = () => {
   const { isLoading, isFetching, isError, data } = useGetSharedEntity();
+  const navigate = useNavigate();
+
+  const [viewFilesViewer, setViewFilesViewer] = useState(false);
+  const [activeId, setActiveId] = useState<number>(0);
+
+  const onClickHandler = (cc: SharedEntityResType) => {
+    if (cc.accessType == EntityType.COLLECTION) {
+      navigate(`/collection/${cc.entityId}`);
+    } else if (cc.accessType == EntityType.JOURNEY) {
+      navigate(`/journey/${cc.entityId}`);
+    } else {
+      setActiveId(cc.id);
+      setViewFilesViewer(true);
+    }
+  };
+
   if (isLoading || isFetching) {
     return <span>Loading...</span>;
   }
@@ -22,10 +42,10 @@ export const SharedEntity = () => {
           {data.map((cc: SharedEntityResType) => (
             <NewCard
               key={cc.entityId}
-              type={cc.accessType}
+              type={cc.type}
               name={cc.name}
               dropdownOptions={[]}
-              onClickHandler={() => {}}
+              onClickHandler={() => onClickHandler(cc)}
               entityId={cc.entityId}
               entityType={cc.accessType}
               bgImage={cc.bgImage}
@@ -34,6 +54,23 @@ export const SharedEntity = () => {
           ))}
         </div>
       </div>
+      {viewFilesViewer ? (
+        <FilesViewer
+          items={data.map((asset: SharedEntityResType) => {
+            return {
+              type: asset.type,
+              entityType: asset.accessType,
+              id: asset.id,
+              name: asset.name,
+              src: asset.bgImage,
+            };
+          })}
+          setView={setViewFilesViewer}
+          activeId={activeId}
+          collectionId={null}
+          journeyId={null}
+        />
+      ) : null}
     </div>
   );
 };

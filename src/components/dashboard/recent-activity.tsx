@@ -26,7 +26,7 @@ export const DashboardRecentActivity = () => {
           {data.map((cc: ActivityResType) => (
             <NewCard
               key={cc.entityId}
-              type={cc.accessType}
+              type={cc.type}
               name={cc.name}
               dropdownOptions={[]}
               onClickHandler={() => {

@@ -14,23 +14,13 @@ import { AssetResType, AssetTypes, CanvasContextType } from "../../types";
 import { cn } from "../../utils";
 
 const StockImagesComp = ({ addImage }: { addImage: (url: string) => void }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("random");
   const { data, isLoading, isFetching, isError } =
     useGetStockImages(searchQuery);
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSearchQuery(e.target.search.value);
   };
-
-  if (isLoading || isFetching) {
-    return (
-      <>
-        <div className="p-5">
-          <span>Loading ...</span>
-        </div>
-      </>
-    );
-  }
 
   if (isError) {
     return (
@@ -53,16 +43,19 @@ const StockImagesComp = ({ addImage }: { addImage: (url: string) => void }) => {
           required
         />
       </form>
-      <div className="w-full grid grid-cols-2 gap-4">
-        {data.results.map((ins) => (
-          <div
-            key={ins.id}
-            className="bg-slate-100 flex items-center justify-center"
-            onClick={() => addImage(ins.urls.small)}
-          >
-            <img src={ins.urls.small} alt="" className="w-full" />
-          </div>
-        ))}
+      <div className="w-full h-[calc(100vh-274px)] overflow-auto">
+        <div className="w-full grid grid-cols-2 gap-4">
+          {isLoading || isFetching ? <span>Loading...</span> : null}
+          {data?.results.map((ins) => (
+            <div
+              key={ins.id}
+              className="bg-slate-100 flex items-center justify-center"
+              onClick={() => addImage(ins.urls.small)}
+            >
+              <img src={ins.urls.small} alt="" className="w-full" />
+            </div>
+          ))}
+        </div>
       </div>
     </>
   );
@@ -133,16 +126,18 @@ const CollectionAssetComp = ({
           </Tab>
         </Tab.List>
         <Tab.Panels>
-          <Tab.Panel className="w-full grid grid-cols-2 gap-4">
-            {data.map((ins: AssetResType) => (
-              <div
-                key={ins.id}
-                className="bg-slate-100 flex items-center justify-center"
-                onClick={() => addImage(ins.assetUrl)}
-              >
-                <img src={ins.assetUrl} alt="" className="w-full" />
-              </div>
-            ))}
+          <Tab.Panel className="w-full h-[calc(100vh-298px)] overflow-auto">
+            <div className="w-full grid grid-cols-2 gap-4">
+              {data.map((ins: AssetResType) => (
+                <div
+                  key={ins.id}
+                  className="bg-slate-100 flex items-center justify-center"
+                  onClick={() => addImage(ins.assetUrl)}
+                >
+                  <img src={ins.assetUrl} alt="" className="w-full" />
+                </div>
+              ))}
+            </div>
           </Tab.Panel>
           <Tab.Panel className="w-full">Content 3</Tab.Panel>
         </Tab.Panels>

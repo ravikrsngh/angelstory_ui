@@ -62,7 +62,7 @@ export function getHeaderIcon(type: string) {
 export type DynamicArrayFilterType = {
   key: string;
   operator: string;
-  value: string | number | boolean;
+  value: string | number | boolean | null;
 };
 export function dynamicFilter(array, conditions) {
   return array.filter((item) => {
@@ -70,6 +70,8 @@ export function dynamicFilter(array, conditions) {
     return conditions.every((condition) => {
       const { key, operator, value } = condition;
       switch (operator) {
+        case "==":
+          return item[key] == value;
         case "===":
           return item[key] === value;
         case "!==":

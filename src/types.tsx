@@ -638,4 +638,5 @@ export type ActivityResType = {
   id: number;
   name: string;
   userId: number;
+  type: string;
 };

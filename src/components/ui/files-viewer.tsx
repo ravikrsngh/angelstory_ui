@@ -1,6 +1,7 @@
 import {
   IconChevronLeft,
   IconChevronRight,
+  IconDownload,
   IconTrash,
   IconX,
 } from "@tabler/icons-react";
@@ -84,6 +85,18 @@ export const FilesViewer = (props: FilesViewerProp) => {
     }
   };
 
+  const downloadBtnClicked = (name: string, src: string) => {
+    if ([MemoryTypes.CARD].includes(activeFile?.type || "")) {
+      name = `${activeFile?.name}.jpg`;
+    } else if ([MemoryTypes.VIDEO].includes(activeFile?.type || "")) {
+      name = `${activeFile?.name}.mp4`;
+    }
+    const link = document.createElement("a");
+    link.href = src;
+    link.download = name;
+    link.click();
+  };
+
   useEffect(() => {
     for (let i = 0; i < props.items.length; i++) {
       const element = props.items[i];
@@ -143,6 +156,23 @@ export const FilesViewer = (props: FilesViewerProp) => {
                     Convert to Product
                   </div>
                 )}
+                {[
+                  MemoryTypes.AUDIO,
+                  MemoryTypes.CARD,
+                  MemoryTypes.IMAGE,
+                  MemoryTypes.PDF,
+                  MemoryTypes.SLIDESHOW,
+                  MemoryTypes.VIDEO,
+                ].includes(activeFile.type) && (
+                  <div
+                    className="hover:cursor-pointer hover:text-slate-300 text-xs"
+                    onClick={() =>
+                      downloadBtnClicked(activeFile.name, activeFile.src)
+                    }
+                  >
+                    <IconDownload />
+                  </div>
+                )}
                 <div
                   className="hover:cursor-pointer hover:text-slate-300"
                   onClick={() => setActionModal(true)}
@@ -158,7 +188,7 @@ export const FilesViewer = (props: FilesViewerProp) => {
               </div>
             )}
           </div>
-          <div className="w-full overflow-hidden py-4 px-20 flex justify-center">
+          <div className="file-view-main w-full overflow-hidden py-4 px-20 flex justify-center">
             <div className="bg-slate-50 w-fit flex justify-center">
               <div className="view grow max-w-[1121px]">
                 {[MemoryTypes.IMAGE, MemoryTypes.CARD].includes(
@@ -166,6 +196,38 @@ export const FilesViewer = (props: FilesViewerProp) => {
                 ) && (
                   <div>
                     <img src={activeFile.src} className="w-full" />
+                  </div>
+                )}
+                {[MemoryTypes.AUDIO].includes(activeFile.type) && (
+                  <div>
+                    <audio controls>
+                      <source src={activeFile.src} />
+                    </audio>
+                  </div>
+                )}
+                {[MemoryTypes.PDF].includes(activeFile.type) && (
+                  <div>
+                    <span>{activeFile.name}</span>
+                    <a href={activeFile.src}>Open</a>
+                  </div>
+                )}
+                {[MemoryTypes.VIDEO, MemoryTypes.SLIDESHOW].includes(
+                  activeFile.type
+                ) && (
+                  <div>
+                    <video src={activeFile.src} controls playsInline></video>
+                  </div>
+                )}
+                {activeFile.entityType == EntityType.COLLECTION && (
+                  <div>
+                    <p>{activeFile.name}</p>
+                    <Link to={`collection/${activeFile.id}`}>Open</Link>
+                  </div>
+                )}
+                {activeFile.entityType == EntityType.JOURNEY && (
+                  <div className="w-full">
+                    <p>{activeFile.name}</p>
+                    <Link to={`journey/${activeFile.id}`}>Open</Link>
                   </div>
                 )}
               </div>

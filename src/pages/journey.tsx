@@ -30,13 +30,49 @@ import {
   MemoryType,
   MemoryTypes,
 } from "../types";
-import { cn } from "../utils";
+import { DynamicArrayFilterType, cn, dynamicFilter } from "../utils";
 
 const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
+  const tabs = [
+    {
+      name: "All",
+      filter: [],
+    },
+    {
+      name: "Images",
+      filter: [
+        {
+          key: "assetType",
+          operator: "==",
+          value: AssetTypes.IMAGE,
+        },
+      ],
+    },
+    {
+      name: "Audio",
+      filter: [
+        {
+          key: "assetType",
+          operator: "==",
+          value: AssetTypes.AUDIO,
+        },
+      ],
+    },
+    {
+      name: "Videos",
+      filter: [
+        {
+          key: "assetType",
+          operator: "==",
+          value: AssetTypes.VIDEO,
+        },
+      ],
+    },
+  ];
   const { data, isLoading, isFetching, isError } = useGetJourneyAssets(
     String(journeyId)
   );
-
+  const [dataCopy, setDataCopy] = useState<AssetResType[] | undefined>([]);
   const [viewFilesViewer, setViewFilesViewer] = useState(false);
   const [activeId, setActiveId] = useState<number>(0);
 
@@ -50,6 +86,18 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
     data?.accessRight || ""
   );
 
+  const filterDataCopy = (filters: DynamicArrayFilterType[]) => {
+    if (dataCopy) {
+      const arr = dynamicFilter(data?.assetList, filters);
+      setDataCopy(arr);
+    }
+    return [];
+  };
+
+  useEffect(() => {
+    setDataCopy(data?.assetList);
+  }, [data]);
+
   if (isLoading || isFetching) {
     return <span>Loading ...</span>;
   }
@@ -59,70 +107,31 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
   }
 
   return (
-    <div className="lg:mt-10">
-      <h4 className="font-medium mb-5 md:mb-10 text-xl flex justify-between items-center">
+    <div className="">
+      <h4 className="font-medium mb-6 text-base md:text-lg flex justify-between items-center">
         Assets
       </h4>
       <div>
         <Tab.Group>
           <Tab.List>
             <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    All
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Images
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Audio
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Video
-                  </button>
-                )}
-              </Tab>
+              {tabs.map((tab) => (
+                <Tab key={tab.name}>
+                  {({ selected }) => (
+                    <button
+                      className={cn(
+                        "px-3 md:px-10 py-3 font-medium",
+                        selected
+                          ? "text-primary-400 border-b-2 border-primary-400"
+                          : ""
+                      )}
+                      onClick={() => filterDataCopy(tab.filter)}
+                    >
+                      {tab.name}
+                    </button>
+                  )}
+                </Tab>
+              ))}
               {isNeedAprovalAccess && (
                 <Tab>
                   {({ selected }) => (
@@ -133,6 +142,15 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                           ? "text-primary-400 border-b-2 border-primary-400"
                           : ""
                       )}
+                      onClick={() =>
+                        filterDataCopy([
+                          {
+                            key: "isApproved",
+                            operator: "==",
+                            value: null,
+                          },
+                        ])
+                      }
                     >
                       Needs Approval
                     </button>
@@ -147,91 +165,29 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
               </Link>
             </div>
           </Tab.List>
-          <Tab.Panels>
-            <Tab.Panel>
-              <div className="flex gap-4 overflow-auto">
-                {data.assetList?.map((asset: AssetResType) => (
-                  <div key={asset.id}>
-                    <NewCard
-                      type={asset.assetType}
-                      name={asset.name}
-                      dropdownOptions={AssetDropdownList}
-                      entityId={asset.id}
-                      entityType={EntityType.ASSET}
-                      bgImage={asset.assetUrl}
-                      accessRight={asset.accessRight}
-                      onClickHandler={openFileViewer}
-                    />
-                    {!asset.isApproved && isNeedAprovalAccess ? (
-                      <ApprovalBox
-                        entityId={asset.id}
-                        entityType={EntityType.ASSET}
-                      />
-                    ) : null}
-                  </div>
-                ))}
+          <div className="flex gap-4 overflow-auto">
+            {dataCopy?.map((asset: AssetResType) => (
+              <div key={asset.id}>
+                <NewCard
+                  type={asset.assetType}
+                  name={asset.name}
+                  dropdownOptions={AssetDropdownList}
+                  dataObject={asset}
+                  onClickHandler={openFileViewer}
+                  entityId={asset.id}
+                  entityType={EntityType.ASSET}
+                  bgImage={asset.assetUrl}
+                  accessRight={asset.accessRight}
+                />
+                {!asset.isApproved && isNeedAprovalAccess ? (
+                  <ApprovalBox
+                    entityId={asset.id}
+                    entityType={EntityType.ASSET}
+                  />
+                ) : null}
               </div>
-            </Tab.Panel>
-            <Tab.Panel>
-              <div className="flex gap-4 overflow-auto">
-                {data.assetList
-                  ?.filter(
-                    (asset: AssetResType) => asset.assetType == AssetTypes.IMAGE
-                  )
-                  .map((asset: AssetResType) => (
-                    <div key={asset.id}>
-                      <NewCard
-                        type={asset.assetType}
-                        name={asset.name}
-                        dropdownOptions={AssetDropdownList}
-                        entityId={asset.id}
-                        entityType={EntityType.ASSET}
-                        bgImage={asset.assetUrl}
-                        accessRight={asset.accessRight}
-                      />
-                    </div>
-                  ))}
-              </div>
-            </Tab.Panel>
-            <Tab.Panel>
-              <div className="flex gap-4 overflow-auto">
-                {data.assetList
-                  ?.filter(
-                    (asset: AssetResType) => asset.assetType == AssetTypes.AUDIO
-                  )
-                  .map((asset: AssetResType) => (
-                    <NewCard
-                      type={asset.assetType}
-                      name={asset.name}
-                      dropdownOptions={AssetDropdownList}
-                      entityId={asset.id}
-                      entityType={EntityType.ASSET}
-                      bgImage={asset.assetUrl}
-                      accessRight={asset.accessRight}
-                    />
-                  ))}
-              </div>
-            </Tab.Panel>
-            <Tab.Panel>
-              <div className="flex gap-4 overflow-auto">
-                {data.assetList
-                  ?.filter(
-                    (asset: AssetResType) => asset.assetType == AssetTypes.VIDEO
-                  )
-                  .map((asset: AssetResType) => (
-                    <NewCard
-                      type={asset.assetType}
-                      name={asset.name}
-                      dropdownOptions={AssetDropdownList}
-                      entityId={asset.id}
-                      entityType={EntityType.ASSET}
-                      bgImage={asset.assetUrl}
-                      accessRight={asset.accessRight}
-                    />
-                  ))}
-              </div>
-            </Tab.Panel>
-          </Tab.Panels>
+            ))}
+          </div>
         </Tab.Group>
       </div>
       {viewFilesViewer ? (
@@ -262,6 +218,62 @@ const JourneyMemories = ({
   setAction: Dispatch<SetStateAction<number>>;
   setActionModal: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const tabs = [
+    {
+      name: "All",
+      filter: [],
+    },
+    {
+      name: "Images",
+      filter: [
+        {
+          key: "projectType",
+          operator: "==",
+          value: MemoryTypes.IMAGE,
+        },
+      ],
+    },
+    {
+      name: "Audio",
+      filter: [
+        {
+          key: "projectType",
+          operator: "==",
+          value: MemoryTypes.AUDIO,
+        },
+      ],
+    },
+    {
+      name: "Videos",
+      filter: [
+        {
+          key: "projectType",
+          operator: "==",
+          value: MemoryTypes.VIDEO,
+        },
+      ],
+    },
+    {
+      name: "Card",
+      filter: [
+        {
+          key: "projectType",
+          operator: "==",
+          value: MemoryTypes.CARD,
+        },
+      ],
+    },
+    {
+      name: "Slideshow",
+      filter: [
+        {
+          key: "projectType",
+          operator: "==",
+          value: MemoryTypes.SLIDESHOW,
+        },
+      ],
+    },
+  ];
   const params = useParams();
   const [sortBy, setSortBy] = useState<string>("-last_created");
   const [startDate, setStartDate] = useState<string>("");
@@ -274,6 +286,7 @@ const JourneyMemories = ({
       endDate: endDate,
     }
   );
+  const [dataCopy, setDataCopy] = useState<MemoryType[] | undefined>([]);
   const [viewFilesViewer, setViewFilesViewer] = useState(false);
   const [activeId, setActiveId] = useState<number>(0);
 
@@ -293,14 +306,26 @@ const JourneyMemories = ({
     setEndDate("");
   };
 
+  const filterDataCopy = (filters: DynamicArrayFilterType[]) => {
+    if (dataCopy) {
+      const arr = dynamicFilter(data?.projectList, filters);
+      setDataCopy(arr);
+    }
+    return [];
+  };
+
+  useEffect(() => {
+    setDataCopy(data?.projectList);
+  }, [data]);
+
   useEffect(() => {
     refetch();
   }, [sortBy, startDate, endDate]);
 
   console.log(data);
   return (
-    <div className="mt-10">
-      <h4 className="font-medium mb-10 text-xl flex justify-between items-center">
+    <div className="">
+      <h4 className="font-medium mb-6 text-base md:text-lg flex justify-between items-center">
         Memories
         <button
           onClick={() => {
@@ -365,266 +390,45 @@ const JourneyMemories = ({
           <Tab.Group>
             <Tab.List>
               <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "px-3 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      All
-                    </button>
-                  )}
-                </Tab>
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "px-3 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Images
-                    </button>
-                  )}
-                </Tab>
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "px-3 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Audio
-                    </button>
-                  )}
-                </Tab>
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "px-3 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Video
-                    </button>
-                  )}
-                </Tab>
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "px-3 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Cards
-                    </button>
-                  )}
-                </Tab>
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "px-3 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Slideshow
-                    </button>
-                  )}
-                </Tab>
+                {tabs.map((tab) => (
+                  <Tab key={tab.name}>
+                    {({ selected }) => (
+                      <button
+                        className={cn(
+                          "px-3 md:px-10 py-3 font-medium",
+                          selected
+                            ? "text-primary-400 border-b-2 border-primary-400"
+                            : ""
+                        )}
+                        onClick={() => filterDataCopy(tab.filter)}
+                      >
+                        {tab.name}
+                      </button>
+                    )}
+                  </Tab>
+                ))}
               </div>
             </Tab.List>
-            <Tab.Panels>
-              <div>
-                <Tab.Panel className="flex gap-4 flex-wrap">
-                  {data?.projectList?.map((memory: MemoryType) => (
-                    <NewCard
-                      key={memory.id}
-                      type={memory.projectType}
-                      name={memory.name}
-                      dropdownOptions={MemoryCardDropdownList}
-                      dataObject={memory}
-                      onClickHandler={openFileViewer}
-                      entityId={memory.id}
-                      entityType={EntityType.MEMORY}
-                      bgImage={memory.previewImage}
-                      accessRight={memory.accessRight}
-                      title={memory.title}
-                      caption={memory.caption}
-                      collectionId={memory.collectionId}
-                      journeyId={memory.journeyId}
-                    />
-                  ))}
-                </Tab.Panel>
-                <Tab.Panel className="flex gap-4 flex-wrap">
-                  {data?.projectList
-                    ?.filter(
-                      (memory: MemoryType) =>
-                        memory.projectType == MemoryTypes.IMAGE
-                    )
-                    .map((memory: MemoryType) => (
-                      <NewCard
-                        key={memory.id}
-                        type={memory.projectType}
-                        name={memory.name}
-                        dropdownOptions={MemoryCardDropdownList}
-                        dataObject={memory}
-                        onClickHandler={openFileViewer}
-                        entityId={memory.id}
-                        entityType={EntityType.MEMORY}
-                        bgImage={memory.previewImage}
-                        accessRight={memory.accessRight}
-                        title={memory.title}
-                        caption={memory.caption}
-                        collectionId={memory.collectionId}
-                        journeyId={memory.journeyId}
-                      />
-                    ))}
-                </Tab.Panel>
-                <Tab.Panel className="flex gap-4 flex-wrap">
-                  {data?.projectList
-                    ?.filter(
-                      (memory: MemoryType) =>
-                        memory.projectType == MemoryTypes.AUDIO
-                    )
-                    .map((memory: MemoryType) => (
-                      <NewCard
-                        key={memory.id}
-                        type={memory.projectType}
-                        name={memory.name}
-                        dropdownOptions={MemoryCardDropdownList}
-                        dataObject={memory}
-                        onClickHandler={openFileViewer}
-                        entityId={memory.id}
-                        entityType={EntityType.MEMORY}
-                        bgImage={memory.previewImage}
-                        accessRight={memory.accessRight}
-                        title={memory.title}
-                        caption={memory.caption}
-                        collectionId={memory.collectionId}
-                        journeyId={memory.journeyId}
-                      />
-                    ))}
-                </Tab.Panel>
-                <Tab.Panel className="flex gap-4 flex-wrap">
-                  {data?.projectList
-                    ?.filter(
-                      (memory: MemoryType) =>
-                        memory.projectType == MemoryTypes.VIDEO
-                    )
-                    .map((memory: MemoryType) => (
-                      <NewCard
-                        key={memory.id}
-                        type={memory.projectType}
-                        name={memory.name}
-                        dropdownOptions={MemoryCardDropdownList}
-                        dataObject={memory}
-                        onClickHandler={openFileViewer}
-                        entityId={memory.id}
-                        entityType={EntityType.MEMORY}
-                        bgImage={memory.previewImage}
-                        accessRight={memory.accessRight}
-                        title={memory.title}
-                        caption={memory.caption}
-                        collectionId={memory.collectionId}
-                        journeyId={memory.journeyId}
-                      />
-                    ))}
-                </Tab.Panel>
-                <Tab.Panel className="flex gap-4 flex-wrap">
-                  {data?.projectList
-                    ?.filter(
-                      (memory: MemoryType) =>
-                        memory.projectType == MemoryTypes.VIDEO
-                    )
-                    .map((memory: MemoryType) => (
-                      <NewCard
-                        key={memory.id}
-                        type={memory.projectType}
-                        name={memory.name}
-                        dropdownOptions={MemoryCardDropdownList}
-                        dataObject={memory}
-                        onClickHandler={openFileViewer}
-                        entityId={memory.id}
-                        entityType={EntityType.MEMORY}
-                        bgImage={memory.previewImage}
-                        accessRight={memory.accessRight}
-                        title={memory.title}
-                        caption={memory.caption}
-                        collectionId={memory.collectionId}
-                        journeyId={memory.journeyId}
-                      />
-                    ))}
-                </Tab.Panel>
-                <Tab.Panel className="flex gap-4 flex-wrap">
-                  {data?.projectList
-                    ?.filter(
-                      (memory: MemoryType) =>
-                        memory.projectType == MemoryTypes.CARD
-                    )
-                    .map((memory: MemoryType) => (
-                      <NewCard
-                        key={memory.id}
-                        type={memory.projectType}
-                        name={memory.name}
-                        dropdownOptions={MemoryCardDropdownList}
-                        dataObject={memory}
-                        onClickHandler={openFileViewer}
-                        entityId={memory.id}
-                        entityType={EntityType.MEMORY}
-                        bgImage={memory.previewImage}
-                        accessRight={memory.accessRight}
-                        title={memory.title}
-                        caption={memory.caption}
-                        collectionId={memory.collectionId}
-                        journeyId={memory.journeyId}
-                      />
-                    ))}
-                </Tab.Panel>
-                <Tab.Panel className="flex gap-4 flex-wrap">
-                  {data?.projectList
-                    ?.filter(
-                      (memory: MemoryType) =>
-                        memory.projectType == MemoryTypes.SLIDESHOW
-                    )
-                    .map((memory: MemoryType) => (
-                      <NewCard
-                        key={memory.id}
-                        type={memory.projectType}
-                        name={memory.name}
-                        dropdownOptions={MemoryCardDropdownList}
-                        dataObject={memory}
-                        onClickHandler={openFileViewer}
-                        entityId={memory.id}
-                        entityType={EntityType.MEMORY}
-                        bgImage={memory.previewImage}
-                        accessRight={memory.accessRight}
-                        title={memory.title}
-                        caption={memory.caption}
-                        collectionId={memory.collectionId}
-                        journeyId={memory.journeyId}
-                      />
-                    ))}
-                </Tab.Panel>
-              </div>
-            </Tab.Panels>
+            <div className="flex gap-4 flex-wrap">
+              {dataCopy?.map((memory: MemoryType) => (
+                <NewCard
+                  key={memory.id}
+                  type={memory.projectType}
+                  name={memory.name}
+                  dropdownOptions={MemoryCardDropdownList}
+                  dataObject={memory}
+                  onClickHandler={openFileViewer}
+                  entityId={memory.id}
+                  entityType={EntityType.MEMORY}
+                  bgImage={memory.previewImage}
+                  accessRight={memory.accessRight}
+                  title={memory.title}
+                  caption={memory.caption}
+                  collectionId={memory.collectionId}
+                  journeyId={memory.journeyId}
+                />
+              ))}
+            </div>
           </Tab.Group>
         )}
       </div>
@@ -666,7 +470,7 @@ const JourneyRecentActivity = () => {
   }
   return (
     <div>
-      <h4 className="text-base font-medium mb-4 md:mb-10 md:text-xl flex justify-between items-center">
+      <h4 className="text-base font-medium mb-6 md:text-lg flex justify-between items-center">
         Recent Activity
       </h4>
       <div className="overflow-scroll">
@@ -716,7 +520,7 @@ export default function Journey() {
   }
 
   return (
-    <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-10">
+    <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-8">
       <div
         className="relative rounded-md p-4 pt-10 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] text-primary-950 bg-cover bg-center"
         style={{

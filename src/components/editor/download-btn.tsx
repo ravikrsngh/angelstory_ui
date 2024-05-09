@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment, useContext } from "react";
-import { CanvasContext } from "../../context/canvasContext";
+import { IconDownload } from "@tabler/icons-react";
 import { fabric } from "fabric";
 import * as JSZip from "jszip";
-import { IconDownload } from "@tabler/icons-react";
+import { Fragment, useContext } from "react";
+import { CanvasContext } from "../../context/canvasContext";
 import { CanvasContextType } from "../../types";
 
 export const DownloadButton = () => {

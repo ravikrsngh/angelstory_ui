@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { IconTrash } from "@tabler/icons-react";
+import { fabric } from "fabric";
 import React, {
   ChangeEventHandler,
   useContext,
   useEffect,
   useState,
 } from "react";
-import BackgroundImageSize from "./background-image-size";
 import { CanvasContext } from "../../../context/canvasContext";
-import BackgroundImagePosition from "./background-image-position";
-import { BackgroundImageOptions } from "./backgroud-image-options";
-import { IconTrash } from "@tabler/icons-react";
-import { fabric } from "fabric";
-import { CanvasContextType } from "../../../types";
 import { useGetStockImages } from "../../../hooks/others/use-stock-photos";
+import { CanvasContextType } from "../../../types";
+import { BackgroundImageOptions } from "./backgroud-image-options";
+import BackgroundImagePosition from "./background-image-position";
+import BackgroundImageSize from "./background-image-size";
 
 export default function BackgroundImageSection() {
   const { fabricRef, recordChange } = useContext(
@@ -20,14 +20,15 @@ export default function BackgroundImageSection() {
   );
   const [position, setPosition] = useState(0);
   const [size, setSize] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const {data, isLoading, isFetching, isError} = useGetStockImages(searchQuery);
+  const [searchQuery, setSearchQuery] = useState("random");
+  const { data, isLoading, isFetching, isError } =
+    useGetStockImages(searchQuery);
 
   //@ts-ignore
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setSearchQuery(e.target.search.value)
-  }
+    setSearchQuery(e.target.search.value);
+  };
 
   const onSelectFileFromDevice: ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.currentTarget.files ? e.currentTarget.files[0] : null;
@@ -122,8 +123,7 @@ export default function BackgroundImageSection() {
     }
   };
 
-  const removeBackgroundImage = (
-  ) => {
+  const removeBackgroundImage = () => {
     if (fabricRef.current) {
       // @ts-ignore
       fabricRef.current.setBackgroundImage(null, () => {});
@@ -138,19 +138,21 @@ export default function BackgroundImageSection() {
   if (isLoading || isFetching) {
     return (
       <>
-      <div className="p-5">
-        <span>Loading ...</span>
-        </div></>
-    )
+        <div className="p-5">
+          <span>Loading ...</span>
+        </div>
+      </>
+    );
   }
 
   if (isError) {
     return (
       <>
-      <div className="p-5">
-        <span>Something went wrong ...</span>
-        </div></>
-    )
+        <div className="p-5">
+          <span>Something went wrong ...</span>
+        </div>
+      </>
+    );
   }
 
   return (
@@ -197,18 +199,18 @@ export default function BackgroundImageSection() {
         />
       </form>
       <div className="w-full grid grid-cols-2 gap-4">
-        
         {
           //@ts-ignore
-        data.results.map((ins) => (
-          <div
-            key={ins.id}
-            className="bg-slate-100 flex items-center justify-center"
-            onClick={() => setBackgroundImage(ins.urls.regular)}
-          >
-            <img src={ins.urls.small} alt="" className="w-full" />
-          </div>
-        ))}
+          data.results.map((ins) => (
+            <div
+              key={ins.id}
+              className="bg-slate-100 flex items-center justify-center"
+              onClick={() => setBackgroundImage(ins.urls.regular)}
+            >
+              <img src={ins.urls.small} alt="" className="w-full" />
+            </div>
+          ))
+        }
       </div>
     </>
   );

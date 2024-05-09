@@ -25,50 +25,51 @@ export default function Dashboard() {
           </form>
         </div> */}
         <CreateProjectBanner />
-        <div className="overflow-scroll">
+        <div className="overflow-x-auto">
           <div className="flex gap-4">
-            <div className="basis-48 rounded-lg">
+            <div className="min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="basis-48 rounded-lg">
-              <Link to={"/"} className="w-full ">
-                <img src={dummyCatImg} className="w-full" />
-              </Link>
-            </div>
-            <div className="basis-48 rounded-lg">
+            <div className="min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="basis-48 rounded-lg">
+            <div className="min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="basis-48 rounded-lg">
+            <div className="min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="basis-48 rounded-lg">
+            <div className="min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="basis-48 rounded-lg">
+            <div className="min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="basis-48 rounded-lg">
+            <div className="min-w-[200px] rounded-lg">
+              <Link to={"/"} className="w-full">
+                <img src={dummyCatImg} className="w-full" />
+              </Link>
+            </div>
+            <div className="min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
           </div>
         </div>
+
         <div>
           <DashboardRecentActivity />
         </div>

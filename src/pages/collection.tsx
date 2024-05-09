@@ -1,6 +1,6 @@
 import { Menu, Tab, Transition } from "@headlessui/react";
 import { IconDots } from "@tabler/icons-react";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { CollectionProjects } from "../components/collection/collection-projects";
 import { CollectionRecentActivity } from "../components/collection/recent-activity";
@@ -32,9 +32,46 @@ const CollectionAssets = ({
 }: {
   collectionId: number | undefined;
 }) => {
+  const tabs = [
+    {
+      name: "All",
+      filter: [],
+    },
+    {
+      name: "Images",
+      filter: [
+        {
+          key: "assetType",
+          operator: "==",
+          value: AssetTypes.IMAGE,
+        },
+      ],
+    },
+    {
+      name: "Audio",
+      filter: [
+        {
+          key: "assetType",
+          operator: "==",
+          value: AssetTypes.AUDIO,
+        },
+      ],
+    },
+    {
+      name: "Videos",
+      filter: [
+        {
+          key: "assetType",
+          operator: "==",
+          value: AssetTypes.VIDEO,
+        },
+      ],
+    },
+  ];
   const { data, isLoading, isFetching, isError } = useGetCollectionAssets(
     String(collectionId)
   );
+  const [dataCopy, setDataCopy] = useState<AssetResType[] | undefined>([]);
   const [viewFilesViewer, setViewFilesViewer] = useState(false);
   const [activeId, setActiveId] = useState<number>(0);
 
@@ -47,31 +84,17 @@ const CollectionAssets = ({
     data?.accessRight || ""
   );
 
-  const generateCards = (filters: DynamicArrayFilterType[]) => {
-    console.log(filters);
-    if (data) {
-      const arr = dynamicFilter(data.assetList, filters);
-      return arr.map((asset: AssetResType) => (
-        <div key={asset.id}>
-          <NewCard
-            type={asset.assetType}
-            name={asset.name}
-            dropdownOptions={AssetDropdownList}
-            dataObject={asset}
-            onClickHandler={openFileViewer}
-            entityId={asset.id}
-            entityType={EntityType.ASSET}
-            bgImage={asset.assetUrl}
-            accessRight={asset.accessRight}
-          />
-          {!asset.isApproved && isNeedAprovalAccess ? (
-            <ApprovalBox entityId={asset.id} entityType={EntityType.ASSET} />
-          ) : null}
-        </div>
-      ));
+  const filterDataCopy = (filters: DynamicArrayFilterType[]) => {
+    if (dataCopy) {
+      const arr = dynamicFilter(data?.assetList, filters);
+      setDataCopy(arr);
     }
     return [];
   };
+
+  useEffect(() => {
+    setDataCopy(data?.assetList);
+  }, [data]);
 
   if (isLoading || isFetching) {
     return <span>Loading ...</span>;
@@ -90,62 +113,23 @@ const CollectionAssets = ({
         <Tab.Group>
           <Tab.List>
             <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    All
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Images
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Audio
-                  </button>
-                )}
-              </Tab>
-              <Tab>
-                {({ selected }) => (
-                  <button
-                    className={cn(
-                      "px-3 md:px-10 py-3 font-medium",
-                      selected
-                        ? "text-primary-400 border-b-2 border-primary-400"
-                        : ""
-                    )}
-                  >
-                    Video
-                  </button>
-                )}
-              </Tab>
+              {tabs.map((tab) => (
+                <Tab key={tab.name}>
+                  {({ selected }) => (
+                    <button
+                      className={cn(
+                        "px-3 md:px-10 py-3 font-medium",
+                        selected
+                          ? "text-primary-400 border-b-2 border-primary-400"
+                          : ""
+                      )}
+                      onClick={() => filterDataCopy(tab.filter)}
+                    >
+                      {tab.name}
+                    </button>
+                  )}
+                </Tab>
+              ))}
               {isNeedAprovalAccess && (
                 <Tab>
                   {({ selected }) => (
@@ -156,6 +140,15 @@ const CollectionAssets = ({
                           ? "text-primary-400 border-b-2 border-primary-400"
                           : ""
                       )}
+                      onClick={() =>
+                        filterDataCopy([
+                          {
+                            key: "isApproved",
+                            operator: "==",
+                            value: null,
+                          },
+                        ])
+                      }
                     >
                       Needs Approval
                     </button>
@@ -170,64 +163,29 @@ const CollectionAssets = ({
               </Link>
             </div>
           </Tab.List>
-          <Tab.Panels>
-            <Tab.Panel>
-              <div className="flex gap-4 overflow-auto">
-                {generateCards([])}
+          <div className="flex gap-4 overflow-auto">
+            {dataCopy?.map((asset: AssetResType) => (
+              <div key={asset.id}>
+                <NewCard
+                  type={asset.assetType}
+                  name={asset.name}
+                  dropdownOptions={AssetDropdownList}
+                  dataObject={asset}
+                  onClickHandler={openFileViewer}
+                  entityId={asset.id}
+                  entityType={EntityType.ASSET}
+                  bgImage={asset.assetUrl}
+                  accessRight={asset.accessRight}
+                />
+                {!asset.isApproved && isNeedAprovalAccess ? (
+                  <ApprovalBox
+                    entityId={asset.id}
+                    entityType={EntityType.ASSET}
+                  />
+                ) : null}
               </div>
-            </Tab.Panel>
-            <Tab.Panel>
-              <div className="flex gap-4 overflow-auto">
-                {generateCards([
-                  { key: "assetType", operator: "==", value: AssetTypes.IMAGE },
-                ])}
-              </div>
-            </Tab.Panel>
-            <Tab.Panel>
-              <div className="flex gap-4 overflow-auto">
-                {data.assetList
-                  ?.filter(
-                    (asset: AssetResType) => asset.assetType == AssetTypes.AUDIO
-                  )
-                  .map((asset: AssetResType) => (
-                    <NewCard
-                      key={asset.id}
-                      type={asset.assetType}
-                      name={asset.name}
-                      dropdownOptions={AssetDropdownList}
-                      dataObject={asset}
-                      onClickHandler={openFileViewer}
-                      entityId={asset.id}
-                      entityType={EntityType.ASSET}
-                      bgImage={asset.assetUrl}
-                      accessRight={asset.accessRight}
-                    />
-                  ))}
-              </div>
-            </Tab.Panel>
-            <Tab.Panel>
-              <div className="flex gap-4 overflow-auto">
-                {data.assetList
-                  ?.filter(
-                    (asset: AssetResType) => asset.assetType == AssetTypes.VIDEO
-                  )
-                  .map((asset: AssetResType) => (
-                    <NewCard
-                      key={asset.id}
-                      type={asset.assetType}
-                      name={asset.name}
-                      dropdownOptions={AssetDropdownList}
-                      dataObject={asset}
-                      onClickHandler={openFileViewer}
-                      entityId={asset.id}
-                      entityType={EntityType.ASSET}
-                      bgImage={asset.assetUrl}
-                      accessRight={asset.accessRight}
-                    />
-                  ))}
-              </div>
-            </Tab.Panel>
-          </Tab.Panels>
+            ))}
+          </div>
         </Tab.Group>
       </div>
       {viewFilesViewer ? (

@@ -29,13 +29,19 @@ export const ApprovalBox = ({ entityId, entityType }: ApprovalBoxPropType) => {
 
   return (
     <div
-      className="p-3 flex justify-center items-center gap-4 bg-white mt-3"
+      className="p-3 flex justify-center items-center gap-4 bg-white mt-3 text-white"
       onClick={(e) => e.stopPropagation()}
     >
-      <button onClick={approve}>
+      <button
+        className="rounded-full w-10 h-10 bg-[#57B055] flex items-center justify-center "
+        onClick={approve}
+      >
         <IconCheck />
       </button>
-      <button onClick={crossClicked}>
+      <button
+        className="rounded-full w-10 h-10 bg-[#B53535] flex items-center justify-center "
+        onClick={crossClicked}
+      >
         <IconX />
       </button>
     </div>
