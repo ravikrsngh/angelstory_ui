@@ -156,6 +156,16 @@ export const DropdownActions = {
     name: "Upload",
     icon: <IconPlus />,
   },
+  SHARE_MEMORY: {
+    id: 26,
+    name: "Share",
+    icon: <IconUserShare />,
+  },
+  MANAGE_ACCESS_MEMORY: {
+    id: 27,
+    name: "Manage Access",
+    icon: <></>,
+  },
 };
 
 export const CollectionDropdownList = [
@@ -212,6 +222,8 @@ export const MemoryCardDropdownList = [
   DropdownActions.DELETE_MEMORY,
   DropdownActions.MOVE_MEMORY,
   DropdownActions.COPY_MEMORY,
+  DropdownActions.SHARE_MEMORY,
+  DropdownActions.MANAGE_ACCESS_MEMORY,
 ];
 
 export const DropdownActionModals = ({
@@ -608,6 +620,38 @@ export const DropdownActionModals = ({
             }
             journeyId={rest.journeyId ? (rest.journeyId as number) : -1}
             source={SourceMemory.UPLOAD}
+            setActionModal={setActionModal}
+          />
+        </Modal>
+      )}
+      {action == DropdownActions.SHARE_MEMORY.id && (
+        <Modal
+          headerLabel="Share Memory"
+          openModal={actionModal}
+          setOpenModal={setActionModal}
+        >
+          <ShareModal
+            entityType={EntityType.MEMORY}
+            entityId={entityId}
+            name={name}
+            bgImage={bgImage}
+            accessRight={accessRight}
+            setActionModal={setActionModal}
+          />
+        </Modal>
+      )}
+      {action == DropdownActions.MANAGE_ACCESS_MEMORY.id && (
+        <Modal
+          headerLabel="Manage Access"
+          openModal={actionModal}
+          setOpenModal={setActionModal}
+        >
+          <ManageAccessModal
+            entityType={EntityType.MEMORY}
+            entityId={entityId}
+            name={name}
+            bgImage={bgImage}
+            accessRight={accessRight}
             setActionModal={setActionModal}
           />
         </Modal>

@@ -50,6 +50,8 @@ export const DashboardRecentActivity = () => {
               id: asset.id,
               name: asset.name,
               src: asset.bgImage,
+              collectionId: null,
+              journeyId: null,
             };
           })}
           setView={setViewFilesViewer}

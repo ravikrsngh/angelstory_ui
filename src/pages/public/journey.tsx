@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NewCard } from "../../components/ui/cards";
 import {
   FilesViewer,
@@ -13,12 +13,110 @@ import {
   MemoryType,
   MemoryTypes,
 } from "../../types";
-import { cn } from "../../utils";
+import { DynamicArrayFilterType, cn, dynamicFilter } from "../../utils";
 
 export const JourneyPublicPage = ({ id }: { id: number }) => {
+  const assetTabs = [
+    {
+      name: "All",
+      filter: [],
+    },
+    {
+      name: "Images",
+      filter: [
+        {
+          key: "assetType",
+          operator: "==",
+          value: AssetTypes.IMAGE,
+        },
+      ],
+    },
+    {
+      name: "Audio",
+      filter: [
+        {
+          key: "assetType",
+          operator: "==",
+          value: AssetTypes.AUDIO,
+        },
+      ],
+    },
+    {
+      name: "Videos",
+      filter: [
+        {
+          key: "assetType",
+          operator: "==",
+          value: AssetTypes.VIDEO,
+        },
+      ],
+    },
+  ];
+  const memoryTabs = [
+    {
+      name: "All",
+      filter: [],
+    },
+    {
+      name: "Images",
+      filter: [
+        {
+          key: "projectType",
+          operator: "==",
+          value: MemoryTypes.IMAGE,
+        },
+      ],
+    },
+    {
+      name: "Audio",
+      filter: [
+        {
+          key: "projectType",
+          operator: "==",
+          value: MemoryTypes.AUDIO,
+        },
+      ],
+    },
+    {
+      name: "Videos",
+      filter: [
+        {
+          key: "projectType",
+          operator: "==",
+          value: MemoryTypes.VIDEO,
+        },
+      ],
+    },
+    {
+      name: "Card",
+      filter: [
+        {
+          key: "projectType",
+          operator: "==",
+          value: MemoryTypes.CARD,
+        },
+      ],
+    },
+    {
+      name: "Slideshow",
+      filter: [
+        {
+          key: "projectType",
+          operator: "==",
+          value: MemoryTypes.SLIDESHOW,
+        },
+      ],
+    },
+  ];
   const { data, isLoading, isFetching, isError } = useGetJourneyDetails(
     String(id)
   );
+  const [assetDataCopy, setAssetDataCopy] = useState<
+    AssetResType[] | undefined
+  >([]);
+  const [memoryDataCopy, setMemoryDataCopy] = useState<
+    MemoryType[] | undefined
+  >([]);
   const [viewFilesViewer, setViewFilesViewer] = useState(false);
   const [activeId, setActiveId] = useState<number>(0);
   const [viewerData, setViewerData] = useState<FilesViewerItemType[]>([]);
@@ -29,6 +127,27 @@ export const JourneyPublicPage = ({ id }: { id: number }) => {
     setViewFilesViewer(true);
     setActiveId(obj.id);
   };
+
+  const filterAssetDataCopy = (filters: DynamicArrayFilterType[]) => {
+    if (assetDataCopy) {
+      const arr = dynamicFilter(data?.assetList, filters);
+      setAssetDataCopy(arr);
+    }
+    return [];
+  };
+
+  const filterMemoryDataCopy = (filters: DynamicArrayFilterType[]) => {
+    if (memoryDataCopy) {
+      const arr = dynamicFilter(data?.assetList, filters);
+      setMemoryDataCopy(arr);
+    }
+    return [];
+  };
+
+  useEffect(() => {
+    setAssetDataCopy(data?.assetList);
+    setMemoryDataCopy(data?.projectList);
+  }, [data]);
 
   if (isLoading || isFetching) {
     return <span>Loading...</span>;
@@ -59,153 +178,64 @@ export const JourneyPublicPage = ({ id }: { id: number }) => {
           <Tab.Group>
             <Tab.List>
               <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "px-3 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      All
-                    </button>
-                  )}
-                </Tab>
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "px-3 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Images
-                    </button>
-                  )}
-                </Tab>
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "px-3 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Audio
-                    </button>
-                  )}
-                </Tab>
-                <Tab>
-                  {({ selected }) => (
-                    <button
-                      className={cn(
-                        "px-3 md:px-10 py-3 font-medium",
-                        selected
-                          ? "text-primary-400 border-b-2 border-primary-400"
-                          : ""
-                      )}
-                    >
-                      Video
-                    </button>
-                  )}
-                </Tab>
+                {assetTabs.map((tab) => (
+                  <Tab key={tab.name}>
+                    {({ selected }) => (
+                      <button
+                        className={cn(
+                          "px-3 md:px-10 py-3 font-medium",
+                          selected
+                            ? "text-primary-400 border-b-2 border-primary-400"
+                            : ""
+                        )}
+                        onClick={() => filterAssetDataCopy(tab.filter)}
+                      >
+                        {tab.name}
+                      </button>
+                    )}
+                  </Tab>
+                ))}
               </div>
             </Tab.List>
-            <Tab.Panels>
-              <Tab.Panel>
-                <div className="flex gap-4 overflow-auto">
-                  {data.assetList?.map((asset: AssetResType) => (
-                    <NewCard
-                      key={asset.id}
-                      type={asset.assetType}
-                      name={asset.name}
-                      dropdownOptions={[]}
-                      dataObject={asset}
-                      onClickHandler={() => {
-                        setViewerData(
-                          data.assetList?.map((asset: AssetResType) => {
-                            return {
-                              type: asset.assetType,
-                              entityType: EntityType.ASSET,
-                              id: asset.id,
-                              name: asset.name,
-                              src: asset.assetUrl,
-                            };
-                          })
-                        );
-                        openFileViewer({
+            <div className="flex gap-4 overflow-auto">
+              {assetDataCopy?.map((asset: AssetResType) => (
+                <NewCard
+                  key={asset.id}
+                  type={asset.assetType}
+                  name={asset.name}
+                  dropdownOptions={[]}
+                  dataObject={asset}
+                  onClickHandler={() => {
+                    setViewerData(
+                      assetDataCopy?.map((asset: AssetResType) => {
+                        return {
                           type: asset.assetType,
-                          src: asset.assetUrl,
-                          name: asset.name,
                           entityType: EntityType.ASSET,
                           id: asset.id,
-                        });
-                      }}
-                    />
-                  ))}
-                </div>
-              </Tab.Panel>
-              <Tab.Panel>
-                <div className="flex gap-4 overflow-auto">
-                  {data.assetList
-                    ?.filter(
-                      (asset: AssetResType) =>
-                        asset.assetType == AssetTypes.IMAGE
-                    )
-                    .map((asset: AssetResType) => (
-                      <NewCard
-                        key={asset.id}
-                        type={asset.assetType}
-                        name={asset.name}
-                        dropdownOptions={[]}
-                        dataObject={asset}
-                      />
-                    ))}
-                </div>
-              </Tab.Panel>
-              <Tab.Panel>
-                <div className="flex gap-4 overflow-auto">
-                  {data.assetList
-                    ?.filter(
-                      (asset: AssetResType) =>
-                        asset.assetType == AssetTypes.AUDIO
-                    )
-                    .map((asset: AssetResType) => (
-                      <NewCard
-                        key={asset.id}
-                        type={asset.assetType}
-                        name={asset.name}
-                        dropdownOptions={[]}
-                        dataObject={asset}
-                      />
-                    ))}
-                </div>
-              </Tab.Panel>
-              <Tab.Panel>
-                <div className="flex gap-4 overflow-auto">
-                  {data.assetList
-                    ?.filter(
-                      (asset: AssetResType) =>
-                        asset.assetType == AssetTypes.VIDEO
-                    )
-                    .map((asset: AssetResType) => (
-                      <NewCard
-                        key={asset.id}
-                        type={asset.assetType}
-                        name={asset.name}
-                        dropdownOptions={[]}
-                        dataObject={asset}
-                      />
-                    ))}
-                </div>
-              </Tab.Panel>
-            </Tab.Panels>
+                          name: asset.name,
+                          src: asset.assetUrl,
+                          collectionId: asset.collectionId,
+                          journeyId: asset.journeyId,
+                        };
+                      })
+                    );
+                    openFileViewer({
+                      type: asset.assetType,
+                      src: asset.assetUrl,
+                      name: asset.name,
+                      entityType: EntityType.ASSET,
+                      id: asset.id,
+                      collectionId: asset.collectionId,
+                      journeyId: asset.journeyId,
+                    });
+                  }}
+                  entityId={asset.id}
+                  entityType={EntityType.ASSET}
+                  bgImage={asset.assetUrl}
+                  accessRight={asset.accessRight}
+                />
+              ))}
+            </div>
           </Tab.Group>
         </div>
         <div className="mt-10">
@@ -217,223 +247,64 @@ export const JourneyPublicPage = ({ id }: { id: number }) => {
             <Tab.Group>
               <Tab.List>
                 <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
-                  <Tab>
-                    {({ selected }) => (
-                      <button
-                        className={cn(
-                          "px-3 md:px-10 py-3 font-medium",
-                          selected
-                            ? "text-primary-400 border-b-2 border-primary-400"
-                            : ""
-                        )}
-                      >
-                        All
-                      </button>
-                    )}
-                  </Tab>
-                  <Tab>
-                    {({ selected }) => (
-                      <button
-                        className={cn(
-                          "px-3 md:px-10 py-3 font-medium",
-                          selected
-                            ? "text-primary-400 border-b-2 border-primary-400"
-                            : ""
-                        )}
-                      >
-                        Images
-                      </button>
-                    )}
-                  </Tab>
-                  <Tab>
-                    {({ selected }) => (
-                      <button
-                        className={cn(
-                          "px-3 md:px-10 py-3 font-medium",
-                          selected
-                            ? "text-primary-400 border-b-2 border-primary-400"
-                            : ""
-                        )}
-                      >
-                        Audio
-                      </button>
-                    )}
-                  </Tab>
-                  <Tab>
-                    {({ selected }) => (
-                      <button
-                        className={cn(
-                          "px-3 md:px-10 py-3 font-medium",
-                          selected
-                            ? "text-primary-400 border-b-2 border-primary-400"
-                            : ""
-                        )}
-                      >
-                        Video
-                      </button>
-                    )}
-                  </Tab>
-                  <Tab>
-                    {({ selected }) => (
-                      <button
-                        className={cn(
-                          "px-3 md:px-10 py-3 font-medium",
-                          selected
-                            ? "text-primary-400 border-b-2 border-primary-400"
-                            : ""
-                        )}
-                      >
-                        Cards
-                      </button>
-                    )}
-                  </Tab>
-                  <Tab>
-                    {({ selected }) => (
-                      <button
-                        className={cn(
-                          "px-3 md:px-10 py-3 font-medium",
-                          selected
-                            ? "text-primary-400 border-b-2 border-primary-400"
-                            : ""
-                        )}
-                      >
-                        Slideshow
-                      </button>
-                    )}
-                  </Tab>
+                  {memoryTabs.map((tab) => (
+                    <Tab key={tab.name}>
+                      {({ selected }) => (
+                        <button
+                          className={cn(
+                            "px-3 md:px-10 py-3 font-medium",
+                            selected
+                              ? "text-primary-400 border-b-2 border-primary-400"
+                              : ""
+                          )}
+                          onClick={() => filterMemoryDataCopy(tab.filter)}
+                        >
+                          {tab.name}
+                        </button>
+                      )}
+                    </Tab>
+                  ))}
                 </div>
               </Tab.List>
-              <Tab.Panels>
-                <div>
-                  <Tab.Panel className="flex gap-4 flex-wrap">
-                    {data?.projectList?.map((memory: MemoryType) => (
-                      <NewCard
-                        key={memory.id}
-                        type={memory.projectType}
-                        name={memory.name}
-                        dropdownOptions={[]}
-                        dataObject={memory}
-                        onClickHandler={() => {
-                          setViewerData(
-                            data.projectList?.map((mm: MemoryType) => {
-                              return {
-                                type: mm.projectType,
-                                entityType: EntityType.MEMORY,
-                                id: mm.id,
-                                name: mm.name,
-                                src: mm.previewImage,
-                              };
-                            })
-                          );
-                          openFileViewer({
-                            type: memory.projectType,
+              <div className="flex gap-4 flex-wrap">
+                {memoryDataCopy?.map((memory: MemoryType) => (
+                  <NewCard
+                    key={memory.id}
+                    type={memory.projectType}
+                    name={memory.name}
+                    dropdownOptions={[]}
+                    dataObject={memory}
+                    onClickHandler={() => {
+                      setViewerData(
+                        memoryDataCopy?.map((mm: MemoryType) => {
+                          return {
+                            type: mm.projectType,
                             entityType: EntityType.MEMORY,
-                            id: memory.id,
-                            name: memory.name,
-                            src: memory.previewImage,
-                          });
-                        }}
-                      />
-                    ))}
-                  </Tab.Panel>
-                  <Tab.Panel className="flex gap-4 flex-wrap">
-                    {data?.projectList
-                      ?.filter(
-                        (memory: MemoryType) =>
-                          memory.projectType == MemoryTypes.IMAGE
-                      )
-                      .map((memory: MemoryType) => (
-                        <NewCard
-                          key={memory.id}
-                          type={memory.projectType}
-                          name={memory.name}
-                          dropdownOptions={[]}
-                          dataObject={memory}
-                        />
-                      ))}
-                  </Tab.Panel>
-                  <Tab.Panel className="flex gap-4 flex-wrap">
-                    {data?.projectList
-                      ?.filter(
-                        (memory: MemoryType) =>
-                          memory.projectType == MemoryTypes.AUDIO
-                      )
-                      .map((memory: MemoryType) => (
-                        <NewCard
-                          key={memory.id}
-                          type={memory.projectType}
-                          name={memory.name}
-                          dropdownOptions={[]}
-                          dataObject={memory}
-                        />
-                      ))}
-                  </Tab.Panel>
-                  <Tab.Panel className="flex gap-4 flex-wrap">
-                    {data?.projectList
-                      ?.filter(
-                        (memory: MemoryType) =>
-                          memory.projectType == MemoryTypes.VIDEO
-                      )
-                      .map((memory: MemoryType) => (
-                        <NewCard
-                          key={memory.id}
-                          type={memory.projectType}
-                          name={memory.name}
-                          dropdownOptions={[]}
-                          dataObject={memory}
-                        />
-                      ))}
-                  </Tab.Panel>
-                  <Tab.Panel className="flex gap-4 flex-wrap">
-                    {data?.projectList
-                      ?.filter(
-                        (memory: MemoryType) =>
-                          memory.projectType == MemoryTypes.VIDEO
-                      )
-                      .map((memory: MemoryType) => (
-                        <NewCard
-                          key={memory.id}
-                          type={memory.projectType}
-                          name={memory.name}
-                          dropdownOptions={[]}
-                          dataObject={memory}
-                        />
-                      ))}
-                  </Tab.Panel>
-                  <Tab.Panel className="flex gap-4 flex-wrap">
-                    {data?.projectList
-                      ?.filter(
-                        (memory: MemoryType) =>
-                          memory.projectType == MemoryTypes.CARD
-                      )
-                      .map((memory: MemoryType) => (
-                        <NewCard
-                          key={memory.id}
-                          type={memory.projectType}
-                          name={memory.name}
-                          dropdownOptions={[]}
-                          dataObject={memory}
-                        />
-                      ))}
-                  </Tab.Panel>
-                  <Tab.Panel className="flex gap-4 flex-wrap">
-                    {data?.projectList
-                      ?.filter(
-                        (memory: MemoryType) =>
-                          memory.projectType == MemoryTypes.SLIDESHOW
-                      )
-                      .map((memory: MemoryType) => (
-                        <NewCard
-                          key={memory.id}
-                          type={memory.projectType}
-                          name={memory.name}
-                          dropdownOptions={[]}
-                          dataObject={memory}
-                        />
-                      ))}
-                  </Tab.Panel>
-                </div>
-              </Tab.Panels>
+                            id: mm.id,
+                            name: mm.name,
+                            src: mm.previewImage,
+                            collectionId: mm.collectionId,
+                            journeyId: mm.journeyId,
+                          };
+                        })
+                      );
+                      openFileViewer({
+                        type: memory.projectType,
+                        entityType: EntityType.MEMORY,
+                        id: memory.id,
+                        name: memory.name,
+                        src: memory.previewImage,
+                        collectionId: memory.collectionId,
+                        journeyId: memory.journeyId,
+                      });
+                    }}
+                    entityId={memory.id}
+                    entityType={EntityType.MEMORY}
+                    bgImage={memory.previewImage}
+                    accessRight={memory.accessRight}
+                  />
+                ))}
+              </div>
             </Tab.Group>
           </div>
         </div>

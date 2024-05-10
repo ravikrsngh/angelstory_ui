@@ -197,6 +197,8 @@ const CollectionAssets = ({
               id: asset.id,
               name: asset.name,
               src: asset.assetUrl,
+              collectionId: asset.collectionId,
+              journeyId: asset.journeyId,
             };
           })}
           setView={setViewFilesViewer}

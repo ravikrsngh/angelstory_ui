@@ -8,7 +8,7 @@ import {
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSaveProject } from "../../hooks/project/use-save-project";
-import { EntityType, MemoryTypes } from "../../types";
+import { AccessTypeGroups, EntityType, MemoryTypes } from "../../types";
 import { getHeaderIcon } from "../../utils";
 import { ViewerDeleteModal } from "./all-modals";
 import { Modal } from "./modal";
@@ -21,6 +21,9 @@ export type FilesViewerItemType = {
   description?: string;
   entityType: string;
   id: number;
+  collectionId: number | null;
+  journeyId: number | null;
+  accessRight?: string | null;
 };
 
 type FilesViewerProp = {
@@ -118,7 +121,10 @@ export const FilesViewer = (props: FilesViewerProp) => {
               </div>
               <span className="text-slate-200">{activeFile.name}</span>
             </div>
-            {props.publicView ? (
+            {props.publicView ||
+            [...AccessTypeGroups.OWNER, AccessTypeGroups.EDIT].includes(
+              activeFile.accessRight || ""
+            ) ? (
               <div className="ml-auto text-slate-400  flex items-center gap-4">
                 <div
                   className="hover:cursor-pointer hover:text-slate-300"
@@ -142,7 +148,7 @@ export const FilesViewer = (props: FilesViewerProp) => {
                 ) && (
                   <div className="hover:cursor-pointer hover:text-slate-300 text-xs">
                     <Link
-                      to={`/design/${props.collectionId}/${props.journeyId}/${activeFile.id}`}
+                      to={`/design/${activeFile.collectionId}/${activeFile.journeyId}/${activeFile.id}`}
                     >
                       Open in editor
                     </Link>
@@ -188,8 +194,8 @@ export const FilesViewer = (props: FilesViewerProp) => {
               </div>
             )}
           </div>
-          <div className="file-view-main w-full overflow-hidden py-4 px-20 flex justify-center">
-            <div className="bg-slate-50 w-fit flex justify-center">
+          <div className="file-view-main w-full py-4 px-20 flex justify-center h-[calc(100vh-40px)]">
+            <div className="w-fit flex justify-center items-center overflow-hidden">
               <div className="view grow max-w-[1121px]">
                 {[MemoryTypes.IMAGE, MemoryTypes.CARD].includes(
                   activeFile.type
@@ -206,9 +212,15 @@ export const FilesViewer = (props: FilesViewerProp) => {
                   </div>
                 )}
                 {[MemoryTypes.PDF].includes(activeFile.type) && (
-                  <div>
-                    <span>{activeFile.name}</span>
-                    <a href={activeFile.src}>Open</a>
+                  <div className="flex flex-col justify-center items-center gap-4">
+                    <p className="text-white">{activeFile.name}</p>
+                    <a
+                      target="_blank"
+                      className="px-4 py-2 bg-primary-400 text-white"
+                      href={activeFile.src}
+                    >
+                      Open
+                    </a>
                   </div>
                 )}
                 {[MemoryTypes.VIDEO, MemoryTypes.SLIDESHOW].includes(
@@ -219,15 +231,25 @@ export const FilesViewer = (props: FilesViewerProp) => {
                   </div>
                 )}
                 {activeFile.entityType == EntityType.COLLECTION && (
-                  <div>
-                    <p>{activeFile.name}</p>
-                    <Link to={`collection/${activeFile.id}`}>Open</Link>
+                  <div className="flex flex-col justify-center items-center gap-4">
+                    <p className="text-white">{activeFile.name}</p>
+                    <Link
+                      className="px-4 py-2 bg-primary-400 text-white"
+                      to={`collection/${activeFile.id}`}
+                    >
+                      Open
+                    </Link>
                   </div>
                 )}
                 {activeFile.entityType == EntityType.JOURNEY && (
-                  <div className="w-full">
-                    <p>{activeFile.name}</p>
-                    <Link to={`journey/${activeFile.id}`}>Open</Link>
+                  <div className="flex flex-col justify-center items-center gap-4">
+                    <p className="text-white">{activeFile.name}</p>
+                    <Link
+                      className="px-4 py-2 bg-primary-400 text-white"
+                      to={`journey/${activeFile.id}`}
+                    >
+                      Open
+                    </Link>
                   </div>
                 )}
               </div>

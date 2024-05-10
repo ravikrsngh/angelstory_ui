@@ -199,6 +199,8 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
               id: asset.id,
               name: asset.name,
               src: asset.assetUrl,
+              collectionId: asset.collectionId,
+              journeyId: asset.journeyId,
             };
           })}
           setView={setViewFilesViewer}
@@ -444,6 +446,8 @@ const JourneyMemories = ({
                 src: memory.previewImage,
                 description: memory.caption,
                 title: memory.title,
+                collectionId: memory.collectionId,
+                journeyId: memory.journeyId,
               };
             }) || []
           }

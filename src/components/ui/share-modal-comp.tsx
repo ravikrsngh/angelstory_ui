@@ -29,6 +29,7 @@ export const UserSearchComp = ({
     <div className="w-full">
       <div className="w-full flex">
         <input
+          autoFocus
           type="text"
           placeholder="Search users"
           className="grow px-4 py-3 outline-none"

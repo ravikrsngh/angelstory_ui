@@ -63,6 +63,9 @@ export const SharedEntity = () => {
               id: asset.id,
               name: asset.name,
               src: asset.bgImage,
+              collectionId: asset.collectionId,
+              journeyId: asset.journeyId,
+              accessRight: asset.accessRight,
             };
           })}
           setView={setViewFilesViewer}
