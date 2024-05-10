@@ -17,7 +17,7 @@ import { MobileToolbar } from "../../components/editor/mobile/mobile-toolbar";
 import { ToolBarButton } from "../../components/editor/toolbar-btn";
 import { CanvasContext } from "../../context/canvasContext";
 import { useCreateTextPhrase } from "../../hooks/textphrases/use-create-textphrase";
-import { DesignLoaderPropType, SlideType } from "../../types";
+import { DesignLoaderPropType, MusicElementType, SlideType } from "../../types";
 import BackgroundPanel from "./background-panel";
 import LayersPanel from "./layers";
 import ShapesPanel from "./shapes-panel";
@@ -33,6 +33,7 @@ export default function Design({
   name,
   projectType,
   saveProject,
+  initialMusic,
 }: DesignLoaderPropType) {
   const timeoutRef = useRef<number>(null);
   const fabricRef = useRef<fabric.Canvas | null>(null);
@@ -41,6 +42,9 @@ export default function Design({
   const [slideshowMode, setSlideShowMode] = useState<boolean>(false);
   const [slides, setSlides] = useState<SlideType[]>(initialSlides);
   const [activeSlide, setActiveSlide] = useState<number>(0);
+  const [musicArr, setMusicArr] = useState<MusicElementType[] | null>(
+    initialMusic
+  );
 
   const createTextPhraseHook = useCreateTextPhrase();
 
@@ -239,8 +243,18 @@ export default function Design({
   }, []);
 
   useEffect(() => {
-    saveProject({ formattedData: JSON.stringify(slides) }, 300000);
+    saveProject(
+      { formattedData: JSON.stringify({ slides: slides, music: musicArr }) },
+      300000
+    );
   }, [slides]);
+
+  useEffect(() => {
+    saveProject(
+      { formattedData: JSON.stringify({ slides: slides, music: musicArr }) },
+      0
+    );
+  }, [musicArr]);
 
   useEffect(() => {
     // @ts-ignore
@@ -261,6 +275,7 @@ export default function Design({
           activeSlide,
           setActiveSlide,
           deleteObject,
+          musicArr,
         }}
       >
         <EditorHeader
@@ -367,7 +382,13 @@ export default function Design({
                 ></canvas>
               </div>
             </div>
-            {slideshowMode && projectType == "SLIDE_SHOW" && <SlideshowPanel />}
+            {slideshowMode && projectType == "SLIDE_SHOW" && (
+              <SlideshowPanel
+                saveProject={saveProject}
+                musicArr={musicArr}
+                setMusicArr={setMusicArr}
+              />
+            )}
           </div>
           <div className="bg-slate-300 w-[140px] hidden lg:block"></div>
           <div className="w-full overflow-auto flex h-20 bg-white lg:hidden"></div>

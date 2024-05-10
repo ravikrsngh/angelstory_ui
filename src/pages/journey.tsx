@@ -173,7 +173,17 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                   name={asset.name}
                   dropdownOptions={AssetDropdownList}
                   dataObject={asset}
-                  onClickHandler={openFileViewer}
+                  onClickHandler={() =>
+                    openFileViewer({
+                      collectionId: asset.collectionId,
+                      type: asset.assetType,
+                      src: asset.assetUrl,
+                      name: asset.name,
+                      entityType: EntityType.ASSET,
+                      id: asset.id,
+                      journeyId: asset.journeyId,
+                    })
+                  }
                   entityId={asset.id}
                   entityType={EntityType.ASSET}
                   bgImage={asset.assetUrl}
@@ -201,6 +211,7 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
               src: asset.assetUrl,
               collectionId: asset.collectionId,
               journeyId: asset.journeyId,
+              accessRight: asset.accessRight,
             };
           })}
           setView={setViewFilesViewer}
@@ -419,7 +430,20 @@ const JourneyMemories = ({
                   name={memory.name}
                   dropdownOptions={MemoryCardDropdownList}
                   dataObject={memory}
-                  onClickHandler={openFileViewer}
+                  onClickHandler={() =>
+                    openFileViewer({
+                      type: memory.projectType,
+                      src: memory.previewImage,
+                      name: memory.name,
+                      entityType: EntityType.MEMORY,
+                      id: memory.id,
+                      collectionId: memory.collectionId,
+                      journeyId: memory.journeyId,
+                      accessRight: memory.accessRight,
+                      title: memory.title,
+                      description: memory.caption,
+                    })
+                  }
                   entityId={memory.id}
                   entityType={EntityType.MEMORY}
                   bgImage={memory.previewImage}

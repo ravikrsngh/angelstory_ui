@@ -20,7 +20,7 @@ export default function EditorHeader({
   name,
   saveProject,
 }: EditorHeaderPropType) {
-  const { fabricRef, slides } = useContext(
+  const { fabricRef, slides, musicArr } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
 
@@ -65,7 +65,7 @@ export default function EditorHeader({
     virtualCanvas.loadFromJSON(slides[0].content, () => {
       saveProject(
         {
-          formattedData: JSON.stringify(slides),
+          formattedData: JSON.stringify({ slides: slides, music: musicArr }),
           previewImage: virtualCanvas.toDataURL({ format: "png" }),
         },
         0

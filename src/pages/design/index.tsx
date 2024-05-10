@@ -57,8 +57,11 @@ export const DesignLoader = () => {
           ratio={data.height / data.width}
           initialSlides={
             data.formattedData != ""
-              ? JSON.parse(data.formattedData)
+              ? JSON.parse(data.formattedData).slides
               : [{ content: "", duration: 2, previewImg: "", history: [] }]
+          }
+          initialMusic={
+            data.formattedData != "" ? JSON.parse(data.formattedData).music : []
           }
           name={data.name}
           projectType={data.projectType}

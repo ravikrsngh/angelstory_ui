@@ -18,7 +18,6 @@ import {
   DropdownActions,
   DropdownButton,
 } from "./dropdown-action-buttons";
-import { FilesViewerItemType } from "./files-viewer";
 import { Modal } from "./modal";
 
 const BasicStyleCard = ({
@@ -78,18 +77,6 @@ export const NewCard = ({
     ...AccessTypeGroups.EDIT,
   ].includes(accessRight);
 
-  const prepare_data_for_viewer = (): FilesViewerItemType => {
-    const fileViewObj = {
-      type: type,
-      src: bgImage,
-      name: name,
-      entityType: entityType,
-      id: entityId,
-    };
-
-    return fileViewObj;
-  };
-
   const clickHandler = () => {
     // if (type == AssetTypes.IMAGE || type == AssetTypes.AUDIO) {
     //   setPreviewModal(true);
@@ -103,8 +90,6 @@ export const NewCard = ({
     if (onClickHandler) {
       if (onClickHandler.length == 0) {
         (onClickHandler as () => void)();
-      } else if (onClickHandler.length == 1) {
-        onClickHandler(prepare_data_for_viewer());
       }
     }
   };

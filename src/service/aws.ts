@@ -32,7 +32,7 @@ export const uploadFiles = async (files) => {
     await uploadFileToS3(
       file,
       `${import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME}`,
-      `users/${Cookies.get("user")}/project/images/${file.name.replace(
+      `users/${Cookies.get("user")}/project/images/${file.name.replaceAll(
         " ",
         "_"
       )}`
@@ -41,7 +41,34 @@ export const uploadFiles = async (files) => {
       import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME
     }.s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/users/${Cookies.get(
       "user"
-    )}/project/images/${file.name.replace(" ", "_")}`;
+    )}/project/images/${file.name.replaceAll(" ", "_")}`;
+    console.log(assetUrl);
+    console.log(file);
+    urlList.push({
+      file: file,
+      url: assetUrl,
+    });
+  }
+  return urlList;
+};
+
+export const uploadRandomFiles = async (files) => {
+  const urlList = [];
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    await uploadFileToS3(
+      file.file,
+      `${import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME}`,
+      `users/${Cookies.get("user")}/project/images/${file.name.replaceAll(
+        " ",
+        "_"
+      )}`
+    );
+    const assetUrl = `https://${
+      import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME
+    }.s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/users/${Cookies.get(
+      "user"
+    )}/project/images/${file.name.replaceAll(" ", "_")}`;
     console.log(assetUrl);
     console.log(file);
     urlList.push({

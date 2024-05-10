@@ -37,6 +37,7 @@ export type CanvasContextType = {
   activeSlide: number;
   setActiveSlide: Dispatch<SetStateAction<number>>;
   deleteObject: () => void;
+  musicArr: MusicElementType[] | null;
 };
 
 export type EditObjectType = {
@@ -158,10 +159,15 @@ export type DesignLoaderPropType = {
   name: string;
   projectType: string;
   saveProject: (
-    obj: { formattedData?: string | undefined; name?: string | undefined },
+    obj: {
+      formattedData?: string | undefined;
+      name?: string | undefined;
+      previewImage?: string | undefined;
+    },
     time: number
   ) => void;
   initialSlides: SlideType[];
+  initialMusic: MusicElementType[] | null;
 };
 
 export type BackgroundImageOptionsPropsType = {

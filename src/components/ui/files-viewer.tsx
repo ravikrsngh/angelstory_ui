@@ -194,8 +194,8 @@ export const FilesViewer = (props: FilesViewerProp) => {
               </div>
             )}
           </div>
-          <div className="file-view-main w-full py-4 px-20 flex justify-center h-[calc(100vh-40px)]">
-            <div className="w-fit flex justify-center items-center overflow-hidden">
+          <div className="file-view-main w-full py-4 px-20 flex justify-center items-center h-[calc(100vh-40px)]">
+            <div className="w-fit grid grid-col-2 overflow-hidden">
               <div className="view grow max-w-[1121px]">
                 {[MemoryTypes.IMAGE, MemoryTypes.CARD].includes(
                   activeFile.type
@@ -227,7 +227,12 @@ export const FilesViewer = (props: FilesViewerProp) => {
                   activeFile.type
                 ) && (
                   <div>
-                    <video src={activeFile.src} controls playsInline></video>
+                    <video
+                      src={activeFile.src}
+                      controls
+                      playsInline
+                      className="w-full"
+                    ></video>
                   </div>
                 )}
                 {activeFile.entityType == EntityType.COLLECTION && (

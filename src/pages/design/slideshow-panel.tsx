@@ -1,19 +1,20 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { IconEdit, IconPlayerPlay, IconTrash } from "@tabler/icons-react";
-import React, { useContext, useEffect, useState, useRef } from "react";
-import {
-  SlideCardType,
-  CanvasContextType,
-  SlideMusic,
-  MusicElementType,
-} from "../../types";
-import { cn, dataURLtoBlob, secondsToHHMMSS } from "../../utils";
-import { CanvasContext } from "../../context/canvasContext";
-import AudioPlayer from "../../components/audio-player";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
+import { IconEdit, IconPlayerPlay, IconTrash } from "@tabler/icons-react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import AudioPlayer from "../../components/audio-player";
 import MusicModal from "../../components/editor/music/music-modal";
+import { CanvasContext } from "../../context/canvasContext";
+import { uploadRandomFiles } from "../../service/aws";
+import {
+  CanvasContextType,
+  MusicElementType,
+  SlideCardType,
+  SlideMusic,
+} from "../../types";
+import { cn, dataURLtoBlob, secondsToHHMMSS } from "../../utils";
 
 const Slide = ({
   isActive,
@@ -122,7 +123,22 @@ const Slide = ({
   );
 };
 
-export default function SlideshowPane() {
+export default function SlideshowPane({
+  saveProject,
+  musicArr,
+  setMusicArr,
+}: {
+  saveProject: (
+    obj: {
+      formattedData?: string | undefined;
+      name?: string | undefined;
+      previewImage?: string | undefined;
+    },
+    time: number
+  ) => void;
+  musicArr: MusicElementType[] | null;
+  setMusicArr: React.Dispatch<SetStateAction<MusicElementType>>;
+}) {
   const { fabricRef, slides, setSlides, activeSlide } = useContext(
     CanvasContext as React.Context<CanvasContextType>
   );
@@ -133,8 +149,6 @@ export default function SlideshowPane() {
   const ffmpegRef = useRef(new FFmpeg());
 
   const [selectedMusic, setSelectedMusic] = useState<SlideMusic | null>(null);
-
-  const [musicArr, setMusicArr] = useState<MusicElementType[] | null>([]);
   const [editMusicData, setEditMusicData] = useState<MusicElementType | null>(
     null
   );
@@ -226,10 +240,13 @@ export default function SlideshowPane() {
   //   setLoading(false);
   // };
 
+  console.log(musicArr);
+
   const createPreview2 = async () => {
     setLoading(true);
     try {
       //Hnadle Music
+      console.log(musicArr);
       const musicFileList = [];
       for (let i = 0; i < musicArr.length; i++) {
         const music = musicArr[i];
@@ -308,7 +325,17 @@ export default function SlideshowPane() {
         "output.mp4",
       ]);
       const createdVideo = await ffmpegRef.current.readFile("output.mp4");
-      setVideoURL(URL.createObjectURL(new Blob([createdVideo.buffer])));
+      console.log(createdVideo);
+      const videoURL = URL.createObjectURL(new Blob([createdVideo.buffer]));
+      const urlLists = await uploadRandomFiles([
+        {
+          file: createdVideo.buffer,
+          name: `${new Date().toISOString()}-preview.mp4`,
+        },
+      ]);
+
+      setVideoURL(videoURL);
+      saveProject({ previewImage: urlLists[0].url }, 0);
     } catch (error) {
       console.log(error);
       setLoading(false);

@@ -171,7 +171,17 @@ const CollectionAssets = ({
                   name={asset.name}
                   dropdownOptions={AssetDropdownList}
                   dataObject={asset}
-                  onClickHandler={openFileViewer}
+                  onClickHandler={() =>
+                    openFileViewer({
+                      collectionId: asset.collectionId,
+                      type: asset.assetType,
+                      src: asset.assetUrl,
+                      name: asset.name,
+                      entityType: EntityType.ASSET,
+                      id: asset.id,
+                      journeyId: asset.journeyId,
+                    })
+                  }
                   entityId={asset.id}
                   entityType={EntityType.ASSET}
                   bgImage={asset.assetUrl}
