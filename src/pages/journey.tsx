@@ -114,7 +114,7 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
       <div>
         <Tab.Group>
           <Tab.List>
-            <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
+            <div className="text-sm lg:text-base  whitespace-nowrap overflow-x-auto flex gap-4 border-b border-slate-300 items-center mb-8">
               {tabs.map((tab) => (
                 <Tab key={tab.name}>
                   {({ selected }) => (
@@ -351,13 +351,13 @@ const JourneyMemories = ({
         </button>
       </h4>
       <div className="journey-filters bg-primary-50 p-4 rounded-md">
-        <h4 className="mb-0 text-primary-700 flex justify-between items-center">
+        <h4 className="text-sm lg:text-base mb-0 text-primary-700 flex justify-between items-center">
           Filters{" "}
           <button className="hover:underline" onClick={resetFilter}>
             Clear
           </button>
         </h4>
-        <div className="my-4 w-full flex items-center">
+        <div className="my-4 w-full flex flex-wrap items-center">
           <div className="flex gap-8">
             <div className="flex gap-2 flex-col">
               <label htmlFor="startDate" className="text-sm">
@@ -384,7 +384,7 @@ const JourneyMemories = ({
               />
             </div>
           </div>
-          <div className="ml-auto">
+          <div className="ml-auto mt-8 lg:mt-0 text-sm lg:text-base">
             <SortByFilter
               defaultValue={sortBy}
               onChange={sortByChanged}
@@ -402,7 +402,7 @@ const JourneyMemories = ({
         ) : (
           <Tab.Group>
             <Tab.List>
-              <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
+              <div className="text-sm lg:text-base whitespace-nowrap overflow-x-auto flex gap-4 border-b border-slate-300 items-center mb-8">
                 {tabs.map((tab) => (
                   <Tab key={tab.name}>
                     {({ selected }) => (
@@ -422,9 +422,10 @@ const JourneyMemories = ({
                 ))}
               </div>
             </Tab.List>
-            <div className="flex gap-4 flex-wrap">
+            <div className="grid grid-cols-2 gap-2 md:flex md:gap-4 flex-wrap">
               {dataCopy?.map((memory: MemoryType) => (
                 <NewCard
+                  className="w-full"
                   key={memory.id}
                   type={memory.projectType}
                   name={memory.name}
@@ -550,7 +551,7 @@ export default function Journey() {
   return (
     <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-8">
       <div
-        className="relative rounded-md p-4 pt-10 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] text-primary-950 bg-cover bg-center"
+        className="relative rounded-md p-4 pt-20 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] text-primary-950 bg-cover bg-center"
         style={{
           backgroundColor: data?.bgColor ? data.bgColor : "#CEB8AF",
           backgroundImage: data?.bgImage ? `url(${data.bgImage})` : "",

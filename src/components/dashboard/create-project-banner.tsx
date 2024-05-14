@@ -11,14 +11,14 @@ export const CreateProjectBanner = () => {
   const [action, setAction] = useState<number>(0);
   return (
     <>
-      <div className="relative rounded-md overflow-hidden h-40 md:h-56 lg:h-auto max-h-96">
+      <div className="relative rounded-md overflow-hidden h-48 md:h-56 lg:h-auto max-h-96">
         <img
           src={dashboard_hero_img}
           alt=""
-          className="h-40 md:h-56 max-w-none lg:h-auto lg:w-full"
+          className="h-48 md:h-56 max-w-none lg:h-auto lg:w-full"
         />
         <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center">
-          <div className="search-bar w-full max-w-3xl px-4 md:px-10 lg:px-16">
+          <div className="search-bar hidden lg:block w-full max-w-3xl px-4 md:px-10 lg:px-16">
             <div>
               <form
                 action=""

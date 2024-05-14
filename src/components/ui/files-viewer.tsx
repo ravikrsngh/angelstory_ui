@@ -194,8 +194,8 @@ export const FilesViewer = (props: FilesViewerProp) => {
               </div>
             )}
           </div>
-          <div className="file-view-main w-full py-4 px-20 flex justify-center items-center h-[calc(100vh-40px)]">
-            <div className="w-fit grid grid-col-2 overflow-hidden">
+          <div className="file-view-main w-full py-4 px-20 flex justify-center items-center h-[calc(100vh-40px)] overflow-hidden">
+            <div className="w-full grid grid-cols-[auto,auto] overflow-hidden justify-center items-center">
               <div className="view grow max-w-[1121px]">
                 {[MemoryTypes.IMAGE, MemoryTypes.CARD].includes(
                   activeFile.type

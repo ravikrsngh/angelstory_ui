@@ -108,11 +108,17 @@ const CollectionAssets = ({
     <div className="">
       <h4 className="font-medium mb-6 md:text-lg flex justify-between items-center">
         Assets
+        <Link
+          className="lg:hidden block ml-auto text-xs md:text-sm lg:text-base"
+          to={`/view-all/collection/${collectionId}/assets`}
+        >
+          View all assets
+        </Link>
       </h4>
       <div>
         <Tab.Group>
           <Tab.List>
-            <div className="flex gap-4 border-b border-slate-300 items-center mb-8">
+            <div className="text-sm lg:text-base flex gap-4 border-b border-slate-300 items-center mb-8 overflow-auto whitespace-nowrap">
               {tabs.map((tab) => (
                 <Tab key={tab.name}>
                   {({ selected }) => (
@@ -156,7 +162,7 @@ const CollectionAssets = ({
                 </Tab>
               )}
               <Link
-                className="ml-auto text-xs md:text-sm lg:text-base"
+                className="hidden lg:block ml-auto text-xs md:text-sm lg:text-base"
                 to={`/view-all/collection/${collectionId}/assets`}
               >
                 View all assets
@@ -251,14 +257,14 @@ export default function Collection() {
   return (
     <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-8">
       <div
-        className="relative rounded-md overflow-hidden p-4 pt-10 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] text-primary-950 bg-center bg-cover"
+        className="relative rounded-md overflow-hidden p-4 pt-20 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] text-primary-950 bg-center bg-cover"
         style={{
           backgroundColor: data?.bgColor ? data.bgColor : "#CEB8AF",
           backgroundImage: data?.bgImage ? `url(${data.bgImage})` : "",
         }}
       >
         <span className="text-xs md:text-sm">Collection</span>
-        <h4 className="text-3xl md:text-4xl lg:text-5xl font-medium">
+        <h4 className="text-2xl md:text-4xl lg:text-5xl font-medium">
           {data?.name}
         </h4>
         {isDropdownAccess && (

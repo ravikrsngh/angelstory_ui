@@ -27,42 +27,38 @@ export default function Dashboard() {
         <CreateProjectBanner />
         <div className="overflow-x-auto">
           <div className="flex gap-4">
-            <div className="min-w-[200px] rounded-lg">
+            <div className="min-w-[140px] md:min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="min-w-[200px] rounded-lg">
+            <div className="min-w-[140px] md:min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="min-w-[200px] rounded-lg">
+            <div className="min-w-[140px] md:min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="min-w-[200px] rounded-lg">
+
+            <div className="min-w-[140px] md:min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="min-w-[200px] rounded-lg">
+            <div className="min-w-[140px] md:min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="min-w-[200px] rounded-lg">
+            <div className="min-w-[140px] md:min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>
             </div>
-            <div className="min-w-[200px] rounded-lg">
-              <Link to={"/"} className="w-full">
-                <img src={dummyCatImg} className="w-full" />
-              </Link>
-            </div>
-            <div className="min-w-[200px] rounded-lg">
+            <div className="min-w-[140px] md:min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">
                 <img src={dummyCatImg} className="w-full" />
               </Link>

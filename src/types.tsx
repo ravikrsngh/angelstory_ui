@@ -381,6 +381,7 @@ export type BasicStyleCardPropType = PropsWithChildren<{
   name: string;
   bgImage: string;
   accessRight: string;
+  className?: string;
 }>;
 
 export type NewCardPropsType = BasicStyleCardPropType & {

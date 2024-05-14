@@ -73,7 +73,7 @@ export const DashboardCollection = () => {
             <span>Create</span>
           </div>
         </h4>
-        <div>
+        <div className="overflow-x-auto">
           <div className="flex gap-4">
             {/* <div
               key={0}
@@ -127,7 +127,7 @@ export const DashboardCollection = () => {
                 <Dialog.Panel className="py-10 px-5 w-full max-w-3xl transform overflow-hidden rounded-md bg-white text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-xl text-center font-medium leading-6 text-gray-900"
+                    className="text-lg md:text-xl text-center font-medium leading-6 text-gray-900"
                   >
                     Create Collection
                   </Dialog.Title>

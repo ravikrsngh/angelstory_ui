@@ -26,17 +26,21 @@ const BasicStyleCard = ({
   onClickHandler,
   bgImage,
   children,
+  className,
 }: BasicStyleCardPropType) => {
   return (
     <div>
       <div
-        className="p-3 bg-primary-100 w-[249px] h-min rounded-lg"
+        className={cn(
+          "p-3 bg-primary-100 w-[180px] md:w-[249px] h-min rounded-lg",
+          className
+        )}
         onClick={onClickHandler as () => void}
       >
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center overflow-hidden">
             <div className="text-primary-400">{getHeaderIcon(type)}</div>
-            <span className="text-sm overflow-hidden whitespace-nowrap text-ellipsis">
+            <span className="text-xs md:text-sm overflow-hidden whitespace-nowrap text-ellipsis">
               {name}
             </span>
           </div>
@@ -44,7 +48,7 @@ const BasicStyleCard = ({
         </div>
         <div
           className={cn(
-            "w-full overflow-hidden mt-2 flex justify-center items-center h-[190px] bg-cover bg-center"
+            "w-full overflow-hidden mt-2 flex justify-center items-center h-[130px] md:h-[190px] bg-cover bg-center"
           )}
           style={{
             backgroundImage: `url(${bgImage})`,
@@ -67,6 +71,7 @@ export const NewCard = ({
   entityType,
   bgImage,
   accessRight,
+  className,
   ...rest
 }: NewCardPropsType) => {
   const [previewModal, setPreviewModal] = useState<boolean>(false);
@@ -122,6 +127,7 @@ export const NewCard = ({
         entityType={entityType}
         bgImage={bgImage}
         accessRight={accessRight}
+        className={className}
       >
         {dropdownOptions.length > 0 && isDropdownAccess && (
           <Menu as="div" className="relative inline-block text-left ml-auto">
