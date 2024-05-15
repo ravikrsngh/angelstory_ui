@@ -55,7 +55,7 @@ export const ViewAllJourneyMemories = () => {
   }
 
   return (
-    <div className="p-10 flex flex-col gap-10">
+    <div className="p-4 lg:p-10 flex flex-col gap-10">
       <ViewAllHeader smallHeading="All Memories" bigHeading={data.name} />
 
       {selectedObjs.length > 0 && (
@@ -67,7 +67,7 @@ export const ViewAllJourneyMemories = () => {
         />
       )}
 
-      <div className="flex gap-4 flex-wrap">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4">
         {data.projectList.map((asset: MemoryType) => (
           <ViewAllCard
             key={asset.id}

@@ -210,6 +210,7 @@ export const ViewAllCard = ({
   entityType,
   bgImage,
   accessRight,
+  className,
 }: ViewAllCardPropType) => {
   return (
     <BasicStyleCard
@@ -220,6 +221,7 @@ export const ViewAllCard = ({
       entityType={entityType}
       bgImage={bgImage}
       accessRight={accessRight}
+      className={className}
     >
       <div>
         <input
