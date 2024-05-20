@@ -1,16 +1,19 @@
+import { Menu, Transition } from "@headlessui/react";
 import {
   IconChevronLeft,
   IconChevronRight,
+  IconDots,
   IconDownload,
   IconTrash,
   IconX,
 } from "@tabler/icons-react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useSaveProject } from "../../hooks/project/use-save-project";
 import { AccessTypeGroups, EntityType, MemoryTypes } from "../../types";
-import { getHeaderIcon } from "../../utils";
+import { cn, getHeaderIcon } from "../../utils";
 import { ViewerDeleteModal } from "./all-modals";
+import { DropdownButton } from "./dropdown-action-buttons";
 import { Modal } from "./modal";
 
 export type FilesViewerItemType = {
@@ -42,6 +45,7 @@ export const FilesViewer = (props: FilesViewerProp) => {
   const [actionModal, setActionModal] = useState<boolean>(false);
   const [editJournalMode, setEditJournalMode] = useState<boolean>(false);
   const saveProjectHook = useSaveProject();
+  const navigate = useNavigate();
   console.log(props);
 
   const addJournal = (e: React.FormEvent) => {
@@ -110,81 +114,190 @@ export const FilesViewer = (props: FilesViewerProp) => {
     }
   }, []);
 
+  console.log(activeFile);
+
   return (
     <div className="fixed top-0 left-0 w-full h-screen bg-black/75 z-[99]">
       {activeFile ? (
         <div className="h-full">
           <div className="file-view-header py-2 px-4 flex items-center">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 overflow-hidden">
               <div className="text-primary-400">
                 {getHeaderIcon(activeFile.type)}
               </div>
-              <span className="text-slate-200">{activeFile.name}</span>
+              <span className="text-slate-200 overflow-hidden whitespace-nowrap  text-ellipsis">
+                {activeFile.name}
+              </span>
             </div>
             {props.publicView ||
-            [...AccessTypeGroups.OWNER, AccessTypeGroups.EDIT].includes(
+            [...AccessTypeGroups.OWNER, ...AccessTypeGroups.EDIT].includes(
               activeFile.accessRight || ""
             ) ? (
-              <div className="ml-auto text-slate-400  flex items-center gap-4">
-                <div
-                  className="hover:cursor-pointer hover:text-slate-300"
-                  onClick={() => props.setView(false)}
-                >
-                  <IconX />
+              <>
+                <div className="lg:hidden ml-auto flex gap-4 items-center">
+                  <Menu
+                    as="div"
+                    className="relative inline-block text-left ml-auto"
+                  >
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Menu.Button className="inline-flex w-full justify-center rounded-md px-2 py-2 text-sm font-medium text-primary-700">
+                        <IconDots
+                          className="-mr-1 ml-2 h-5 w-5 text-white"
+                          aria-hidden="true"
+                        />
+                      </Menu.Button>
+                    </div>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items
+                        className={cn(
+                          "absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+                        )}
+                      >
+                        <div
+                          className="px-1 py-1 "
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {activeFile.entityType == EntityType.MEMORY && (
+                            <Menu.Item key="add-journal">
+                              <DropdownButton
+                                icon={""}
+                                name={"Add/Edit Journal"}
+                                onClickHandler={() => setEditJournalMode(true)}
+                              />
+                            </Menu.Item>
+                          )}
+                          {[MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(
+                            activeFile.type
+                          ) && (
+                            <Menu.Item key="open-editor">
+                              <DropdownButton
+                                icon={""}
+                                name={"Open in editor"}
+                                onClickHandler={() =>
+                                  navigate(
+                                    `/design/${activeFile.collectionId}/${activeFile.journeyId}/${activeFile.id}`
+                                  )
+                                }
+                              />
+                            </Menu.Item>
+                          )}
+                          {activeFile.type == MemoryTypes.IMAGE && (
+                            <Menu.Item key="convert-product">
+                              <DropdownButton
+                                icon={""}
+                                name={"Convert to Product"}
+                                onClickHandler={() => {}}
+                              />
+                            </Menu.Item>
+                          )}
+                          {[
+                            MemoryTypes.AUDIO,
+                            MemoryTypes.CARD,
+                            MemoryTypes.IMAGE,
+                            MemoryTypes.PDF,
+                            MemoryTypes.SLIDESHOW,
+                            MemoryTypes.VIDEO,
+                          ].includes(activeFile.type) && (
+                            <Menu.Item key="download">
+                              <DropdownButton
+                                icon={""}
+                                name={"Download"}
+                                onClickHandler={() =>
+                                  downloadBtnClicked(
+                                    activeFile.name,
+                                    activeFile.src
+                                  )
+                                }
+                              />
+                            </Menu.Item>
+                          )}
+                          <Menu.Item key="delete">
+                            <DropdownButton
+                              icon={""}
+                              name={"Delete"}
+                              onClickHandler={() => setActionModal(true)}
+                            />
+                          </Menu.Item>
+                        </div>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+                  <div
+                    className="text-white hover:cursor-pointer hover:text-slate-300"
+                    onClick={() => props.setView(false)}
+                  >
+                    <IconX />
+                  </div>
                 </div>
-              </div>
+                <div className="hidden lg:flex ml-auto text-slate-400 items-center gap-4">
+                  {activeFile.entityType == EntityType.MEMORY && (
+                    <div
+                      className="hover:cursor-pointer hover:text-slate-300 text-xs"
+                      onClick={() => setEditJournalMode(true)}
+                    >
+                      Add/Edit Journal
+                    </div>
+                  )}
+                  {[MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(
+                    activeFile.type
+                  ) && (
+                    <div className="hover:cursor-pointer hover:text-slate-300 text-xs">
+                      <Link
+                        to={`/design/${activeFile.collectionId}/${activeFile.journeyId}/${activeFile.id}`}
+                      >
+                        Open in editor
+                      </Link>
+                    </div>
+                  )}
+                  {activeFile.type == MemoryTypes.IMAGE && (
+                    <div
+                      className="hover:cursor-pointer hover:text-slate-300 text-xs"
+                      onClick={() => setEditJournalMode(true)}
+                    >
+                      Convert to Product
+                    </div>
+                  )}
+                  {[
+                    MemoryTypes.AUDIO,
+                    MemoryTypes.CARD,
+                    MemoryTypes.IMAGE,
+                    MemoryTypes.PDF,
+                    MemoryTypes.SLIDESHOW,
+                    MemoryTypes.VIDEO,
+                  ].includes(activeFile.type) && (
+                    <div
+                      className="hover:cursor-pointer hover:text-slate-300 text-xs"
+                      onClick={() =>
+                        downloadBtnClicked(activeFile.name, activeFile.src)
+                      }
+                    >
+                      <IconDownload />
+                    </div>
+                  )}
+                  <div
+                    className="hover:cursor-pointer hover:text-slate-300"
+                    onClick={() => setActionModal(true)}
+                  >
+                    <IconTrash />
+                  </div>
+                  <div
+                    className="hover:cursor-pointer hover:text-slate-300"
+                    onClick={() => props.setView(false)}
+                  >
+                    <IconX />
+                  </div>
+                </div>
+              </>
             ) : (
               <div className="ml-auto text-slate-400  flex items-center gap-4">
-                {activeFile.entityType == EntityType.MEMORY && (
-                  <div
-                    className="hover:cursor-pointer hover:text-slate-300 text-xs"
-                    onClick={() => setEditJournalMode(true)}
-                  >
-                    Add/Edit Journal
-                  </div>
-                )}
-                {[MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(
-                  activeFile.type
-                ) && (
-                  <div className="hover:cursor-pointer hover:text-slate-300 text-xs">
-                    <Link
-                      to={`/design/${activeFile.collectionId}/${activeFile.journeyId}/${activeFile.id}`}
-                    >
-                      Open in editor
-                    </Link>
-                  </div>
-                )}
-                {activeFile.type == MemoryTypes.IMAGE && (
-                  <div
-                    className="hover:cursor-pointer hover:text-slate-300 text-xs"
-                    onClick={() => setEditJournalMode(true)}
-                  >
-                    Convert to Product
-                  </div>
-                )}
-                {[
-                  MemoryTypes.AUDIO,
-                  MemoryTypes.CARD,
-                  MemoryTypes.IMAGE,
-                  MemoryTypes.PDF,
-                  MemoryTypes.SLIDESHOW,
-                  MemoryTypes.VIDEO,
-                ].includes(activeFile.type) && (
-                  <div
-                    className="hover:cursor-pointer hover:text-slate-300 text-xs"
-                    onClick={() =>
-                      downloadBtnClicked(activeFile.name, activeFile.src)
-                    }
-                  >
-                    <IconDownload />
-                  </div>
-                )}
-                <div
-                  className="hover:cursor-pointer hover:text-slate-300"
-                  onClick={() => setActionModal(true)}
-                >
-                  <IconTrash />
-                </div>
                 <div
                   className="hover:cursor-pointer hover:text-slate-300"
                   onClick={() => props.setView(false)}
@@ -194,7 +307,7 @@ export const FilesViewer = (props: FilesViewerProp) => {
               </div>
             )}
           </div>
-          <div className="file-view-main w-full py-4 px-20 flex justify-center items-center h-[calc(100vh-40px)] overflow-hidden">
+          <div className="file-view-main w-full py-4 px-16 lg:px-20 flex justify-center items-center h-[calc(100vh-40px)] overflow-hidden">
             <div className="w-full grid grid-cols-[auto,auto] overflow-hidden justify-center items-center">
               <div className="view grow max-w-[1121px]">
                 {[MemoryTypes.IMAGE, MemoryTypes.CARD].includes(
@@ -303,17 +416,17 @@ export const FilesViewer = (props: FilesViewerProp) => {
               )}
             </div>
           </div>
-          <div className="right-nav absolute top-20 right-0 w-20 h-full pb-40 flex justify-center items-center">
+          <div className="right-nav absolute top-20 right-0 w-14 lg:w-20 h-full pb-40 flex justify-center items-center">
             <button
-              className="w-10 h-10 rounded-full bg-slate-500 flex justify-center items-center hover:bg-slate-300"
+              className="lg:w-10 lg:h-10 rounded-full lg:bg-slate-500 flex justify-center items-center hover:bg-slate-300"
               onClick={moveNext}
             >
               <IconChevronRight />
             </button>
           </div>
-          <div className="right-nav absolute top-20 pb-40 left-0 w-20 h-full flex justify-center items-center">
+          <div className="right-nav absolute top-20 pb-40 left-0 w-14 lg:w-20 h-full flex justify-center items-center">
             <button
-              className="w-10 h-10 rounded-full bg-slate-500 flex justify-center items-center hover:bg-slate-300"
+              className="lg:w-10 lg:h-10 rounded-full lg:bg-slate-500 flex justify-center items-center hover:bg-slate-300"
               onClick={moveBack}
             >
               <IconChevronLeft />

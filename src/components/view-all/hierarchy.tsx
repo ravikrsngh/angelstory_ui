@@ -6,15 +6,17 @@ import {
   IconFolderFilled,
 } from "@tabler/icons-react";
 import { Fragment, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useGetCollectionLevel } from "../../hooks/collection/use-collection-level";
 import { CollectionLevelResType, HierarchyType } from "../../types";
 import { cn } from "../../utils";
 
 export const ViewAllHierarchy = () => {
   const { data, isLoading, isFetching, isError } = useGetCollectionLevel();
+  const [displayDrawer, setDisplayDrawer] = useState(false);
   const [hierarchy, setHierarchy] = useState<HierarchyType[]>([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const obj: HierarchyType[] = [];
@@ -63,6 +65,10 @@ export const ViewAllHierarchy = () => {
     setHierarchy(obj);
   }, [data]);
 
+  useEffect(() => {
+    setDisplayDrawer(false);
+  }, [location]);
+
   if (isLoading || isFetching) {
     return <span>Loading ...</span>;
   }
@@ -72,7 +78,13 @@ export const ViewAllHierarchy = () => {
   }
   return (
     <>
-      <div className="absolute top-0 -left-0 lg:relative w-80 border-l bg-white z-10 border-slate-300 h-full py-8 shadow-md overflow-y-auto">
+      <div
+        className={cn(
+          "absolute top-0 lg:relative w-80 border-l bg-white z-10 border-slate-300 h-full py-8 shadow-md overflow-y-auto",
+          displayDrawer ? "left-0" : "-left-80",
+          "lg:left-0"
+        )}
+      >
         <h4 className="text-lg mb-4 px-5">Collection</h4>
         {hierarchy.map((h: HierarchyType) => (
           <Disclosure key={h.id} as={Fragment}>
@@ -150,8 +162,16 @@ export const ViewAllHierarchy = () => {
           </Disclosure>
         ))}
       </div>
-      <div className="lg:hidden w-10 h-10 rounded-full absolute top-1/2 left-72 flex justify-center items-center bg-white z-20">
-        <IconChevronRight />
+      <div
+        className={cn(
+          "lg:hidden w-10 h-10 rounded-full absolute top-1/2 flex justify-end items-center bg-white z-20 shadow-md pr-1 transition",
+          displayDrawer ? "left-72 pr-0 justify-center" : "-left-2"
+        )}
+        onClick={() => setDisplayDrawer((prev) => !prev)}
+      >
+        <IconChevronRight
+          className={cn(displayDrawer ? "transform rotate-180" : "")}
+        />
       </div>
     </>
   );

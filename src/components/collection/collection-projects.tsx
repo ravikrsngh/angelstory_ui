@@ -42,15 +42,17 @@ export const CollectionProjects = ({
     <div className="">
       <h4 className="font-medium mb-6 text-base md:text-lg flex justify-between items-center">
         Journies
-        <button
-          onClick={() => {
-            setActionModal(true);
-            setAction(DropdownActions.ADD_JOURNEY.id);
-          }}
-          className="text-sm"
-        >
-          + Add Journey
-        </button>
+        {![...AccessTypeGroups.VIEW_ONLY].includes(data.accessRight) ? (
+          <button
+            onClick={() => {
+              setActionModal(true);
+              setAction(DropdownActions.ADD_JOURNEY.id);
+            }}
+            className="text-sm"
+          >
+            + Add Journey
+          </button>
+        ) : null}
       </h4>
       <div className="flex gap-4 overflow-auto">
         {data.journeyList?.map((journey: JourneyType) => (

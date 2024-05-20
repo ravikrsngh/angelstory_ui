@@ -4,7 +4,7 @@ import {
   IconPlayerPlay,
   IconTrash,
 } from "@tabler/icons-react";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   AccessTypeGroups,
   AssetTypes,
@@ -77,6 +77,10 @@ export const NewCard = ({
   const [previewModal, setPreviewModal] = useState<boolean>(false);
   const [action, setAction] = useState<number | null>(null);
   const [actionModal, setActionModal] = useState<boolean>(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [dropdownPosition, setDropdownPosition] =
+    useState<string>("origin-top-left");
   const isDropdownAccess = [
     ...AccessTypeGroups.OWNER,
     ...AccessTypeGroups.EDIT,
@@ -117,6 +121,35 @@ export const NewCard = ({
     }
   };
 
+  useEffect(() => {
+    const handlePosition = () => {
+      console.log("ascg");
+      if (triggerRef.current && dropdownRef.current) {
+        const triggerRect = triggerRef.current.getBoundingClientRect();
+        const dropdownRect = dropdownRef.current.getBoundingClientRect();
+
+        const spaceAbove = triggerRect.top;
+        const spaceBelow = window.innerHeight - triggerRect.bottom;
+        const spaceLeft = triggerRect.left;
+        const spaceRight = window.innerWidth - triggerRect.right;
+
+        if (spaceBelow >= dropdownRect.height || spaceBelow >= spaceAbove) {
+          setDropdownPosition("origin-top-left");
+        } else if (spaceAbove >= dropdownRect.height) {
+          setDropdownPosition("origin-top");
+        } else if (spaceRight >= dropdownRect.width) {
+          setDropdownPosition("origin-top-right");
+        } else if (spaceLeft >= dropdownRect.width) {
+          setDropdownPosition("origin-bottom");
+        } else {
+          setDropdownPosition("origin-top-left");
+        }
+      }
+    };
+    window.addEventListener("resize", handlePosition);
+    window.addEventListener("scroll", handlePosition);
+  }, [triggerRef]);
+
   return (
     <>
       <BasicStyleCard
@@ -132,7 +165,10 @@ export const NewCard = ({
         {dropdownOptions.length > 0 && isDropdownAccess && (
           <Menu as="div" className="relative inline-block text-left ml-auto">
             <div onClick={(e) => e.stopPropagation()}>
-              <Menu.Button className="inline-flex w-full justify-center rounded-md px-2 py-2 text-sm font-medium text-primary-700">
+              <Menu.Button
+                ref={triggerRef}
+                className="inline-flex w-full justify-center rounded-md px-2 py-2 text-sm font-medium text-primary-700"
+              >
                 <IconDotsVertical
                   className="-mr-1 ml-2 h-5 w-5 text-primary-700"
                   aria-hidden="true"
@@ -148,7 +184,13 @@ export const NewCard = ({
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+              <Menu.Items
+                ref={dropdownRef}
+                className={cn(
+                  "absolute left-0 mt-2 w-56 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none",
+                  dropdownPosition
+                )}
+              >
                 <div
                   className="px-1 py-1 "
                   onClick={(e) => e.stopPropagation()}

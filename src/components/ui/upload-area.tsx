@@ -50,7 +50,7 @@ export default function UploadArea({
     ev.preventDefault();
   };
   return (
-    <div className="upload-container h-full w-full">
+    <div className="upload-container h-full w-full grow">
       <div
         id="drop_zone"
         className="bg-primary-50 rounded-md w-full h-full flex justify-center items-center"

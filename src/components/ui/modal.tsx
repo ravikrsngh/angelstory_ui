@@ -42,10 +42,10 @@ export const Modal: FC<ModalPropsType> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="py-6 md:py-10 px-4 md:px-10 w-full max-w-3xl transform overflow-hidden rounded-md max-h bg-white text-left shadow-xl transition-all">
+              <Dialog.Panel className="py-6 md:py-10 px-4 md:px-10 w-full max-w-3xl transform !overflow-auto rounded-md max-h bg-white text-left shadow-xl transition-all max-h-[calc(100vh-40px)]">
                 <div className="modal relative">
                   {headerLabel != "" && (
-                    <h3 className="text-xl">{headerLabel}</h3>
+                    <h3 className="text-lg lg:text-xl">{headerLabel}</h3>
                   )}
                   {children}
                   <div className="actions">

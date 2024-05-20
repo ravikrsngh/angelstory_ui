@@ -1,5 +1,5 @@
 import { Menu, Tab, Transition } from "@headlessui/react";
-import { IconDots } from "@tabler/icons-react";
+import { IconDots, IconPlus } from "@tabler/icons-react";
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { SortByFilter } from "../components/filters/sort-by";
@@ -187,7 +187,7 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                   entityId={asset.id}
                   entityType={EntityType.ASSET}
                   bgImage={asset.assetUrl}
-                  accessRight={asset.accessRight}
+                  accessRight={data.accessRight}
                 />
                 {!asset.isApproved && isNeedAprovalAccess ? (
                   <ApprovalBox
@@ -211,7 +211,7 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
               src: asset.assetUrl,
               collectionId: asset.collectionId,
               journeyId: asset.journeyId,
-              accessRight: asset.accessRight,
+              accessRight: data.accessRight,
             };
           })}
           setView={setViewFilesViewer}
@@ -340,15 +340,17 @@ const JourneyMemories = ({
     <div className="">
       <h4 className="font-medium mb-6 text-base md:text-lg flex justify-between items-center">
         Memories
-        <button
-          onClick={() => {
-            setActionModal(true);
-            setAction(DropdownActions.ADD_MEMORY.id);
-          }}
-          className="text-sm"
-        >
-          + Add Journey
-        </button>
+        {![...AccessTypeGroups.VIEW_ONLY].includes(data?.accessRight || "") ? (
+          <button
+            onClick={() => {
+              setActionModal(true);
+              setAction(DropdownActions.ADD_MEMORY.id);
+            }}
+            className="text-sm"
+          >
+            + Add Memory
+          </button>
+        ) : null}
       </h4>
       <div className="journey-filters bg-primary-50 p-4 rounded-md">
         <h4 className="text-sm lg:text-base mb-0 text-primary-700 flex justify-between items-center">
@@ -429,7 +431,14 @@ const JourneyMemories = ({
                   key={memory.id}
                   type={memory.projectType}
                   name={memory.name}
-                  dropdownOptions={MemoryCardDropdownList}
+                  dropdownOptions={
+                    [
+                      ...AccessTypeGroups.OWNER,
+                      ...AccessTypeGroups.EDIT,
+                    ].includes(data?.accessRight || "")
+                      ? MemoryCardDropdownList
+                      : []
+                  }
                   dataObject={memory}
                   onClickHandler={() =>
                     openFileViewer({
@@ -473,6 +482,7 @@ const JourneyMemories = ({
                 title: memory.title,
                 collectionId: memory.collectionId,
                 journeyId: memory.journeyId,
+                accessRight: memory.accessRight,
               };
             }) || []
           }
@@ -561,43 +571,88 @@ export default function Journey() {
         <h4 className="text-3xl md:text-4xl lg:text-5xl font-medium">
           {data?.name}
         </h4>
-        <div className="absolute top-4 right-4">
-          <Menu as="div" className="relative inline-block text-left ml-auto">
-            <div onClick={(e) => e.stopPropagation()}>
-              <Menu.Button className="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-primary-700">
-                <IconDots
-                  className="-mr-1 ml-2 h-5 w-5 text-primary-700"
-                  aria-hidden="true"
-                />
-              </Menu.Button>
-            </div>
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
-                <div className="px-1 py-1 ">
-                  {JourneyBannerDropdownList.map((opt) => (
-                    <Menu.Item key={opt.id}>
+        {[...AccessTypeGroups.EDIT, ...AccessTypeGroups.OWNER].includes(
+          data?.accessRight || ""
+        ) ? (
+          <div className="absolute top-4 right-4">
+            <Menu as="div" className="relative inline-block text-left ml-auto">
+              <div onClick={(e) => e.stopPropagation()}>
+                <Menu.Button className="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-primary-700">
+                  <IconDots
+                    className="-mr-1 ml-2 h-5 w-5 text-primary-700"
+                    aria-hidden="true"
+                  />
+                </Menu.Button>
+              </div>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                  <div className="px-1 py-1 ">
+                    {JourneyBannerDropdownList.map((opt) => (
+                      <Menu.Item key={opt.id}>
+                        <DropdownButton
+                          icon={opt.icon}
+                          name={opt.name}
+                          onClickHandler={() => onClickDropdownOptions(opt.id)}
+                        />
+                      </Menu.Item>
+                    ))}
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          </div>
+        ) : null}
+        {[...AccessTypeGroups.ADD_VIEW, ...AccessTypeGroups.ADD_ONLY].includes(
+          data?.accessRight || ""
+        ) ? (
+          <div className="absolute top-4 right-4">
+            <Menu as="div" className="relative inline-block text-left ml-auto">
+              <div onClick={(e) => e.stopPropagation()}>
+                <Menu.Button className="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-primary-700">
+                  <IconDots
+                    className="-mr-1 ml-2 h-5 w-5 text-primary-700"
+                    aria-hidden="true"
+                  />
+                </Menu.Button>
+              </div>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                  <div className="px-1 py-1 ">
+                    <Menu.Item>
                       <DropdownButton
-                        icon={opt.icon}
-                        name={opt.name}
-                        onClickHandler={() => onClickDropdownOptions(opt.id)}
+                        icon={<IconPlus />}
+                        name={"Upload"}
+                        onClickHandler={() =>
+                          onClickDropdownOptions(DropdownActions.ADD_MEMORY.id)
+                        }
                       />
                     </Menu.Item>
-                  ))}
-                </div>
-              </Menu.Items>
-            </Transition>
-          </Menu>
-        </div>
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          </div>
+        ) : null}
       </div>
-      <JourneyRecentActivity />
+      {[...AccessTypeGroups.OWNER].includes(data.accessRight) ? (
+        <JourneyRecentActivity />
+      ) : null}
       <JourneyAssets journeyId={params.journeyId ? params.journeyId : "-1"} />
       <JourneyMemories setAction={setAction} setActionModal={setActionModal} />
       <DropdownActionModals

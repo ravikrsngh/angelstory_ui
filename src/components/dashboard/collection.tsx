@@ -73,7 +73,7 @@ export const DashboardCollection = () => {
             <span>Create</span>
           </div>
         </h4>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-visible">
           <div className="flex gap-4">
             {/* <div
               key={0}

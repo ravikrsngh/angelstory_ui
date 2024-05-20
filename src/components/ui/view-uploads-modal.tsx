@@ -61,12 +61,12 @@ export default function ViewUploadModalContent({
           <ViewUploadCard file={f} onDelete={() => deleteFile(idx)} />
         ))}
       </div>
-      <div className="flex gap-4 justify-end mt-10">
+      <div className="flex gap-4 text-sm md:text-base justify-end mt-10">
         <button className="px-10 py-3" onClick={backBtnHandler}>
           {backBtnLabel ? backBtnLabel : "Back"}
         </button>
         <button
-          className="bg-primary-400 text-white px-10 py-3 rounded-sm"
+          className="bg-primary-400 text-white px-4 text-sm md:text-base md:px-10 py-3 rounded-sm"
           onClick={nextBtnHandler}
         >
           {nextBtnLabel ? nextBtnLabel : "Next"}

@@ -136,11 +136,14 @@ export default function SelectFolder({
         ))}
       </div>
       <div className="flex gap-4 justify-end mt-10">
-        <button className="px-10 py-3" onClick={backBtnHandler}>
+        <button
+          className="px-10 py-3 text-sm md:text-base"
+          onClick={backBtnHandler}
+        >
           {backBtnLabel ? backBtnLabel : "Back"}
         </button>
         <button
-          className="bg-primary-400 text-white px-10 py-3 rounded-sm"
+          className="bg-primary-400 text-white text-sm md:text-base px-4  md:px-10 py-3 rounded-sm"
           onClick={onClickNext}
         >
           {nextBtnLabel ? nextBtnLabel : "Next"}

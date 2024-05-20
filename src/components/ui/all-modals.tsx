@@ -214,7 +214,7 @@ export const ChangeBackgroundCollection = ({
     <>
       <div className="change-background flex gap-8 mt-8 flex-col">
         {stage == changeBackgroundStages.COLORS && (
-          <div className="flex gap-6">
+          <div className="flex flex-col gap-6">
             <div className="all-colors">
               <div className="flex gap-4 flex-wrap">
                 {bgColorOptions.map((color: string) => {
@@ -590,8 +590,8 @@ export const AddMemoryUploadModal = ({
       <div className="add-memory-modal">
         {stage == StageLists.UPLOAD_SELECT ? (
           <>
-            <h3 className="text-xl">Create Memory</h3>
-            <div className="flex justify-between items-center h-[300px] mt-6">
+            <h3 className="text-lg md:text-xl">Create Memory</h3>
+            <div className="w-full flex flex-col md:flex-row justify-between items-center h-[300px] mt-6">
               <UploadArea
                 setFiles={setFiles}
                 nextBtnHandler={() => setStage(StageLists.VIEW_UPLOADS)}
@@ -599,11 +599,11 @@ export const AddMemoryUploadModal = ({
               {source == SourceMemory.UPLOAD ? null : (
                 <>
                   <div className="flex p-6">
-                    <span>OR</span>
+                    <span className="text-sm">OR</span>
                   </div>
-                  <div className="h-full flex flex-col gap-4">
+                  <div className="w-full h-full flex flex-col gap-4">
                     <div
-                      className="w-[200px] bg-primary-200 rounded-md flex-grow flex justify-center items-center"
+                      className="w-full bg-primary-200 rounded-md flex-grow flex justify-center items-center"
                       onClick={() => {
                         setMemoryType(MemoryTypes.CARD);
                         setStage(StageLists.CARD_SIZE);
@@ -612,7 +612,7 @@ export const AddMemoryUploadModal = ({
                       <span>CARD</span>
                     </div>
                     <div
-                      className="w-[200px] bg-primary-200 rounded-md flex-grow flex justify-center items-center"
+                      className="w-full bg-primary-200 rounded-md flex-grow flex justify-center items-center"
                       onClick={() => {
                         setMemoryType(MemoryTypes.SLIDESHOW);
                         setStage(StageLists.CARD_SIZE);
@@ -1013,13 +1013,13 @@ export const ShareModal = ({
         </div> */}
         <div className="flex justify-between items-center mt-40">
           <button
-            className="px-10 py-3 rounded-sm border border-primary-400 text-primary-400"
+            className="text-sm md:text-base px-4 md:px-10 py-3 rounded-sm border border-primary-400 text-primary-400"
             onClick={copyPublicLink}
           >
             Copy Public Link
           </button>
           <button
-            className="bg-primary-400 text-white px-10 py-3 rounded-sm disabled:opacity-75"
+            className="bg-primary-400 text-white text-sm md:text-base px-6 md:px-10 py-3 rounded-sm disabled:opacity-75"
             onClick={share}
           >
             Share

@@ -624,7 +624,7 @@ export const DropdownActionModals = ({
           />
         </Modal>
       )}
-      {action == DropdownActions.SHARE_MEMORY.id && (
+      {action == DropdownActions.SHARE_JOURNEY.id && (
         <Modal
           headerLabel="Share Memory"
           openModal={actionModal}
@@ -640,7 +640,7 @@ export const DropdownActionModals = ({
           />
         </Modal>
       )}
-      {action == DropdownActions.MANAGE_ACCESS_MEMORY.id && (
+      {action == DropdownActions.MANAGE_ACCESS_JOURNEY.id && (
         <Modal
           headerLabel="Manage Access"
           openModal={actionModal}

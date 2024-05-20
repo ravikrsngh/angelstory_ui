@@ -186,6 +186,7 @@ const CollectionAssets = ({
                       entityType: EntityType.ASSET,
                       id: asset.id,
                       journeyId: asset.journeyId,
+                      accessRight: asset.accessRight,
                     })
                   }
                   entityId={asset.id}
@@ -206,17 +207,20 @@ const CollectionAssets = ({
       </div>
       {viewFilesViewer ? (
         <FilesViewer
-          items={data.assetList?.map((asset: AssetResType) => {
-            return {
-              type: asset.assetType,
-              entityType: EntityType.ASSET,
-              id: asset.id,
-              name: asset.name,
-              src: asset.assetUrl,
-              collectionId: asset.collectionId,
-              journeyId: asset.journeyId,
-            };
-          })}
+          items={
+            dataCopy?.map((asset: AssetResType) => {
+              return {
+                type: asset.assetType,
+                entityType: EntityType.ASSET,
+                id: asset.id,
+                name: asset.name,
+                src: asset.assetUrl,
+                collectionId: asset.collectionId,
+                journeyId: asset.journeyId,
+                accessRight: asset.accessRight,
+              };
+            }) || []
+          }
           setView={setViewFilesViewer}
           activeId={activeId}
           collectionId={data?.id}
@@ -257,7 +261,7 @@ export default function Collection() {
   return (
     <div className="px-4 md:px-10 lg:px-16 py-8 flex flex-col gap-8">
       <div
-        className="relative rounded-md overflow-hidden p-4 pt-20 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] text-primary-950 bg-center bg-cover"
+        className="relative rounded-md p-4 pt-20 pb-5 md:p-10 md:pt-[140px] lg:pt-[200px] text-primary-950 bg-center bg-cover"
         style={{
           backgroundColor: data?.bgColor ? data.bgColor : "#CEB8AF",
           backgroundImage: data?.bgImage ? `url(${data.bgImage})` : "",
@@ -271,7 +275,7 @@ export default function Collection() {
           <div className="absolute top-4 right-4">
             <Menu as="div" className="relative inline-block text-left ml-auto">
               <div onClick={(e) => e.stopPropagation()}>
-                <Menu.Button className="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-primary-700">
+                <Menu.Button className="inline-flex w-full justify-center rounded-md px-2 py-2 text-sm font-medium text-primary-700">
                   <IconDots
                     className="-mr-1 ml-2 h-5 w-5 text-primary-700"
                     aria-hidden="true"
@@ -304,7 +308,9 @@ export default function Collection() {
             </Menu>
           </div>
         )}
-        {AccessTypeGroups.ADD_ONLY.includes(data?.accessRight || "") ? (
+        {[...AccessTypeGroups.ADD_ONLY, ...AccessTypeGroups.ADD_VIEW].includes(
+          data?.accessRight || ""
+        ) ? (
           <div className="absolute top-4 right-4">
             <Menu as="div" className="relative inline-block text-left ml-auto">
               <div onClick={(e) => e.stopPropagation()}>
@@ -342,7 +348,9 @@ export default function Collection() {
           </div>
         ) : null}
       </div>
-      <CollectionRecentActivity />
+      {[...AccessTypeGroups.OWNER].includes(data.accessRight) ? (
+        <CollectionRecentActivity />
+      ) : null}
       <CollectionAssets collectionId={data?.id} />
       {AccessTypeGroups.ADD_ONLY.includes(data?.accessRight || "") ? null : (
         <CollectionProjects
