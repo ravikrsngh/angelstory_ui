@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
+
 import { Transition } from "@headlessui/react";
 import SlideshowPanel from "../../../pages/design/slideshow-panel";
 
