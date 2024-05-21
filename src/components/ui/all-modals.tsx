@@ -212,9 +212,9 @@ export const ChangeBackgroundCollection = ({
 
   return (
     <>
-      <div className="change-background flex gap-8 mt-8 flex-col">
+      <div className="change-background flex gap-8 mt-8 flex-col overflow-auto max-h-full">
         {stage == changeBackgroundStages.COLORS && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col  lg:flex-row gap-6">
             <div className="all-colors">
               <div className="flex gap-4 flex-wrap">
                 {bgColorOptions.map((color: string) => {
@@ -253,7 +253,7 @@ export const ChangeBackgroundCollection = ({
             <div className="px-4 flex justify-center items-center">
               <span>OR </span>
             </div>
-            <div className="choose-image-section w-64">
+            <div className="choose-image-section w-full lg:w-64">
               <div className="w-full h-24 bg-primary-200 flex justify-center items-center rounded-md">
                 <input
                   type="file"
@@ -276,6 +276,10 @@ export const ChangeBackgroundCollection = ({
               >
                 Choose from AngelJourney
               </button>
+
+              <span className="text-xs">
+                Note :- Recommended size for images : 1152 X 312px
+              </span>
             </div>
           </div>
         )}
