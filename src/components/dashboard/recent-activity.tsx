@@ -3,6 +3,7 @@ import { useGetActivity } from "../../hooks/activity/use-get-activity";
 import { ActivityResType } from "../../types";
 import { NewCard } from "../ui/cards";
 import { FilesViewer } from "../ui/files-viewer";
+import { CardDefaultLoader } from "../ui/loaders";
 
 export const DashboardRecentActivity = () => {
   const { data, isLoading, isFetching, isError } = useGetActivity();
@@ -10,9 +11,6 @@ export const DashboardRecentActivity = () => {
   const [viewFilesViewer, setViewFilesViewer] = useState(false);
   const [activeId, setActiveId] = useState<number>(0);
 
-  if (isLoading || isFetching) {
-    return <span>Loading...</span>;
-  }
   if (isError) {
     return <span>Something went wrong !!</span>;
   }
@@ -23,29 +21,33 @@ export const DashboardRecentActivity = () => {
       </h4>
       <div className="overflow-scroll">
         <div className="flex gap-4">
-          {data.map((cc: ActivityResType) => (
-            <NewCard
-              key={cc.entityId}
-              type={cc.type}
-              name={cc.name}
-              dropdownOptions={[]}
-              onClickHandler={() => {
-                setViewFilesViewer(true);
-                setActiveId(cc.id);
-              }}
-              entityId={cc.entityId}
-              entityType={cc.accessType}
-              bgImage={cc.bgImage}
-              accessRight={cc.accessRight}
-            />
-          ))}
+          {isLoading || isFetching ? (
+            <CardDefaultLoader wrap={false} number={8} />
+          ) : (
+            data.map((cc: ActivityResType) => (
+              <NewCard
+                key={cc.entityId}
+                type={cc.type}
+                name={cc.name}
+                dropdownOptions={[]}
+                onClickHandler={() => {
+                  setViewFilesViewer(true);
+                  setActiveId(cc.id);
+                }}
+                entityId={cc.entityId}
+                entityType={cc.accessType}
+                bgImage={cc.bgImage}
+                accessRight={cc.accessRight}
+              />
+            ))
+          )}
         </div>
       </div>
       {viewFilesViewer ? (
         <FilesViewer
-          items={data.map((asset: ActivityResType) => {
+          items={(data || []).map((asset: ActivityResType) => {
             return {
-              type: asset.accessType,
+              type: asset.type,
               entityType: asset.accessType,
               id: asset.id,
               name: asset.name,

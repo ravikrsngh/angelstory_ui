@@ -4,7 +4,7 @@ import {
   DropdownActionModals,
   DropdownActions,
 } from "../ui/dropdown-action-buttons";
-import dashboard_hero_img from "./../../assets/new1.png";
+import dashboard_hero_img from "./../../assets/collection-project-banner.png";
 
 export const CreateProjectBanner = () => {
   const [actionModal, setActionModal] = useState<boolean>(false);
@@ -43,7 +43,7 @@ export const CreateProjectBanner = () => {
             <button
               className="flex items-center gap-2 bg-primary-400 text-white px-10 py-3 rounded-sm hover:bg-primary-500"
               onClick={() => {
-                setAction(DropdownActions.ADD_MEMORY.id);
+                setAction(DropdownActions.ADD_MEMORY_DASHBOARD.id);
                 setActionModal(true);
               }}
             >

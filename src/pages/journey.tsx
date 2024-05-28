@@ -17,6 +17,7 @@ import {
   FilesViewer,
   FilesViewerItemType,
 } from "../components/ui/files-viewer";
+import { GeneralPageSkeleton } from "../components/ui/loaders";
 import { useGetActivityJourney } from "../hooks/activity/use-get-activity-for-journey";
 import { useGetJourneyAssets } from "../hooks/journey/use-fetch-journey-assets";
 import { useGetJourneysMemories } from "../hooks/journey/use-fetch-journeys-memory";
@@ -551,7 +552,7 @@ export default function Journey() {
   };
 
   if (isLoading || isFetching) {
-    return <span>Loading ...</span>;
+    return <GeneralPageSkeleton />;
   }
 
   if (isError) {

@@ -594,7 +594,9 @@ export const AddMemoryUploadModal = ({
       <div className="add-memory-modal">
         {stage == StageLists.UPLOAD_SELECT ? (
           <>
-            <h3 className="text-lg md:text-xl">Create Memory</h3>
+            <h3 className="text-lg md:text-xl">
+              {source == SourceMemory.UPLOAD ? "Upload files" : "Create memory"}
+            </h3>
             <div className="w-full flex flex-col md:flex-row justify-between items-center h-[300px] mt-6">
               <UploadArea
                 setFiles={setFiles}

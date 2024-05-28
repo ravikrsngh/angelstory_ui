@@ -9,6 +9,8 @@ import { AssetTypes, CollectionType, EntityType } from "../../types";
 import { NewCard } from "../ui/cards";
 import { CollectionDropdownList } from "../ui/dropdown-action-buttons";
 import { Input } from "../ui/input";
+import { CardDefaultLoader } from "../ui/loaders";
+import defaultCardImage from "./../../assets/aj_rectangle.png";
 
 export const DashboardCollection = () => {
   const { data, isLoading, isFetching, isError } = useGetAllCollectionForUser(
@@ -38,16 +40,6 @@ export const DashboardCollection = () => {
     setIsOpen(false);
   };
 
-  if (isLoading || isFetching) {
-    return (
-      <>
-        <div>
-          <span>Loading...</span>
-        </div>
-      </>
-    );
-  }
-
   if (isError) {
     return (
       <>
@@ -73,8 +65,8 @@ export const DashboardCollection = () => {
             <span>Create</span>
           </div>
         </h4>
-        <div className="overflow-x-auto overflow-y-visible">
-          <div className="flex gap-4">
+        <div className="">
+          <div className="flex gap-4 overflow-x-auto">
             {/* <div
               key={0}
               onClick={openModal}
@@ -83,19 +75,23 @@ export const DashboardCollection = () => {
               <IconPlus />
               <span>Create</span>
             </div> */}
-            {data.map((cc: CollectionType) => (
-              <NewCard
-                key={cc.entityId}
-                type={AssetTypes.FOLDER}
-                name={cc.name}
-                dropdownOptions={CollectionDropdownList}
-                onClickHandler={() => navigate(`/collection/${cc.entityId}`)}
-                entityId={cc.entityId}
-                entityType={EntityType.COLLECTION}
-                bgImage={cc.bgImage}
-                accessRight={cc.accessRight}
-              />
-            ))}
+            {isLoading || isFetching ? (
+              <CardDefaultLoader wrap={false} number={8} />
+            ) : (
+              data.map((cc: CollectionType) => (
+                <NewCard
+                  key={cc.entityId}
+                  type={AssetTypes.FOLDER}
+                  name={cc.name}
+                  dropdownOptions={CollectionDropdownList}
+                  onClickHandler={() => navigate(`/collection/${cc.entityId}`)}
+                  entityId={cc.entityId}
+                  entityType={EntityType.COLLECTION}
+                  bgImage={cc.bgImage ? cc.bgImage : defaultCardImage}
+                  accessRight={cc.accessRight}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>

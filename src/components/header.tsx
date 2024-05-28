@@ -1,6 +1,5 @@
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { IconMenu2 } from "@tabler/icons-react";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -74,8 +73,7 @@ const navigation = [
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [sideMenuDisplay, setSideMenuDisplay] = useState(false);
-  console.log(sideMenuDisplay);
+  //const [sideMenuDisplay, setSideMenuDisplay] = useState(false);
   const userDetailsHook = useGetUserDetails();
 
   const navigate = useNavigate();
@@ -168,9 +166,9 @@ export default function Header() {
               >
                 Sign up
               </Link>
-              <button onClick={() => setSideMenuDisplay((prev) => !prev)}>
+              {/* <button onClick={() => setSideMenuDisplay((prev) => !prev)}>
                 <IconMenu2 />
-              </button>
+              </button> */}
             </div>
             <div className="flex lg:hidden">
               <button

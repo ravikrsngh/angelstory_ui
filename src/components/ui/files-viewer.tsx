@@ -353,7 +353,7 @@ export const FilesViewer = (props: FilesViewerProp) => {
                     <p className="text-white">{activeFile.name}</p>
                     <Link
                       className="px-4 py-2 bg-primary-400 text-white"
-                      to={`collection/${activeFile.id}`}
+                      to={`/collection/${activeFile.id}`}
                     >
                       Open
                     </Link>
@@ -364,7 +364,7 @@ export const FilesViewer = (props: FilesViewerProp) => {
                     <p className="text-white">{activeFile.name}</p>
                     <Link
                       className="px-4 py-2 bg-primary-400 text-white"
-                      to={`journey/${activeFile.id}`}
+                      to={`/journey/${activeFile.id}`}
                     >
                       Open
                     </Link>

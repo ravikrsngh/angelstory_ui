@@ -22,8 +22,8 @@ import {
 import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import { Modal } from "../ui/modal";
+import dashboard_hero_img from "./../../assets/collection-project-banner.png";
 import testImg from "./../../assets/download.jpeg";
-import dashboard_hero_img from "./../../assets/new1.png";
 import testAudio from "./../../assets/test.mp3";
 import {
   AddJournalTemp,

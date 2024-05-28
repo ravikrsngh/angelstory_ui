@@ -7,6 +7,7 @@ import {
 import { EntityType } from "../../types";
 import { NewCard } from "../ui/cards";
 import { FilesViewer } from "../ui/files-viewer";
+import { CardDefaultLoader } from "../ui/loaders";
 
 export const SharedEntity = () => {
   const { isLoading, isFetching, isError, data } = useGetSharedEntity();
@@ -21,14 +22,11 @@ export const SharedEntity = () => {
     } else if (cc.accessType == EntityType.JOURNEY) {
       navigate(`/journey/${cc.entityId}`);
     } else {
-      setActiveId(cc.id);
+      setActiveId(cc.entityId);
       setViewFilesViewer(true);
     }
   };
 
-  if (isLoading || isFetching) {
-    return <span>Loading...</span>;
-  }
   if (isError) {
     return <span>Something went wrong !!</span>;
   }
@@ -38,29 +36,33 @@ export const SharedEntity = () => {
         Shared
       </h4>
       <div>
-        <div className="flex gap-4">
-          {data.map((cc: SharedEntityResType) => (
-            <NewCard
-              key={cc.entityId}
-              type={cc.type}
-              name={cc.name}
-              dropdownOptions={[]}
-              onClickHandler={() => onClickHandler(cc)}
-              entityId={cc.entityId}
-              entityType={cc.accessType}
-              bgImage={cc.bgImage}
-              accessRight={cc.accessRight}
-            />
-          ))}
+        <div className="flex gap-4 overflow-x-auto">
+          {isLoading || isFetching ? (
+            <CardDefaultLoader wrap={false} number={8} />
+          ) : (
+            data.map((cc: SharedEntityResType) => (
+              <NewCard
+                key={cc.entityId}
+                type={cc.type}
+                name={cc.name}
+                dropdownOptions={[]}
+                onClickHandler={() => onClickHandler(cc)}
+                entityId={cc.entityId}
+                entityType={cc.accessType}
+                bgImage={cc.bgImage}
+                accessRight={cc.accessRight}
+              />
+            ))
+          )}
         </div>
       </div>
       {viewFilesViewer ? (
         <FilesViewer
-          items={data.map((asset: SharedEntityResType) => {
+          items={(data || []).map((asset: SharedEntityResType) => {
             return {
               type: asset.type,
               entityType: asset.accessType,
-              id: asset.id,
+              id: asset.entityId,
               name: asset.name,
               src: asset.bgImage,
               collectionId: asset.collectionId,

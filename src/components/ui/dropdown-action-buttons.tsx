@@ -166,6 +166,11 @@ export const DropdownActions = {
     name: "Manage Access",
     icon: <></>,
   },
+  ADD_MEMORY_DASHBOARD: {
+    id: 28,
+    name: "Create Memory",
+    icon: <IconPlus />,
+  },
 };
 
 export const CollectionDropdownList = [
@@ -624,7 +629,7 @@ export const DropdownActionModals = ({
           />
         </Modal>
       )}
-      {action == DropdownActions.SHARE_JOURNEY.id && (
+      {action == DropdownActions.SHARE_MEMORY.id && (
         <Modal
           headerLabel="Share Memory"
           openModal={actionModal}
@@ -640,7 +645,7 @@ export const DropdownActionModals = ({
           />
         </Modal>
       )}
-      {action == DropdownActions.MANAGE_ACCESS_JOURNEY.id && (
+      {action == DropdownActions.MANAGE_ACCESS_MEMORY.id && (
         <Modal
           headerLabel="Manage Access"
           openModal={actionModal}
@@ -652,6 +657,20 @@ export const DropdownActionModals = ({
             name={name}
             bgImage={bgImage}
             accessRight={accessRight}
+            setActionModal={setActionModal}
+          />
+        </Modal>
+      )}
+      {action == DropdownActions.ADD_MEMORY_DASHBOARD.id && (
+        <Modal
+          headerLabel=""
+          openModal={actionModal}
+          setOpenModal={setActionModal}
+        >
+          <AddMemoryUploadModal
+            collectionId={-1}
+            journeyId={-1}
+            source={SourceMemory.MEMORY_DASHBOARD}
             setActionModal={setActionModal}
           />
         </Modal>

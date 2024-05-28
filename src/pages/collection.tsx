@@ -17,6 +17,10 @@ import {
   FilesViewer,
   FilesViewerItemType,
 } from "../components/ui/files-viewer";
+import {
+  CardDefaultLoader,
+  GeneralPageSkeleton,
+} from "../components/ui/loaders";
 import { useGetCollectionDetails } from "../hooks/collection/use-fetch-all-collection-details";
 import { useGetCollectionAssets } from "../hooks/collection/use-fetch-collection-assets";
 import {
@@ -96,10 +100,6 @@ const CollectionAssets = ({
     setDataCopy(data?.assetList);
   }, [data]);
 
-  if (isLoading || isFetching) {
-    return <span>Loading ...</span>;
-  }
-
   if (isError) {
     return <span>Some error occurred while fetching data ...</span>;
   }
@@ -170,38 +170,42 @@ const CollectionAssets = ({
             </div>
           </Tab.List>
           <div className="flex gap-4 overflow-auto">
-            {dataCopy?.map((asset: AssetResType) => (
-              <div key={asset.id}>
-                <NewCard
-                  type={asset.assetType}
-                  name={asset.name}
-                  dropdownOptions={AssetDropdownList}
-                  dataObject={asset}
-                  onClickHandler={() =>
-                    openFileViewer({
-                      collectionId: asset.collectionId,
-                      type: asset.assetType,
-                      src: asset.assetUrl,
-                      name: asset.name,
-                      entityType: EntityType.ASSET,
-                      id: asset.id,
-                      journeyId: asset.journeyId,
-                      accessRight: asset.accessRight,
-                    })
-                  }
-                  entityId={asset.id}
-                  entityType={EntityType.ASSET}
-                  bgImage={asset.assetUrl}
-                  accessRight={asset.accessRight}
-                />
-                {!asset.isApproved && isNeedAprovalAccess ? (
-                  <ApprovalBox
+            {isLoading || isFetching ? (
+              <CardDefaultLoader wrap={false} number={8} />
+            ) : (
+              dataCopy?.map((asset: AssetResType) => (
+                <div key={asset.id}>
+                  <NewCard
+                    type={asset.assetType}
+                    name={asset.name}
+                    dropdownOptions={AssetDropdownList}
+                    dataObject={asset}
+                    onClickHandler={() =>
+                      openFileViewer({
+                        collectionId: asset.collectionId,
+                        type: asset.assetType,
+                        src: asset.assetUrl,
+                        name: asset.name,
+                        entityType: EntityType.ASSET,
+                        id: asset.id,
+                        journeyId: asset.journeyId,
+                        accessRight: asset.accessRight,
+                      })
+                    }
                     entityId={asset.id}
                     entityType={EntityType.ASSET}
+                    bgImage={asset.assetUrl}
+                    accessRight={asset.accessRight}
                   />
-                ) : null}
-              </div>
-            ))}
+                  {!asset.isApproved && isNeedAprovalAccess ? (
+                    <ApprovalBox
+                      entityId={asset.id}
+                      entityType={EntityType.ASSET}
+                    />
+                  ) : null}
+                </div>
+              ))
+            )}
           </div>
         </Tab.Group>
       </div>
@@ -223,7 +227,7 @@ const CollectionAssets = ({
           }
           setView={setViewFilesViewer}
           activeId={activeId}
-          collectionId={data?.id}
+          collectionId={data?.id || null}
           journeyId={null}
         />
       ) : null}
@@ -251,7 +255,7 @@ export default function Collection() {
   };
 
   if (isLoading || isFetching) {
-    return <span>Loading ...</span>;
+    return <GeneralPageSkeleton />;
   }
 
   if (isError) {

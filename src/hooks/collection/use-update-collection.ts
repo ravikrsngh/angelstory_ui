@@ -23,6 +23,9 @@ export function useUpdateCollection() {
       queryClient.invalidateQueries({
         queryKey: ["collection-details"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["collections"],
+      });
     },
     onError: (error) =>
       error instanceof HTTPError && console.log(error.message),

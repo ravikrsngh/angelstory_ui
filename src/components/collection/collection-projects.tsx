@@ -13,6 +13,8 @@ import {
   DropdownActions,
   JourneyCardDropdownList,
 } from "../ui/dropdown-action-buttons";
+import { CardDefaultLoader } from "../ui/loaders";
+import defaultCardImage from "./../../assets/aj_rectangle.png";
 
 export const CollectionProjects = ({
   setAction,
@@ -31,9 +33,6 @@ export const CollectionProjects = ({
     ...AccessTypeGroups.EDIT,
   ].includes(data?.accessRight || "");
 
-  if (isLoading || isFetching) {
-    return <span>Loading ...</span>;
-  }
   if (isError) {
     return <span>Some error occurred while fetching data ...</span>;
   }
@@ -42,7 +41,7 @@ export const CollectionProjects = ({
     <div className="">
       <h4 className="font-medium mb-6 text-base md:text-lg flex justify-between items-center">
         Journies
-        {![...AccessTypeGroups.VIEW_ONLY].includes(data.accessRight) ? (
+        {![...AccessTypeGroups.VIEW_ONLY].includes(data?.accessRight || "") ? (
           <button
             onClick={() => {
               setActionModal(true);
@@ -54,28 +53,32 @@ export const CollectionProjects = ({
           </button>
         ) : null}
       </h4>
-      <div className="flex gap-4 overflow-auto">
-        {data.journeyList?.map((journey: JourneyType) => (
-          <NewCard
-            key={journey.id}
-            type={AssetTypes.FOLDER}
-            name={journey.name}
-            dropdownOptions={JourneyCardDropdownList}
-            dataObject={journey}
-            onClickHandler={() => {
-              if (!isEntityOwner) {
-                return;
-              }
-              navigate(`/journey/${journey.id}`);
-            }}
-            entityId={journey.id}
-            entityType={EntityType.JOURNEY}
-            bgImage={journey.bgImage}
-            accessRight={journey.accessRight}
-            collectionId={journey.collectionId}
-            journeyId={journey.id}
-          />
-        ))}
+      <div className="flex gap-4 flex-wrap">
+        {isLoading || isFetching ? (
+          <CardDefaultLoader wrap={false} number={8} />
+        ) : (
+          data.journeyList?.map((journey: JourneyType) => (
+            <NewCard
+              key={journey.id}
+              type={AssetTypes.FOLDER}
+              name={journey.name}
+              dropdownOptions={JourneyCardDropdownList}
+              dataObject={journey}
+              onClickHandler={() => {
+                if (!isEntityOwner) {
+                  return;
+                }
+                navigate(`/journey/${journey.id}`);
+              }}
+              entityId={journey.id}
+              entityType={EntityType.JOURNEY}
+              bgImage={journey.bgImage ? journey.bgImage : defaultCardImage}
+              accessRight={journey.accessRight}
+              collectionId={journey.collectionId}
+              journeyId={journey.id}
+            />
+          ))
+        )}
       </div>
     </div>
   );

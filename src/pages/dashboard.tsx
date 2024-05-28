@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import dummyCatImg from "../assets/dummyCat.jpeg";
+import dummyCatImg from "../assets/Artboard 5.svg";
 import { DashboardCollection } from "../components/dashboard/collection";
 import { CreateProjectBanner } from "../components/dashboard/create-project-banner";
 import { DashboardRecentActivity } from "../components/dashboard/recent-activity";
