@@ -870,7 +870,7 @@ export const MoveCopyModal = ({
           mode: mode,
           collectionId: toCollectionId,
           journeyId: toJourneyId,
-          projectId: bulkIds ? bulkIds : [entityId],
+          projectIds: bulkIds ? bulkIds : [entityId],
         },
         { onSuccess: afterSuccess }
       );

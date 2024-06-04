@@ -7,7 +7,7 @@ type saveCollectionPayloadType = {
   mode: string;
   collectionId: number;
   journeyId: number;
-  projectId: number[];
+  projectIds: number[];
 };
 const saveCollection = (input: saveCollectionPayloadType) => {
   console.log(input);
