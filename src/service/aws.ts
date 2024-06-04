@@ -27,16 +27,23 @@ export const uploadFileToS3 = async (file, bucket_name, filename) => {
 
 export const uploadFiles = async (files) => {
   const urlList = [];
+  const uploadPromises = [];
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    await uploadFileToS3(
-      file,
-      `${import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME}`,
-      `users/${Cookies.get("user")}/project/images/${file.name.replaceAll(
-        " ",
-        "_"
-      )}`
+    uploadPromises.push(
+      uploadFileToS3(
+        file,
+        `${import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME}`,
+        `users/${Cookies.get("user")}/project/images/${file.name.replaceAll(
+          " ",
+          "_"
+        )}`
+      )
     );
+  }
+  await Promise.all(uploadPromises);
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
     const assetUrl = `https://${
       import.meta.env.VITE_AWS_STORAGE_BUCKET_NAME
     }.s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/users/${Cookies.get(

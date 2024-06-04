@@ -266,13 +266,17 @@ export const ViewAllCard = ({
       className={className}
     >
       <div>
-        <input
-          type="checkbox"
-          name=""
-          id=""
-          checked={defaultChecked}
-          onChange={onChangeHandler}
-        />
+        {[...AccessTypeGroups.OWNER, ...AccessTypeGroups.EDIT].includes(
+          accessRight
+        ) ? (
+          <input
+            type="checkbox"
+            name=""
+            id=""
+            checked={defaultChecked}
+            onChange={onChangeHandler}
+          />
+        ) : null}
       </div>
     </BasicStyleCard>
   );

@@ -1,15 +1,17 @@
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { useGetUserDetails } from "../../hooks/user/use-get-user-details";
 import { useSaveUserDetails } from "../../hooks/user/use-save-user-details";
 import { uploadFiles } from "../../service/aws";
 import { Input } from "../ui/input";
+import { Loader } from "../ui/loaders";
 import AccountDashboardHeading from "./account-dashboard-heading";
 
 export default function AccountSetting() {
   const { data, isLoading, isFetching, isError } = useGetUserDetails();
+  const [apiLoading, setApiLoading] = useState(false);
   const saveUserDetailsHook = useSaveUserDetails();
   const queryClient = useQueryClient();
 
@@ -35,6 +37,7 @@ export default function AccountSetting() {
     const fileInput = e.target;
     if (fileInput.files && fileInput.files.length > 0) {
       const selectedFile = fileInput.files[0];
+      setApiLoading(true);
       console.log("Selected file:", selectedFile);
       const urlLists = await uploadFiles([selectedFile]);
       if (data) {
@@ -47,8 +50,12 @@ export default function AccountSetting() {
           },
           {
             onSuccess: () => {
+              setApiLoading(false);
               toast.success("Profile pic updated successfully.");
               queryClient.invalidateQueries(["user-details"]);
+            },
+            onError: () => {
+              setApiLoading(false);
             },
           }
         );
@@ -154,6 +161,11 @@ export default function AccountSetting() {
           </div>
         </div>
       </form>
+      <Loader
+        isLoading={apiLoading}
+        position={"fixed"}
+        label="Changing profile picture..."
+      />
     </div>
   );
 }

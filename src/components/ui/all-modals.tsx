@@ -1,6 +1,11 @@
-import { Menu, Transition } from "@headlessui/react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { IconArrowLeft } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconChevronDown,
+  IconChevronUp,
+  IconTrash,
+} from "@tabler/icons-react";
 import React, {
   ChangeEvent,
   Dispatch,
@@ -14,6 +19,8 @@ import { useAddUserPermission } from "../../hooks/access-rights/use-add-user";
 import { useGetAllAccessRightForEntity } from "../../hooks/access-rights/use-get-all-access";
 import { useGetAllUserAccessForEntity } from "../../hooks/access-rights/use-get-all-access-for-entity";
 import { useGetPublicLink } from "../../hooks/access-rights/use-get-public-link";
+import { useDeleteUserPermission } from "../../hooks/access-rights/use-remove-access";
+import { useUpdateUserPermission } from "../../hooks/access-rights/use-update-user-access";
 import {
   createBulkAssetType,
   useBulkCreateAssets,
@@ -42,6 +49,7 @@ import {
   MemoryTypes,
   MoveCopyModalPropType,
   PermissionType,
+  PermissionUserCardPropType,
   ProjectDimensionType,
   SourceMemory,
   StageLists,
@@ -49,8 +57,8 @@ import {
 } from "../../types";
 import { cn } from "../../utils";
 import ColorPallete from "../edit-panel/components/color-pallete";
-import { PermissionUserCard } from "../templates-reference/all-modals";
 import { Input } from "./input";
+import { Loader } from "./loaders";
 import SelectCardSize from "./select-card-size";
 import SelectFolder from "./select-folder";
 import { UserSearchComp } from "./share-modal-comp";
@@ -472,6 +480,7 @@ export const AddMemoryUploadModal = ({
   journeyId: number;
   setActionModal: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const [apiLoading, setApiLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [memoryType, setMemoryType] = useState<string>("");
   const [projectDimension, setProjectDimension] =
@@ -521,6 +530,7 @@ export const AddMemoryUploadModal = ({
   };
 
   const bulkUpload = async () => {
+    setApiLoading(true);
     const urlLists = await uploadFiles(files);
     console.log(urlLists);
     const payload: createBulkAssetType = {
@@ -537,7 +547,10 @@ export const AddMemoryUploadModal = ({
     if (toJourneyId != -1) {
       payload.journeyId = toJourneyId;
     }
-    bullUploadHook.mutate(payload);
+    bullUploadHook.mutate(payload, {
+      onSuccess: () => setApiLoading(false),
+      onError: () => setApiLoading(false),
+    });
   };
 
   const afterSelectingFolders = async () => {
@@ -701,6 +714,11 @@ export const AddMemoryUploadModal = ({
             />
           </>
         ) : null}
+        <Loader
+          isLoading={apiLoading}
+          position={"fixed"}
+          label="Uploading files..."
+        />
       </div>
     </>
   );
@@ -1036,6 +1054,139 @@ export const ShareModal = ({
   );
 };
 
+export const PermissionUserCard = (props: PermissionUserCardPropType) => {
+  const [selectedPermission, setSelectedPermission] =
+    useState<PermissionType | null>(props.accessRight);
+  const [defaultOpen, setDefaultOpen] = useState<boolean>(false);
+  const updateUserAccessHook = useUpdateUserPermission();
+  const deleteUserAccessHook = useDeleteUserPermission();
+  const updateUserAccess = () => {
+    updateUserAccessHook.mutate(
+      {
+        accessRight: selectedPermission?.value || "",
+        userId: props.userId,
+        entityId: props.entityId,
+        accessType: props.accessType,
+      },
+      {
+        onSuccess: () => {
+          setSelectedPermission(selectedPermission);
+          setDefaultOpen(false);
+          toast.success("Update the permission successfully.");
+        },
+      }
+    );
+  };
+
+  const deleteUserAccess = () => {
+    deleteUserAccessHook.mutate(
+      {
+        accessRight: props.accessRight.value,
+        userIds: [props.userId],
+        entityId: props.entityId,
+        accessType: props.accessType,
+        approvalRequired: true,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Deleted user access.");
+        },
+      }
+    );
+  };
+
+  return (
+    <Disclosure as={Fragment} defaultOpen={defaultOpen}>
+      {({ open, close }) => (
+        <>
+          <div className="flex gap-2">
+            <Disclosure.Button className={cn("outline-none w-full")}>
+              <div className="flex gap-3 items-center text-left">
+                <div className="h-7 w-7 bg-primary-400 rounded-full"></div>
+                <span>
+                  {props.name} <br />{" "}
+                  <span className="text-sm">{props.accessRight.name}</span>
+                </span>
+                {open ? (
+                  <IconChevronUp className="ml-auto" />
+                ) : (
+                  <IconChevronDown className="ml-auto" />
+                )}
+                <button onClick={deleteUserAccess}>
+                  <IconTrash />
+                </button>
+              </div>
+            </Disclosure.Button>
+          </div>
+          <Disclosure.Panel>
+            <Menu
+              as="div"
+              className="relative w-full inline-block text-left ml-auto"
+            >
+              <div onClick={(e) => e.stopPropagation()}>
+                <Menu.Button className="inline-flex w-full justify-center rounded-md ">
+                  <div className="border border-slate-200 py-2 px-3 w-full text-left">
+                    <span>{selectedPermission?.name}</span>
+                  </div>
+                </Menu.Button>
+              </div>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute left-0 mt-2 w-full origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                  <div className="px-1 py-1 ">
+                    {props.allAccessRights.map((opt) => (
+                      <Menu.Item key={opt.value}>
+                        <div
+                          className="flex gap-4 p-2 hover:bg-primary-100 hover:cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedPermission(opt);
+                          }}
+                        >
+                          <span>{opt.name}</span>
+                        </div>
+                      </Menu.Item>
+                    ))}
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+            {/* <div className="flex flex-col gap-4 mt-4">
+              <div className="flex gap-3 items-center">
+                <input type="checkbox" id="checkbox1" />
+                <label htmlFor="checkbox1">Approve additions</label>
+              </div>
+              <div className="flex gap-3 items-center">
+                <input type="checkbox" id="checkbox2" />
+                <label htmlFor="checkbox2">Some other permission</label>
+              </div>
+            </div> */}
+            <div className="flex w-full justify-end mt-4">
+              <button
+                className="bg-primary-400 text-sm text-white px-8 py-2 rounded-sm disabled:opacity-75"
+                disabled={selectedPermission == props.accessRight}
+                onClick={() => {
+                  updateUserAccess();
+                  close();
+                }}
+              >
+                Update
+              </button>
+            </div>
+          </Disclosure.Panel>
+        </>
+      )}
+    </Disclosure>
+  );
+};
+
 export const ManageAccessModal = ({
   entityType,
   entityId,
@@ -1051,8 +1202,7 @@ export const ManageAccessModal = ({
   return (
     <div className="share-modal overflow-scroll">
       <div className="mt-4 min-h-[340px] overflow-y-auto flex flex-col gap-3">
-        {(getAllUserAccessHook.isLoading ||
-          getAllUserAccessHook.isFetching) && (
+        {getAllUserAccessHook.isLoading && (
           <div>
             {" "}
             <p>Loading...</p>

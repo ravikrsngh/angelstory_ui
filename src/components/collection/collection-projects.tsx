@@ -41,7 +41,9 @@ export const CollectionProjects = ({
     <div className="">
       <h4 className="font-medium mb-6 text-base md:text-lg flex justify-between items-center">
         Journies
-        {![...AccessTypeGroups.VIEW_ONLY].includes(data?.accessRight || "") ? (
+        {[...AccessTypeGroups.OWNER, ...AccessTypeGroups.EDIT].includes(
+          data?.accessRight || ""
+        ) ? (
           <button
             onClick={() => {
               setActionModal(true);

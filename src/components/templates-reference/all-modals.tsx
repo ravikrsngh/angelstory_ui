@@ -1,20 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Menu, Transition } from "@headlessui/react";
 import * as Tooltip from "@radix-ui/react-tooltip";
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconFolderFilled,
-} from "@tabler/icons-react";
+import { IconFolderFilled } from "@tabler/icons-react";
 import { Fragment, useState } from "react";
-import toast from "react-hot-toast";
-import { useUpdateUserPermission } from "../../hooks/access-rights/use-update-user-access";
-import {
-  PermissionType,
-  PermissionUserCardPropType,
-  TempPropType,
-} from "../../types";
+import { TempPropType } from "../../types";
 import { cn } from "../../utils";
 import dummyImg from "./../../assets/download.jpeg";
 
@@ -192,118 +182,6 @@ const permissions = [
     checkbox_options: [],
   },
 ];
-
-export const PermissionUserCard = (props: PermissionUserCardPropType) => {
-  const [selectedPermission, setSelectedPermission] =
-    useState<PermissionType | null>(props.accessRight);
-  const [defaultOpen, setDefaultOpen] = useState<boolean>(false);
-  const updateUserAccessHook = useUpdateUserPermission();
-  const updateUserAccess = () => {
-    updateUserAccessHook.mutate(
-      {
-        accessRight: selectedPermission?.value,
-        userId: props.userId,
-        entityId: props.entityId,
-        accessType: props.accessType,
-      },
-      {
-        onSuccess: () => {
-          setSelectedPermission(selectedPermission);
-          setDefaultOpen(false);
-          toast.success("Update the permission successfully.");
-        },
-      }
-    );
-  };
-
-  return (
-    <Disclosure as={Fragment} defaultOpen={defaultOpen}>
-      {({ open, close }) => (
-        <>
-          <div className="flex gap-2">
-            <Disclosure.Button className={cn("outline-none w-full")}>
-              <div className="flex gap-3 items-center text-left">
-                <div className="h-7 w-7 bg-primary-400 rounded-full"></div>
-                <span>
-                  {props.name} <br />{" "}
-                  <span className="text-sm">{props.accessRight.name}</span>
-                </span>
-                {open ? (
-                  <IconChevronUp className="ml-auto" />
-                ) : (
-                  <IconChevronDown className="ml-auto" />
-                )}
-              </div>
-            </Disclosure.Button>
-          </div>
-          <Disclosure.Panel>
-            <Menu
-              as="div"
-              className="relative w-full inline-block text-left ml-auto"
-            >
-              <div onClick={(e) => e.stopPropagation()}>
-                <Menu.Button className="inline-flex w-full justify-center rounded-md ">
-                  <div className="border border-slate-200 py-2 px-3 w-full text-left">
-                    <span>{selectedPermission?.name}</span>
-                  </div>
-                </Menu.Button>
-              </div>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute left-0 mt-2 w-full origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
-                  <div className="px-1 py-1 ">
-                    {props.allAccessRights.map((opt) => (
-                      <Menu.Item key={opt.value}>
-                        <div
-                          className="flex gap-4 p-2 hover:bg-primary-100 hover:cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedPermission(opt);
-                          }}
-                        >
-                          <span>{opt.name}</span>
-                        </div>
-                      </Menu.Item>
-                    ))}
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
-            {/* <div className="flex flex-col gap-4 mt-4">
-              <div className="flex gap-3 items-center">
-                <input type="checkbox" id="checkbox1" />
-                <label htmlFor="checkbox1">Approve additions</label>
-              </div>
-              <div className="flex gap-3 items-center">
-                <input type="checkbox" id="checkbox2" />
-                <label htmlFor="checkbox2">Some other permission</label>
-              </div>
-            </div> */}
-            <div className="flex w-full justify-end mt-4">
-              <button
-                className="bg-primary-400 text-sm text-white px-8 py-2 rounded-sm disabled:opacity-75"
-                disabled={selectedPermission == props.accessRight}
-                onClick={() => {
-                  updateUserAccess();
-                  close();
-                }}
-              >
-                Update
-              </button>
-            </div>
-          </Disclosure.Panel>
-        </>
-      )}
-    </Disclosure>
-  );
-};
 
 export const ShareModalTemp = () => {
   const [userList, setUserList] = useState(false);
