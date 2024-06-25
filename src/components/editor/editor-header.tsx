@@ -1,15 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import {
-  IconArrowBackUp,
-  IconDeviceFloppy,
-  IconShare,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconArrowBackUp, IconTrash } from "@tabler/icons-react";
 import { fabric } from "fabric";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { CanvasContext } from "../../context/canvasContext";
-import { useCreateTemplate } from "../../hooks/templates/use-create-template";
 import { CanvasContextType, EditorHeaderPropType } from "../../types";
 import logoimg from "./../../assets/logo-angel-journey.svg";
 import { DownloadButton } from "./download-btn";
@@ -24,27 +18,27 @@ export default function EditorHeader({
     CanvasContext as React.Context<CanvasContextType>
   );
 
-  const createTemplateHook = useCreateTemplate();
+  // const createTemplateHook = useCreateTemplate();
 
-  const generateTemplateData = () => {
-    const virtualCanvas = new fabric.Canvas("");
-    virtualCanvas.setDimensions({
-      //@ts-ignore
-      width: fabricRef.current.getWidth() / fabricRef.current.getZoom(),
-      //@ts-ignore
-      height: fabricRef.current.getHeight() / fabricRef.current.getZoom(),
-    });
-    virtualCanvas.loadFromJSON(slides[0].content, () => {
-      createTemplateHook.mutate({
-        collectionId: 0,
-        formattedData: JSON.stringify(slides),
-        name: "Template2 ",
-        premium: false,
-        previewImage: virtualCanvas.toDataURL({ format: "png" }),
-        price: 0,
-      });
-    });
-  };
+  // const generateTemplateData = () => {
+  //   const virtualCanvas = new fabric.Canvas("");
+  //   virtualCanvas.setDimensions({
+  //     //@ts-ignore
+  //     width: fabricRef.current.getWidth() / fabricRef.current.getZoom(),
+  //     //@ts-ignore
+  //     height: fabricRef.current.getHeight() / fabricRef.current.getZoom(),
+  //   });
+  //   virtualCanvas.loadFromJSON(slides[0].content, () => {
+  //     createTemplateHook.mutate({
+  //       collectionId: 0,
+  //       formattedData: JSON.stringify(slides),
+  //       name: "Template2 ",
+  //       premium: false,
+  //       previewImage: virtualCanvas.toDataURL({ format: "png" }),
+  //       price: 0,
+  //     });
+  //   });
+  // };
 
   const saveProjectName = (e: React.FocusEvent) => {
     if ((e.target as HTMLInputElement).value) {
@@ -90,19 +84,14 @@ export default function EditorHeader({
           />
         </div>
         <div className="flex flex-1 items-center justify-end gap-x-6">
-          <button onClick={saveProjectStatus}>
-            <IconDeviceFloppy />
-          </button>
-          <button
+          <button onClick={saveProjectStatus}>Save</button>
+          {/* <button
             className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900"
             onClick={generateTemplateData}
           >
             Generate template
-          </button>
+          </button> */}
           <DownloadButton />
-          <button className="hidden lg:block bg-primary-500 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-            Share
-          </button>
         </div>
       </nav>
       <nav className="flex lg:hidden items-center justify-end gap-x-6 px-4 md:px-10 lg:px-16 py-4">
@@ -126,12 +115,9 @@ export default function EditorHeader({
           </button>
         ) : null}
         <button className="text-primary-400" onClick={saveProjectStatus}>
-          <IconDeviceFloppy />
+          Save
         </button>
         <DownloadButton />
-        <button className="text-primary-400">
-          <IconShare />
-        </button>
       </nav>
     </header>
   );

@@ -25,7 +25,7 @@ export default function Dashboard() {
           </form>
         </div> */}
         <CreateProjectBanner />
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mt-3 md:-mt-5">
           <div className="flex gap-4">
             <div className="min-w-[140px] md:min-w-[200px] rounded-lg">
               <Link to={"/"} className="w-full">

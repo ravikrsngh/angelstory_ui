@@ -62,7 +62,12 @@ export function getHeaderIcon(type: string) {
 export type DynamicArrayFilterType = {
   key: string;
   operator: string;
-  value: string | number | boolean | null;
+  value:
+    | string
+    | number
+    | boolean
+    | null
+    | (string | number | boolean | null)[];
 };
 export function dynamicFilter(array, conditions) {
   return array.filter((item) => {
@@ -84,6 +89,8 @@ export function dynamicFilter(array, conditions) {
           return item[key] >= value;
         case "<=":
           return item[key] <= value;
+        case "in":
+          return value.includes(item[key]);
         default:
           return false;
       }

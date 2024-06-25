@@ -14,8 +14,8 @@ export default function SelectCardSize({
     return <span>Some error occurred while fetching data ...</span>;
   }
   return (
-    <>
-      <div className="flex overflow-x-auto gap-4 items-center my-8">
+    <div>
+      <div className="flex overflow-x-auto gap-4 items-center my-4">
         {data?.map((size: SizeResType) => (
           <div
             key={size.id}
@@ -34,6 +34,34 @@ export default function SelectCardSize({
           </div>
         ))}
       </div>
-    </>
+      <div>
+        <p className="text-center text-xs">OR</p>
+      </div>
+      <form className="mt-4">
+        <p className="text-center mb-4">Custom size?</p>
+        <div className="flex gap-4 justify-center items-center">
+          <input
+            type="text"
+            name=""
+            id=""
+            maxLength={4}
+            placeholder="Width (px)"
+            className="w-32 border border-slate-300 p-2 text-sm"
+          />
+          <span>X</span>
+          <input
+            type="text"
+            name=""
+            id=""
+            maxLength={4}
+            placeholder="Height (px)"
+            className="w-32 border border-slate-300 p-2 text-sm"
+          />
+          <button className="bg-primary-400 text-white text-xs md:text-base p-2 px-4 rounded-sm">
+            Create
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

@@ -3,7 +3,7 @@ import BackgroundImageSection from "../../components/background-panel/background
 
 export default function BackgroundPanel() {
   return (
-    <div className="p-5">
+    <div className="p-5 h-[calc(100vh-80px)]">
       <BackgroundColorSection />
       <BackgroundImageSection />
     </div>

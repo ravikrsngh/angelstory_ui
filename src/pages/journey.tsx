@@ -147,8 +147,8 @@ const JourneyAssets = ({ journeyId }: { journeyId: string | undefined }) => {
                         filterDataCopy([
                           {
                             key: "isApproved",
-                            operator: "==",
-                            value: null,
+                            operator: "in",
+                            value: [null, false],
                           },
                         ])
                       }

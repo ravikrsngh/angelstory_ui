@@ -5,7 +5,6 @@ import {
   IconCloudUpload,
   IconLayersSubtract,
   IconLetterT,
-  IconSlideshow,
   IconTemplate,
   IconTexture,
 } from "@tabler/icons-react";
@@ -39,7 +38,6 @@ export default function Design({
   const fabricRef = useRef<fabric.Canvas | null>(null);
   const historyRef = useRef<(string | null)[]>([null]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [slideshowMode, setSlideShowMode] = useState<boolean>(false);
   const [slides, setSlides] = useState<SlideType[]>(initialSlides);
   const [activeSlide, setActiveSlide] = useState<number>(0);
   const [musicArr, setMusicArr] = useState<MusicElementType[] | null>(
@@ -334,15 +332,6 @@ export default function Design({
                   label="Templates"
                 />
               </Tab>
-              {projectType == "SLIDE_SHOW" ? (
-                <div onClick={() => setSlideShowMode(true)}>
-                  <ToolBarButton
-                    key="slideshow"
-                    icon={<IconSlideshow color="#AD7A5B" size={26} />}
-                    label="Slideshow"
-                  />
-                </div>
-              ) : null}
 
               <Tab className="outline-none"></Tab>
             </Tab.List>
@@ -382,7 +371,7 @@ export default function Design({
                 ></canvas>
               </div>
             </div>
-            {slideshowMode && projectType == "SLIDE_SHOW" && (
+            {projectType == "SLIDE_SHOW" && (
               <SlideshowPanel
                 saveProject={saveProject}
                 musicArr={musicArr}

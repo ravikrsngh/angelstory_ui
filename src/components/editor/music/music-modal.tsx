@@ -12,6 +12,7 @@ import {
   MusicModalPropType,
 } from "../../../types";
 import EditInputBox from "../../edit-panel/components/edit-inputbox";
+import { Loader } from "../../ui/loaders";
 
 export default function MusicModal({
   musicModalOpen,
@@ -36,6 +37,10 @@ export default function MusicModal({
     defaultData ? defaultData.startFrom : 1
   );
 
+  const [replaceMusicModal, setReplaceMusicModal] = useState(false);
+
+  const [isPageLoading, setIsPageLoading] = useState(false);
+
   const createAssetHook = useCreateAssets();
 
   const params = useParams();
@@ -53,6 +58,7 @@ export default function MusicModal({
     setSlideTo(0);
     setStartFrom(0);
     setMusicModalOpen(false);
+    setIsPageLoading(false);
   }
 
   const validateMusic = () => {
@@ -75,6 +81,7 @@ export default function MusicModal({
           slideNumbers.includes(slideTo) ||
           slideNumbers.includes(slideFrom)
         ) {
+          setReplaceMusicModal(true);
           toast.error("Music are getting overlapped.");
           return false;
         }
@@ -119,8 +126,10 @@ export default function MusicModal({
 
   const addThisMusic = async () => {
     if (validateMusic()) {
+      setIsPageLoading(true);
       const assetURL = await uploadMusicToS3();
       const t = calculateDurationOfMusic();
+      const musicStartFrom = auidoRef.current?.currentTime || 0;
       if (assetURL) {
         setMusicArr((prev: MusicElementType[] | null) => {
           let arr = prev;
@@ -130,7 +139,7 @@ export default function MusicModal({
                 if (arr[i].id == defaultData.id) {
                   arr[i].slideFrom = slideFrom;
                   arr[i].slideTo = slideTo;
-                  arr[i].startFrom = startFrom;
+                  arr[i].startFrom = musicStartFrom;
                   arr[i].duration = t;
                 }
               }
@@ -141,7 +150,7 @@ export default function MusicModal({
                 url: assetURL,
                 slideFrom: slideFrom,
                 slideTo: slideTo,
-                startFrom: startFrom,
+                startFrom: musicStartFrom,
                 duration: t,
               });
             }
@@ -153,7 +162,7 @@ export default function MusicModal({
               url: assetURL,
               slideFrom: slideFrom,
               slideTo: slideTo,
-              startFrom: startFrom,
+              startFrom: musicStartFrom,
               duration: t,
             });
           }
@@ -241,7 +250,7 @@ export default function MusicModal({
                           Start Here
                         </button>
                       </div>
-                      <div className="flex mt-4 gap-20">
+                      <div className="flex mt-4 gap-5">
                         <EditInputBox
                           icon={<label className="text-sm"> Slide From</label>}
                           containerClassName="w-full flex flex-col items-start border-none"
@@ -267,18 +276,10 @@ export default function MusicModal({
                           min={slideFrom}
                           max={slides.length}
                         />
-                        <EditInputBox
-                          icon={<label className="text-sm">Music Start</label>}
-                          containerClassName="w-full flex flex-col items-start border-none"
-                          inputClassName="border border-slate-200 py-2"
-                          type="number"
-                          id="Music Start"
-                          defaultValue={startFrom}
-                          onChange={(e) =>
-                            setStartFrom(parseInt(e.target.value))
-                          }
-                        />
                       </div>
+                      {replaceMusicModal ? (
+                        <div>Do you want to replace</div>
+                      ) : null}
                       <div className="flex justify-end mt-8">
                         <button
                           className="py-3 w-full px-4 text-sm bg-primary-400 text-white"
@@ -295,6 +296,11 @@ export default function MusicModal({
           </div>
         </Dialog>
       </Transition>
+      <Loader
+        isLoading={isPageLoading}
+        position={"fixed"}
+        label="Updating music..."
+      />
     </>
   );
 }

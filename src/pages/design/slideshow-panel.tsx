@@ -4,8 +4,10 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import { IconEdit, IconPlayerPlay, IconTrash } from "@tabler/icons-react";
 import React, { useContext, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import AudioPlayer from "../../components/audio-player";
 import MusicModal from "../../components/editor/music/music-modal";
+import { Loader } from "../../components/ui/loaders";
 import { CanvasContext } from "../../context/canvasContext";
 import { uploadRandomFiles } from "../../service/aws";
 import {
@@ -75,12 +77,15 @@ const Slide = ({
     <div>
       <div
         className={cn(
-          "h-14 w-14 rounded-md overflow-hidden relative border border-slate-200",
+          "h-14 w-14 rounded-md overflow-hidden relative border border-slate-200 flex justify-center items-center",
           isActive && "border-2 border-primary-600"
         )}
         onClick={onClickSlide}
       >
-        <img src={slide.previewImg} className="h-full w-auto" />
+        <img
+          src={slide.previewImg}
+          className="w-full border border-slate-200"
+        />
         <div className="absolute bottom-1 left-1 flex">
           <input
             type="text"
@@ -152,6 +157,7 @@ export default function SlideshowPane({
   const [editMusicData, setEditMusicData] = useState<MusicElementType | null>(
     null
   );
+  const [isPageLoading, setIsPageLoading] = useState(false);
 
   const addSlide = () => {
     setSlides([
@@ -170,11 +176,13 @@ export default function SlideshowPane({
 
   const createEachSlideVideo = async (slide: SlideType, idx: number) => {
     const virtualCanvas = new fabric.Canvas("");
+    const vw = fabricRef.current.getWidth() / fabricRef.current.getZoom();
+    const vh = fabricRef.current.getHeight() / fabricRef.current.getZoom();
     virtualCanvas.setDimensions({
       //@ts-ignore
-      width: fabricRef.current.getWidth() / fabricRef.current.getZoom(),
+      width: vw,
       //@ts-ignore
-      height: fabricRef.current.getHeight() / fabricRef.current.getZoom(),
+      height: vh,
     });
     return new Promise((resolve) => {
       virtualCanvas.loadFromJSON(slide.content, async () => {
@@ -201,7 +209,7 @@ export default function SlideshowPane({
           "-pix_fmt",
           "yuv420p",
           "-vf",
-          "scale=1080:1080",
+          `scale=${vw}:${vh}`,
           `test${idx}.mp4`,
         ]);
         console.log("Video Made", `test${idx}.mp4`);
@@ -243,7 +251,7 @@ export default function SlideshowPane({
   console.log(musicArr);
 
   const createPreview2 = async () => {
-    setLoading(true);
+    setIsPageLoading(true);
     try {
       //Hnadle Music
       console.log(musicArr);
@@ -338,9 +346,10 @@ export default function SlideshowPane({
       saveProject({ previewImage: urlLists[0].url }, 0);
     } catch (error) {
       console.log(error);
-      setLoading(false);
+      toast.error("Something went wrong.");
+      setIsPageLoading(false);
     }
-    setLoading(false);
+    setIsPageLoading(false);
   };
 
   const loadFFMPEG = async () => {
@@ -482,6 +491,11 @@ export default function SlideshowPane({
           />
         )}
       </div>
+      <Loader
+        isLoading={isPageLoading}
+        position={"fixed"}
+        label="Preparing the preview..."
+      />
     </div>
   );
 }

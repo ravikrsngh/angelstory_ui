@@ -8,6 +8,7 @@ import Collection from "../pages/collection";
 import CollectionAssets from "../pages/collection-assets";
 import Dashboard from "../pages/dashboard";
 import { DesignLoader } from "../pages/design";
+import EventsPage from "../pages/events";
 import { ForgotPassword } from "../pages/forgot-password";
 import Journey from "../pages/journey";
 import LoginPage from "../pages/login";
@@ -63,6 +64,11 @@ const RouteData = () => {
         <Route path="/view" element={<Template />} />
         <Route path="/view-collection" element={<ViewCollection />} />
         <Route path="/view-journey" element={<ViewJourney />} />
+        <Route path="/">
+          <Route path="/" element={<PrivateRoutes />}>
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Route>
       </Route>
       <Route path="/">
         <Route path="/" element={<PrivateRoutes />}>

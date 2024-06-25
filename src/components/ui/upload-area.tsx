@@ -61,7 +61,7 @@ export default function UploadArea({
           onDrop={dropHanlder}
           onDragOver={dragHandler}
         >
-          Darg or Select Files
+          Drag or Select Files
         </label>
       </div>
       <input

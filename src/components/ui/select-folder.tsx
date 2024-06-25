@@ -27,11 +27,11 @@ const FolderRow = ({
           className={cn(
             "w-full h-12 group flex justify-between items-center border-b border-slate-200 hover:bg-primary-50 px-4",
             toCollectionId == collectionDetails.id
-              ? "bg-primary-200 hover:bg-primary-200"
+              ? "bg-[#ede0d4] hover:bg-[#ede0d4]"
               : ""
           )}
         >
-          <div className="flex gap-2 items-center text-sm">
+          <div className="flex gap-2 items-center text-sm text-primary-700">
             <IconFolderFilled size={20} />
             {collectionDetails.name}
           </div>
@@ -62,12 +62,10 @@ const FolderRow = ({
                 key={lvl.id}
                 className={cn(
                   "w-full h-12 group flex justify-between items-center border-b border-slate-200 hover:bg-primary-50 px-4",
-                  toJourneyId == lvl.id
-                    ? "bg-primary-200 hover:bg-primary-200"
-                    : ""
+                  toJourneyId == lvl.id ? "bg-[#ede0d4] hover:bg-[#ede0d4]" : ""
                 )}
               >
-                <div className="flex gap-2 items-center text-sm pl-4">
+                <div className="flex gap-2 items-center text-sm pl-4 text-primary-700">
                   <IconFolderFilled size={20} />
                   {lvl.name}
                 </div>

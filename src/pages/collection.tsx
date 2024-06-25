@@ -150,8 +150,8 @@ const CollectionAssets = ({
                         filterDataCopy([
                           {
                             key: "isApproved",
-                            operator: "==",
-                            value: null,
+                            operator: "in",
+                            value: [null, false],
                           },
                         ])
                       }

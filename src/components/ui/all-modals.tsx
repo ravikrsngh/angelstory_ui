@@ -1,4 +1,6 @@
 import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import * as HoverCard from "@radix-ui/react-hover-card";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import {
   IconArrowLeft,
@@ -608,12 +610,15 @@ export const AddMemoryUploadModal = ({
         {stage == StageLists.UPLOAD_SELECT ? (
           <>
             <h3 className="text-lg md:text-xl">
-              {source == SourceMemory.UPLOAD ? "Upload files" : "Create memory"}
+              {source == SourceMemory.UPLOAD ? "Upload files" : "Create Memory"}
             </h3>
             <div className="w-full flex flex-col md:flex-row justify-between items-center h-[300px] mt-6">
               <UploadArea
                 setFiles={setFiles}
-                nextBtnHandler={() => setStage(StageLists.VIEW_UPLOADS)}
+                nextBtnHandler={() => {
+                  setMemoryType("UPLOAD_FILES");
+                  setStage(StageLists.VIEW_UPLOADS);
+                }}
               />
               {source == SourceMemory.UPLOAD ? null : (
                 <>
@@ -622,7 +627,7 @@ export const AddMemoryUploadModal = ({
                   </div>
                   <div className="w-full h-full flex flex-col gap-4">
                     <div
-                      className="w-full bg-primary-200 rounded-md flex-grow flex justify-center items-center"
+                      className="w-full bg-[#e39679] rounded-md flex-grow flex justify-center items-center text-white"
                       onClick={() => {
                         setMemoryType(MemoryTypes.CARD);
                         setStage(StageLists.CARD_SIZE);
@@ -631,7 +636,7 @@ export const AddMemoryUploadModal = ({
                       <span>CARD</span>
                     </div>
                     <div
-                      className="w-full bg-primary-200 rounded-md flex-grow flex justify-center items-center"
+                      className="w-full bg-[#e39679] rounded-md flex-grow flex justify-center items-center text-white"
                       onClick={() => {
                         setMemoryType(MemoryTypes.SLIDESHOW);
                         setStage(StageLists.CARD_SIZE);
@@ -678,7 +683,26 @@ export const AddMemoryUploadModal = ({
         ) : null}
         {stage == StageLists.SELECT_FOLDER ? (
           <>
-            <h3 className="text-xl"> Choose Location</h3>
+            <h3 className="text-xl flex gap-4 items-center">
+              <span>Choose Location</span>
+              <HoverCard.Root>
+                <HoverCard.Trigger>
+                  <button>
+                    <QuestionMarkCircleIcon className="h-6 w-6 mt-1" />
+                  </button>
+                </HoverCard.Trigger>
+                <HoverCard.Portal>
+                  <HoverCard.Content className="z-[9999]">
+                    <p className="p-5 bg-primary-50 shadow-sm rounded-sm max-w-xs">
+                      If you want to create a new location, go to dashborad and
+                      start by creating a collection. You can then create
+                      journies inside the collection.
+                    </p>
+                    <HoverCard.Arrow />
+                  </HoverCard.Content>
+                </HoverCard.Portal>
+              </HoverCard.Root>
+            </h3>
             <SelectFolder
               toCollectionId={toCollectionId}
               toJourneyId={toJourneyId}
@@ -690,7 +714,11 @@ export const AddMemoryUploadModal = ({
                 setToCollectionId(-1);
                 setToJourneyId(-1);
               }}
-              nextBtnLabel="Upload Here"
+              nextBtnLabel={
+                [MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(memoryType)
+                  ? "Create here"
+                  : "Upload here"
+              }
             />
           </>
         ) : null}
@@ -700,7 +728,7 @@ export const AddMemoryUploadModal = ({
               <button onClick={() => setStage(StageLists.UPLOAD_SELECT)}>
                 <IconArrowLeft />
               </button>{" "}
-              <span>Select Card Size</span>
+              <span>Select Size</span>
             </h3>
             <SelectCardSize
               setProjectDimension={setProjectDimension}
@@ -710,7 +738,11 @@ export const AddMemoryUploadModal = ({
                 setToCollectionId(-1);
                 setToJourneyId(-1);
               }}
-              nextBtnLabel="Upload Here"
+              nextBtnLabel={
+                [MemoryTypes.CARD, MemoryTypes.SLIDESHOW].includes(memoryType)
+                  ? "Create here"
+                  : "Upload here"
+              }
             />
           </>
         ) : null}
