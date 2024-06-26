@@ -4,6 +4,7 @@ import ViewCollection from "../components/templates-reference/view-collection";
 import ViewJourney from "../components/templates-reference/view-journey";
 import { BasicPage } from "../components/ui/basic-page";
 import AccountDashboard from "../pages/account-dashboard";
+import BuyEventsPage from "../pages/buy-events";
 import Collection from "../pages/collection";
 import CollectionAssets from "../pages/collection-assets";
 import Dashboard from "../pages/dashboard";
@@ -30,6 +31,7 @@ const RouteData = () => {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/templates" element={<Templates />} />
+        <Route path="/events-package" element={<BuyEventsPage />} />
         <Route path="/" element={<PrivateRoutes />}>
           <Route path="/account-dashboard" element={<AccountDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
