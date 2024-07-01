@@ -10,6 +10,7 @@ import CollectionAssets from "../pages/collection-assets";
 import Dashboard from "../pages/dashboard";
 import { DesignLoader } from "../pages/design";
 import EventsPage from "../pages/events";
+import EventsSetupPage from "../pages/events-setup";
 import { ForgotPassword } from "../pages/forgot-password";
 import Journey from "../pages/journey";
 import LoginPage from "../pages/login";
@@ -69,6 +70,10 @@ const RouteData = () => {
         <Route path="/">
           <Route path="/" element={<PrivateRoutes />}>
             <Route path="/events" element={<EventsPage />} />
+            <Route
+              path="/events-setup/:eventId"
+              element={<EventsSetupPage />}
+            />
           </Route>
         </Route>
       </Route>
